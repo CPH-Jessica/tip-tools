@@ -1,0 +1,8 @@
+{
+  "name": "romantic-suspense-skill",
+  "version": "1.0.0",
+  "description": "Genre writing system for romantic suspense — dual-arc pacing, danger meets desire, and tension on every page",
+  "author": {"name": "The Invisible Pen", "url": "https://theinvisiblepen.com"},
+  "repository": "https://github.com/CPH-Jessica/tip-tools",
+  "keywords": ["writing", "romance", "suspense", "romantic-suspense", "fiction", "genre-writing"]
+}

@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 2: Your Newsletter From Scratch - The Invisible Pen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2D3436;
+            --accent: #6C5CE7;
+            --warm: #FDCB6E;
+            --background: #FAFAFA;
+            --card: #FFFFFF;
+            --border: #E8E8E8;
+            --text: #2D3436;
+            --text-light: #636E72;
+            --success: #27AE60;
+            --error: #E74C3C;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            border-bottom: 3px solid var(--warm);
+            padding-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .save-indicator.saving {
+            display: flex;
+            background-color: var(--warm);
+            color: var(--text);
+        }
+
+        .save-indicator.saved {
+            display: flex;
+            background-color: var(--success);
+            color: white;
+        }
+
+        .save-indicator.error {
+            display: flex;
+            background-color: var(--error);
+            color: white;
+        }
+
+        .save-indicator::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: currentColor;
+            opacity: 0.6;
+        }
+
+        .save-indicator.saving::before {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        section {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+
+        section h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        section h3 {
+            color: var(--accent);
+            font-size: 1.3rem;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+
+        section > h3:first-of-type {
+            margin-top: 0;
+        }
+
+        .section-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: var(--primary);
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+
+        .checkbox-item,
+        .radio-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-item label,
+        .radio-item label {
+            margin: 0;
+            font-weight: 400;
+            cursor: pointer;
+        }
+
+        .comparison-card {
+            background-color: var(--background);
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .comparison-card h4 {
+            color: var(--primary);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--warm);
+            padding-bottom: 8px;
+        }
+
+        .comparison-info {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .comparison-info strong {
+            color: var(--primary);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background-color: var(--background);
+        }
+
+        .calculator-result {
+            background-color: var(--background);
+            border-left: 4px solid var(--accent);
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .calculator-result p {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .calculator-result .label {
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .calculator-result .value {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.05rem;
+        }
+
+        .calculator-result .total {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 2px solid var(--warm);
+        }
+
+        .word-count {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .word-count.warning {
+            color: var(--error);
+            font-weight: 500;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid var(--border);
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #5F46D4;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--warm);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background-color: #F5C447;
+            box-shadow: 0 4px 12px rgba(253, 203, 110, 0.3);
+        }
+
+        .btn-danger {
+            background-color: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #C0392B;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--card);
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+
+        .modal-content p {
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .note {
+            background-color: #FEF5E7;
+            border-left: 4px solid var(--warm);
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+
+        .checklist {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .checklist-item label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .save-indicator,
+            .control-buttons {
+                display: none;
+            }
+
+            section {
+                page-break-inside: avoid;
+                border: 1px solid var(--border);
+                box-shadow: none;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            textarea {
+                border: 1px solid var(--border);
+                padding: 8px;
+            }
+
+            input[type="checkbox"],
+            input[type="radio"] {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 16px;
+                height: 16px;
+                border: 1px solid var(--border);
+                border-radius: 2px;
+            }
+
+            input[type="checkbox"]:checked,
+            input[type="radio"]:checked {
+                background-color: var(--accent);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            section {
+                padding: 20px;
+            }
+
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-card {
+                margin-bottom: 15px;
+            }
+
+            .control-buttons {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .save-indicator {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="save-indicator" id="saveIndicator"></div>
+
+    <div class="container">
+        <header>
+            <h1>Lesson 2: Your Newsletter From Scratch</h1>
+            <p>Build your author newsletter foundation</p>
+        </header>
+
+        <form id="worksheetForm">
+            <!-- EMAIL PLATFORM DECISION -->
+            <section>
+                <h2>Email Platform Decision</h2>
+                <h3>Platform Comparison</h3>
+                <p class="section-subtitle">Review these three popular platforms and select which fits your needs.</p>
+
+                <div class="comparison-card">
+                    <h4>Mailerlite</h4>
+                    <div class="comparison-info">
+                        <strong>Free tier:</strong> Up to 1,000 subscribers<br>
+                        <strong>Price after free:</strong> Starting at $25/month (for 1,001-5,000 subscribers)<br>
+                        <strong>Interface:</strong> Intuitive, creator-friendly, excellent templates
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="mailerlite-good" name="platform-fit-mailerlite" value="good">
+                            <label for="mailerlite-good">Good fit</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="mailerlite-not" name="platform-fit-mailerlite" value="not-ideal">
+                            <label for="mailerlite-not">Not ideal</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>Kit (formerly ConvertKit)</h4>
+                    <div class="comparison-info">
+                        <strong>Free tier:</strong> Up to 1,000 subscribers<br>
+                        <strong>Price after free:</strong> Starting at $29/month (for 1,001-5,000 subscribers)<br>
+                        <strong>Interface:</strong> Creator-focused, excellent for writers, strong automation
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="kit-good" name="platform-fit-kit" value="good">
+                            <label for="kit-good">Good fit</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="kit-not" name="platform-fit-kit" value="not-ideal">
+                            <label for="kit-not">Not ideal</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comparison-card">
+                    <h4>Mailchimp</h4>
+                    <div class="comparison-info">
+                        <strong>Free tier:</strong> Up to 500 contacts<br>
+                        <strong>Price after free:</strong> Starting at $20/month (for 501-1,000 contacts)<br>
+                        <strong>Interface:</strong> Feature-rich but steeper learning curve, better for established lists
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="mailchimp-good" name="platform-fit-mailchimp" value="good">
+                            <label for="mailchimp-good">Good fit</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="mailchimp-not" name="platform-fit-mailchimp" value="not-ideal">
+                            <label for="mailchimp-not">Not ideal</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="platform-choice">My platform choice</label>
+                    <input type="text" id="platform-choice" placeholder="Enter your chosen platform">
+                </div>
+
+                <div class="form-group">
+                    <label for="platform-needs">Why this platform serves my needs</label>
+                    <textarea id="platform-needs" placeholder="Explain what appeals to you about this choice..."></textarea>
+                </div>
+            </section>
+
+            <!-- NEWSLETTER SETUP CHECKLIST -->
+            <section>
+                <h2>Newsletter Setup Checklist</h2>
+
+                <h3>Account Creation</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="account-created" name="account-created">
+                        <label for="account-created">Account created and verified</label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="workspace-name">Workspace name</label>
+                        <input type="text" id="workspace-name" placeholder="e.g., My Author Brand">
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="branding-applied" name="branding-applied">
+                        <label for="branding-applied">Pen name/author branding applied</label>
+                    </div>
+                </div>
+
+                <h3>Landing Page Setup</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="landing-page-created" name="landing-page-created">
+                        <label for="landing-page-created">Landing page created</label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="landing-page-title">Page title</label>
+                        <input type="text" id="landing-page-title" placeholder="e.g., Join [Pen Name]'s Readers Club">
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="description-written" name="description-written">
+                        <label for="description-written">Description written</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="brand-colors-applied" name="brand-colors-applied">
+                        <label for="brand-colors-applied">Brand colors/fonts applied</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="email-form-added" name="email-form-added">
+                        <label for="email-form-added">Email capture form added</label>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="landing-page-url">Landing page URL</label>
+                        <input type="text" id="landing-page-url" placeholder="https://...">
+                    </div>
+                </div>
+
+                <h3>Subscriber Segments/Groups</h3>
+                <p class="section-subtitle">List 4 subscriber groups you'll create (e.g., "Sci-fi readers", "Fantasy fans", etc.)</p>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="segment-1">Segment 1</label>
+                        <input type="text" id="segment-1" placeholder="e.g., Sci-fi readers">
+                    </div>
+                    <div class="form-group">
+                        <label for="segment-2">Segment 2</label>
+                        <input type="text" id="segment-2" placeholder="e.g., Fantasy fans">
+                    </div>
+                    <div class="form-group">
+                        <label for="segment-3">Segment 3</label>
+                        <input type="text" id="segment-3" placeholder="e.g., Newsletter supporters">
+                    </div>
+                    <div class="form-group">
+                        <label for="segment-4">Segment 4</label>
+                        <input type="text" id="segment-4" placeholder="e.g., VIP/patrons">
+                    </div>
+                </div>
+
+                <h3>Newsletter Template Design</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="template-created" name="template-created">
+                        <label for="template-created">Template created</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="template-header" name="template-header">
+                        <label for="template-header">Header with logo</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="template-fonts" name="template-fonts">
+                        <label for="template-fonts">Body fonts consistent</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="template-footer" name="template-footer">
+                        <label for="template-footer">Footer with required links</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="template-colors" name="template-colors">
+                        <label for="template-colors">Colors from brand palette</label>
+                    </div>
+                </div>
+
+                <h3>Newsletter Cadence Decision</h3>
+                <p class="section-subtitle">How often will you send your newsletter?</p>
+                <div class="radio-group" style="gap: 15px;">
+                    <div class="radio-item">
+                        <input type="radio" id="cadence-weekly" name="cadence" value="weekly">
+                        <label for="cadence-weekly">Weekly</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="cadence-biweekly" name="cadence" value="bi-weekly">
+                        <label for="cadence-biweekly">Bi-weekly</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="cadence-monthly" name="cadence" value="monthly">
+                        <label for="cadence-monthly">Monthly</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="cadence-irregular" name="cadence" value="irregular">
+                        <label for="cadence-irregular">Irregular</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cadence-why">Why this cadence works for me</label>
+                    <textarea id="cadence-why" placeholder="Consider your writing schedule, time availability, and reader expectations..."></textarea>
+                </div>
+
+                <p style="font-weight: 500; margin-top: 20px; margin-bottom: 10px;">Is this cadence realistic for you?</p>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="cadence-realistic-yes" name="cadence-realistic" value="yes">
+                        <label for="cadence-realistic-yes">Yes</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="cadence-realistic-no" name="cadence-realistic" value="no">
+                        <label for="cadence-realistic-no">No</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- WELCOME SEQUENCE -->
+            <section>
+                <h2>Welcome Sequence (3 Emails)</h2>
+                <p class="section-subtitle">Create a 3-email welcome sequence that introduces you and builds reader connection.</p>
+
+                <h3>Email 1: Who You Are</h3>
+                <div class="form-group">
+                    <label for="email1-subject">Subject line</label>
+                    <input type="text" id="email1-subject" placeholder="e.g., Welcome! Let's get to know each other...">
+                </div>
+                <div class="form-group">
+                    <label for="email1-intro">Introduce yourself</label>
+                    <input type="text" id="email1-intro" placeholder="Your name, pen name, brief bio...">
+                </div>
+                <div class="form-group">
+                    <label for="email1-why-write">Why you write</label>
+                    <input type="text" id="email1-why-write" placeholder="Your motivation, what draws you to writing...">
+                </div>
+                <div class="form-group">
+                    <label for="email1-what-getting">What subscribers are getting</label>
+                    <input type="text" id="email1-what-getting" placeholder="What to expect from this newsletter...">
+                </div>
+                <div class="form-group">
+                    <label for="email1-draft">Draft (aim for 100–150 words)</label>
+                    <textarea id="email1-draft" placeholder="Write your welcome email here..."></textarea>
+                    <div class="word-count" id="email1-count">Word count: 0</div>
+                </div>
+
+                <h3>Email 2: Your Story & Process</h3>
+                <div class="form-group">
+                    <label for="email2-subject">Subject line</label>
+                    <input type="text" id="email2-subject" placeholder="e.g., How I create the stories you love...">
+                </div>
+                <div class="form-group">
+                    <label for="email2-process">Your writing process/inspiration</label>
+                    <input type="text" id="email2-process" placeholder="How you brainstorm, write, edit...">
+                </div>
+                <div class="form-group">
+                    <label for="email2-tropes">Your signature tropes</label>
+                    <input type="text" id="email2-tropes" placeholder="What themes/tropes appear in your work...">
+                </div>
+                <div class="form-group">
+                    <label for="email2-expect">What readers can expect</label>
+                    <input type="text" id="email2-expect" placeholder="Genre, tone, update schedule, content...">
+                </div>
+                <div class="form-group">
+                    <label for="email2-draft">Draft (aim for 100–150 words)</label>
+                    <textarea id="email2-draft" placeholder="Write your story email here..."></textarea>
+                    <div class="word-count" id="email2-count">Word count: 0</div>
+                </div>
+
+                <h3>Email 3: Stay Tuned</h3>
+                <div class="note">
+                    <strong>Note:</strong> This email is a placeholder until Lesson 3. You'll create this content focusing on what's coming next in your newsletter/series.
+                </div>
+                <div class="form-group">
+                    <label for="email3-subject">Subject line</label>
+                    <input type="text" id="email3-subject" placeholder="e.g., Here's what's coming next...">
+                </div>
+                <div class="form-group">
+                    <label for="email3-draft">Draft (aim for 100–150 words)</label>
+                    <textarea id="email3-draft" placeholder="Tease upcoming stories, announcements, or behind-the-scenes content..."></textarea>
+                    <div class="word-count" id="email3-count">Word count: 0</div>
+                </div>
+            </section>
+
+            <!-- NEWSLETTER SWAP STRATEGY -->
+            <section>
+                <h2>Newsletter Swap Strategy</h2>
+                <p class="section-subtitle">Set up your accounts and identify potential swap partners to grow your list fast.</p>
+
+                <h3>Platform Setup Checklist</h3>
+                <div class="checklist">
+                    <div style="margin-bottom: 20px;">
+                        <strong style="display: block; margin-bottom: 12px;">BookFunnel ($30–$300/year)</strong>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookfunnel-account" name="bookfunnel-account">
+                            <label for="bookfunnel-account">Account created</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookfunnel-landing" name="bookfunnel-landing">
+                            <label for="bookfunnel-landing">Landing page set up</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookfunnel-leadmagnet" name="bookfunnel-leadmagnet">
+                            <label for="bookfunnel-leadmagnet">Lead magnet configured</label>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label for="bookfunnel-tier">Tier chosen</label>
+                            <input type="text" id="bookfunnel-tier" placeholder="e.g., Starter ($30/year)">
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong style="display: block; margin-bottom: 12px;">BookClicker (Free)</strong>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookclicker-account" name="bookclicker-account">
+                            <label for="bookclicker-account">Account created</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookclicker-landing" name="bookclicker-landing">
+                            <label for="bookclicker-landing">Landing page set up</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookclicker-leadmagnet" name="bookclicker-leadmagnet">
+                            <label for="bookclicker-leadmagnet">Lead magnet configured</label>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <strong style="display: block; margin-bottom: 12px;">Bookswappy (Free)</strong>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookswappy-account" name="bookswappy-account">
+                            <label for="bookswappy-account">Account created</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookswappy-landing" name="bookswappy-landing">
+                            <label for="bookswappy-landing">Landing page set up</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="bookswappy-leadmagnet" name="bookswappy-leadmagnet">
+                            <label for="bookswappy-leadmagnet">Lead magnet configured</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Potential Swap Partners</h3>
+                <p class="section-subtitle">Identify 10 authors in your genre/adjacent genres for potential swaps.</p>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Author Name</th>
+                                <th>Genre/Subgenre</th>
+                                <th>Est. List Size</th>
+                                <th>Contact Info</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="text" id="partner-1-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-1-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-1-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-1-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-1-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-2-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-2-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-2-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-2-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-2-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-3-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-3-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-3-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-3-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-3-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-4-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-4-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-4-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-4-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-4-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-5-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-5-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-5-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-5-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-5-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-6-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-6-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-6-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-6-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-6-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-7-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-7-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-7-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-7-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-7-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-8-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-8-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-8-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-8-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-8-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-9-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-9-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-9-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-9-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-9-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="text" id="partner-10-name" placeholder="Name"></td>
+                                <td><input type="text" id="partner-10-genre" placeholder="Genre"></td>
+                                <td><input type="text" id="partner-10-size" placeholder="e.g., 5K"></td>
+                                <td><input type="text" id="partner-10-contact" placeholder="Email/link"></td>
+                                <td><input type="text" id="partner-10-status" placeholder="e.g., Pending"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="note">
+                    <strong>Swap Tracking Template:</strong> Use a spreadsheet (Google Sheets, Excel) to track your swaps long-term. Include columns for: Partner Name, Platform, Swap Date, List Size Sent, Emails Received, Follow-up Date, Status (Completed, In Progress, etc.)
+                </div>
+            </section>
+
+            <!-- COST CALCULATOR -->
+            <section>
+                <h2>Cost Calculator</h2>
+
+                <h3>Platform & Add-on Costs</h3>
+                <p class="section-subtitle">Calculate your first-year investment in your newsletter infrastructure.</p>
+
+                <div class="form-group">
+                    <label style="font-weight: 600; margin-bottom: 12px;">Which platform will you use?</label>
+                    <div class="radio-group" style="flex-direction: column; gap: 12px;">
+                        <div class="radio-item">
+                            <input type="radio" id="calc-mailerlite" name="calc-platform" value="mailerlite" data-cost="25">
+                            <label for="calc-mailerlite">Mailerlite ($25/month after free tier)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="calc-kit" name="calc-platform" value="kit" data-cost="29">
+                            <label for="calc-kit">Kit/ConvertKit ($29/month after free tier)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="calc-mailchimp" name="calc-platform" value="mailchimp" data-cost="20">
+                            <label for="calc-mailchimp">Mailchimp ($20/month after free tier)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="calc-none" name="calc-platform" value="free" data-cost="0">
+                            <label for="calc-none">Staying on free tier</label>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>Annual Add-ons</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="calc-bookfunnel" name="calc-bookfunnel" data-cost="30">
+                        <label for="calc-bookfunnel">BookFunnel ($30/year)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="calc-bookclicker" name="calc-bookclicker" data-cost="0">
+                        <label for="calc-bookclicker">BookClicker (Free)</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="calc-bookswappy" name="calc-bookswappy" data-cost="0">
+                        <label for="calc-bookswappy">Bookswappy (Free)</label>
+                    </div>
+                </div>
+
+                <div class="calculator-result" id="calcResult">
+                    <p>
+                        <span class="label">Monthly platform cost:</span>
+                        <span class="value">$0</span>
+                    </p>
+                    <p>
+                        <span class="label">Annual add-ons total:</span>
+                        <span class="value">$0</span>
+                    </p>
+                    <p>
+                        <span class="label">Total first-year cost:</span>
+                        <span class="value total">$0</span>
+                    </p>
+                    <p>
+                        <span class="label">Per-month average:</span>
+                        <span class="value">$0</span>
+                    </p>
+                </div>
+            </section>
+
+            <!-- COMPLETION CHECKLIST -->
+            <section>
+                <h2>Completion Checklist</h2>
+                <p class="section-subtitle">Track your progress through this lesson.</p>
+
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-platform" name="complete-platform">
+                        <label for="complete-platform">Email platform chosen and account created</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-landing" name="complete-landing">
+                        <label for="complete-landing">Landing page live and functional</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-segments" name="complete-segments">
+                        <label for="complete-segments">Subscriber segments/groups created</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-template" name="complete-template">
+                        <label for="complete-template">Newsletter template designed</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-cadence" name="complete-cadence">
+                        <label for="complete-cadence">Newsletter send schedule decided</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-welcome" name="complete-welcome">
+                        <label for="complete-welcome">Welcome sequence 3 emails drafted</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-bookfunnel" name="complete-bookfunnel">
+                        <label for="complete-bookfunnel">BookFunnel or BookClicker account created</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-bookswappy" name="complete-bookswappy">
+                        <label for="complete-bookswappy">Bookswappy profile created</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-partners" name="complete-partners">
+                        <label for="complete-partners">10–15 potential swap partners identified</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="complete-tracking" name="complete-tracking">
+                        <label for="complete-tracking">Swap tracking spreadsheet created</label>
+                    </div>
+                </div>
+
+                <h3>Ready for Swaps?</h3>
+                <div class="checklist">
+                    <div class="checklist-item">
+                        <input type="checkbox" id="ready-landing" name="ready-landing">
+                        <label for="ready-landing">Landing page live</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="ready-welcome" name="ready-welcome">
+                        <label for="ready-welcome">Welcome sequence ready</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="ready-list" name="ready-list">
+                        <label for="ready-list">List starting to grow</label>
+                    </div>
+                    <div class="checklist-item">
+                        <input type="checkbox" id="ready-contacted" name="ready-contacted">
+                        <label for="ready-contacted">First 5 swap partners contacted</label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- NOTES & OBSERVATIONS -->
+            <section>
+                <h2>Notes & Observations</h2>
+
+                <div class="form-group">
+                    <label for="notes-platform">What I learned about my chosen platform</label>
+                    <textarea id="notes-platform" placeholder="Key features, limitations, surprises..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes-cadence">Newsletter cadence I'm committing to</label>
+                    <input type="text" id="notes-cadence" placeholder="e.g., Weekly on Thursdays">
+                </div>
+
+                <h3>My First Swap Targets</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="notes-target-1">First target author</label>
+                        <input type="text" id="notes-target-1" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="notes-target-2">Second target author</label>
+                        <input type="text" id="notes-target-2" placeholder="Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="notes-target-3">Third target author</label>
+                        <input type="text" id="notes-target-3" placeholder="Name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes-commitment">By the end of next month, I will</label>
+                    <textarea id="notes-commitment" placeholder="Your commitment: e.g., 'Launch my newsletter with 3 emails and contact 10 swap partners'..."></textarea>
+                </div>
+            </section>
+
+            <!-- CONTROL BUTTONS -->
+            <section>
+                <div class="control-buttons">
+                    <button type="button" class="btn-primary" id="saveBtnManual">Save Progress</button>
+                    <button type="button" class="btn-secondary" id="printBtn">Print Worksheet</button>
+                    <button type="button" class="btn-danger" id="clearBtn">Clear All</button>
+                </div>
+            </section>
+        </form>
+    </div>
+
+    <footer>
+        <p>A product of The Invisible Pen — AI-powered author education by Jessica Waldron</p>
+    </footer>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h3>Clear All Data?</h3>
+            <p>This will erase all your responses. This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button type="button" class="btn-danger" id="confirmClear">Clear Everything</button>
+                <button type="button" class="btn-secondary" id="cancelClear">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Storage key
+        const STORAGE_KEY = 'lesson-2-worksheet';
+        const SAVE_DEBOUNCE_DELAY = 1000;
+        let saveTimeout;
+
+        // Get all form elements with IDs
+        const form = document.getElementById('worksheetForm');
+        const allInputs = form.querySelectorAll('[id]');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFromStorage();
+            attachEventListeners();
+            updateCostCalculator();
+            updateWordCounts();
+        });
+
+        // Event listeners
+        function attachEventListeners() {
+            // Auto-save on input
+            allInputs.forEach(input => {
+                input.addEventListener('change', debouncedSave);
+                if (input.tagName === 'TEXTAREA') {
+                    input.addEventListener('input', debouncedSave);
+                }
+                if (input.type === 'text' || input.type === 'email') {
+                    input.addEventListener('input', debouncedSave);
+                }
+            });
+
+            // Cost calculator updates
+            document.querySelectorAll('[name="calc-platform"], [name*="calc-"]').forEach(el => {
+                el.addEventListener('change', updateCostCalculator);
+            });
+
+            // Word counters
+            document.querySelectorAll('[id$="-draft"]').forEach(textarea => {
+                textarea.addEventListener('input', updateWordCounts);
+            });
+
+            // Button handlers
+            document.getElementById('saveBtnManual').addEventListener('click', manualSave);
+            document.getElementById('printBtn').addEventListener('click', printWorksheet);
+            document.getElementById('clearBtn').addEventListener('click', showClearModal);
+            document.getElementById('confirmClear').addEventListener('click', clearAll);
+            document.getElementById('cancelClear').addEventListener('click', hideClearModal);
+        }
+
+        // Debounced save
+        function debouncedSave() {
+            clearTimeout(saveTimeout);
+            showSaveIndicator('saving', 'Saving...');
+            saveTimeout = setTimeout(saveToStorage, SAVE_DEBOUNCE_DELAY);
+        }
+
+        // Manual save
+        function manualSave() {
+            saveToStorage();
+        }
+
+        // Save to localStorage
+        function saveToStorage() {
+            try {
+                const data = {};
+                allInputs.forEach(input => {
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        data[input.id] = input.checked;
+                    } else {
+                        data[input.id] = input.value;
+                    }
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+                showSaveIndicator('saved', 'Saved!');
+                setTimeout(() => {
+                    document.getElementById('saveIndicator').style.display = 'none';
+                }, 2000);
+            } catch (e) {
+                showSaveIndicator('error', 'Save failed');
+                console.error('Save error:', e);
+            }
+        }
+
+        // Load from localStorage
+        function loadFromStorage() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                if (data) {
+                    const parsed = JSON.parse(data);
+                    allInputs.forEach(input => {
+                        if (parsed.hasOwnProperty(input.id)) {
+                            if (input.type === 'checkbox' || input.type === 'radio') {
+                                input.checked = parsed[input.id];
+                            } else {
+                                input.value = parsed[input.id];
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Load error:', e);
+            }
+        }
+
+        // Show save indicator
+        function showSaveIndicator(status, text) {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.textContent = text;
+            indicator.className = 'save-indicator ' + status;
+        }
+
+        // Cost calculator
+        function updateCostCalculator() {
+            let monthlyCost = 0;
+            let addOnsCost = 0;
+
+            // Platform cost
+            const platformRadios = document.querySelectorAll('[name="calc-platform"]');
+            platformRadios.forEach(radio => {
+                if (radio.checked) {
+                    monthlyCost = parseInt(radio.getAttribute('data-cost')) || 0;
+                }
+            });
+
+            // Add-ons
+            document.querySelectorAll('[id^="calc-"]:not([name="calc-platform"])').forEach(checkbox => {
+                if (checkbox.type === 'checkbox' && checkbox.checked) {
+                    addOnsCost += parseInt(checkbox.getAttribute('data-cost')) || 0;
+                }
+            });
+
+            const firstYearTotal = (monthlyCost * 12) + addOnsCost;
+            const avgPerMonth = (firstYearTotal / 12).toFixed(2);
+
+            const result = document.getElementById('calcResult');
+            result.innerHTML = `
+                <p>
+                    <span class="label">Monthly platform cost:</span>
+                    <span class="value">$${monthlyCost}</span>
+                </p>
+                <p>
+                    <span class="label">Annual add-ons total:</span>
+                    <span class="value">$${addOnsCost}</span>
+                </p>
+                <p>
+                    <span class="label">Total first-year cost:</span>
+                    <span class="value total">$${firstYearTotal}</span>
+                </p>
+                <p>
+                    <span class="label">Per-month average:</span>
+                    <span class="value">$${avgPerMonth}</span>
+                </p>
+            `;
+
+            debouncedSave();
+        }
+
+        // Word counters
+        function updateWordCounts() {
+            ['email1', 'email2', 'email3'].forEach(prefix => {
+                const textarea = document.getElementById(`${prefix}-draft`);
+                const counter = document.getElementById(`${prefix}-count`);
+                const words = textarea.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                const warningClass = words > 150 ? ' warning' : '';
+                counter.textContent = `Word count: ${words}`;
+                counter.className = `word-count${warningClass}`;
+            });
+        }
+
+        // Print
+        function printWorksheet() {
+            window.print();
+        }
+
+        // Clear confirmation
+        function showClearModal() {
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function hideClearModal() {
+            document.getElementById('confirmModal').classList.remove('active');
+        }
+
+        // Clear all data
+        function clearAll() {
+            hideClearModal();
+            allInputs.forEach(input => {
+                if (input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+            });
+            localStorage.removeItem(STORAGE_KEY);
+            updateCostCalculator();
+            updateWordCounts();
+            showSaveIndicator('saved', 'Cleared!');
+            setTimeout(() => {
+                document.getElementById('saveIndicator').style.display = 'none';
+            }, 2000);
+        }
+
+        // Close modal on outside click
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target.id === 'confirmModal') {
+                hideClearModal();
+            }
+        });
+    </script>
+</body>
+</html>

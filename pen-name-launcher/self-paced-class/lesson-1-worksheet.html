@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 1: Building Your Pen Name Identity | The Invisible Pen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark: #2D3436;
+            --accent: #6C5CE7;
+            --gold: #FDCB6E;
+            --bg: #FAFAFA;
+            --white: #FFFFFF;
+            --gray-light: #F0F0F0;
+            --gray-text: #636E72;
+            --border: #E8E8E8;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--accent) 100%);
+            color: var(--white);
+            padding: 3rem 2rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+
+        /* Container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Auto-save indicator */
+        .save-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 0.75rem 1.25rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .save-indicator.show {
+            opacity: 1;
+        }
+
+        .save-indicator.success {
+            background-color: #27AE60;
+            color: white;
+        }
+
+        .save-indicator.error {
+            background-color: #E74C3C;
+            color: white;
+        }
+
+        /* Control buttons */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background-color: #5F3DC4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-secondary {
+            background-color: var(--gold);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: #FBC93F;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(253, 203, 110, 0.3);
+        }
+
+        .btn-danger {
+            background-color: #E74C3C;
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background-color: #C0392B;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        @media print {
+            .button-group {
+                display: none;
+            }
+
+            .save-indicator {
+                display: none;
+            }
+        }
+
+        /* Section styles */
+        .section {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid var(--gold);
+        }
+
+        .section h3 {
+            font-size: 1.2rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Multiple inputs in one row */
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group .form-group {
+            margin-bottom: 0;
+        }
+
+        /* Checkbox and radio groups */
+        .checkbox-group,
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item,
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .checkbox-item input[type="checkbox"],
+        .radio-item input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        .checkbox-item label,
+        .radio-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: normal;
+        }
+
+        /* Reference card */
+        .reference-card {
+            background-color: var(--gray-light);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .reference-card h4 {
+            color: var(--accent);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .heat-level-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .heat-level-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .heat-level-table td:first-child {
+            font-weight: 600;
+            color: var(--accent);
+            width: 50px;
+        }
+
+        /* Word counter */
+        .word-counter {
+            font-size: 0.85rem;
+            color: var(--gray-text);
+            margin-top: 0.25rem;
+        }
+
+        .word-counter.warning {
+            color: #E67E22;
+            font-weight: 600;
+        }
+
+        .word-counter.error {
+            color: #E74C3C;
+            font-weight: 600;
+        }
+
+        /* Two column layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Checklist */
+        .completion-checklist {
+            background-color: var(--gray-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .completion-checklist .checkbox-item {
+            padding: 0.5rem 0;
+        }
+
+        /* Next steps */
+        .next-steps {
+            background: linear-gradient(135deg, #E8F4F8 0%, #F0E8F8 100%);
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .next-steps h3 {
+            border-bottom: 2px solid var(--gold);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+        }
+
+        .next-steps ol {
+            margin-left: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .next-steps li {
+            margin-bottom: 0.75rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: var(--white);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+            font-size: 0.95rem;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal for confirmation */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .modal-content h3 {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .modal-content p {
+            margin-bottom: 1.5rem;
+            color: var(--gray-text);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .input-group {
+                grid-template-columns: 1fr;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .section {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid var(--border);
+            }
+
+            input[type="text"],
+            input[type="email"],
+            input[type="number"],
+            textarea {
+                border: 1px solid #ccc;
+                min-height: 25px;
+            }
+
+            textarea {
+                min-height: 60px;
+            }
+
+            input[type="checkbox"],
+            input[type="radio"] {
+                cursor: default;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Lesson 1: Building Your Pen Name Identity</h1>
+        <p>The Invisible Pen Self-Paced Class | Phase 1 & 2: Foundation Building</p>
+    </header>
+
+    <div class="save-indicator" id="saveIndicator"></div>
+
+    <div class="container">
+        <div class="button-group">
+            <button class="btn-primary" onclick="saveProgress()">Save Progress</button>
+            <button class="btn-secondary" onclick="printWorksheet()">Print Worksheet</button>
+            <button class="btn-danger" onclick="showClearConfirm()">Clear All</button>
+        </div>
+
+        <!-- PEN NAME DECISION -->
+        <div class="section">
+            <h2>Pen Name Decision</h2>
+
+            <h3>Brainstorm Your Pen Name Candidates</h3>
+            <p style="margin-bottom: 1rem; color: var(--gray-text);">Develop at least 5 pen name options that fit your genre and feel authentic to your author identity.</p>
+
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="penName1">Candidate #1</label>
+                    <input type="text" id="penName1" placeholder="e.g., Victoria Chase">
+                </div>
+                <div class="form-group">
+                    <label for="penName2">Candidate #2</label>
+                    <input type="text" id="penName2">
+                </div>
+                <div class="form-group">
+                    <label for="penName3">Candidate #3</label>
+                    <input type="text" id="penName3">
+                </div>
+                <div class="form-group">
+                    <label for="penName4">Candidate #4</label>
+                    <input type="text" id="penName4">
+                </div>
+                <div class="form-group">
+                    <label for="penName5">Candidate #5</label>
+                    <input type="text" id="penName5">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="finalPenName"><strong>Final Pen Name Choice</strong></label>
+                <input type="text" id="finalPenName" placeholder="Which name are you moving forward with?">
+            </div>
+
+            <h3>Availability Research</h3>
+
+            <div class="two-column">
+                <div>
+                    <h4 style="font-size: 1rem; color: var(--dark); margin-bottom: 1rem;">Amazon Check</h4>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="amazonSearched">
+                        <label for="amazonSearched">Searched on Amazon</label>
+                    </div>
+                    <div class="radio-group" style="margin-top: 0.75rem; margin-left: 1.5rem;">
+                        <div class="radio-item">
+                            <input type="radio" id="amazonYes" name="amazonConflicts" value="yes">
+                            <label for="amazonYes">Conflicts found</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="amazonNo" name="amazonConflicts" value="no">
+                            <label for="amazonNo">Clear</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 style="font-size: 1rem; color: var(--dark); margin-bottom: 1rem;">Goodreads Check</h4>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="goodreadsSearched">
+                        <label for="goodreadsSearched">Searched on Goodreads</label>
+                    </div>
+                    <div class="radio-group" style="margin-top: 0.75rem; margin-left: 1.5rem;">
+                        <div class="radio-item">
+                            <input type="radio" id="goodreadsYes" name="goodreadsConflicts" value="yes">
+                            <label for="goodreadsYes">Conflicts found</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="goodreadsNo" name="goodreadsConflicts" value="no">
+                            <label for="goodreadsNo">Clear</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="penNameNotes">Notes on why this name works for my genre/reader</label>
+                <textarea id="penNameNotes" placeholder="Explain your choice..."></textarea>
+            </div>
+        </div>
+
+        <!-- GENRE & SUBGENRE -->
+        <div class="section">
+            <h2>Genre & Subgenre</h2>
+
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="primaryGenre">Primary Genre</label>
+                    <input type="text" id="primaryGenre" placeholder="e.g., Romance, Fantasy, Mystery">
+                </div>
+                <div class="form-group">
+                    <label for="subgenres">Subgenre(s)</label>
+                    <input type="text" id="subgenres" placeholder="e.g., Contemporary Romance, Paranormal">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="genreChoiceNotes">Why I chose this genre combination</label>
+                <textarea id="genreChoiceNotes" placeholder="What draws you to these genres? How does it serve your author voice?"></textarea>
+            </div>
+        </div>
+
+        <!-- HEAT LEVEL -->
+        <div class="section">
+            <h2>Heat Level</h2>
+
+            <div class="reference-card">
+                <h4>Heat Level Reference</h4>
+                <table class="heat-level-table">
+                    <tr>
+                        <td>Level 1</td>
+                        <td>Closed Door: Little to no sexual content. Fade to black romance.</td>
+                    </tr>
+                    <tr>
+                        <td>Level 2</td>
+                        <td>Sweet: Kissing and mild physical affection. Suggestive but not explicit.</td>
+                    </tr>
+                    <tr>
+                        <td>Level 3</td>
+                        <td>Warm: Some sexual scenes. Moderate detail and frequency.</td>
+                    </tr>
+                    <tr>
+                        <td>Level 4</td>
+                        <td>Hot: Frequent, explicit sexual content. Detailed descriptions.</td>
+                    </tr>
+                    <tr>
+                        <td>Level 5</td>
+                        <td>Scorching: Very explicit content. Central to the story. Multiple detailed scenes.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Your Heat Level Choice</h3>
+            <div class="form-group">
+                <label><strong>Select your heat level</strong></label>
+                <div class="radio-group">
+                    <div class="radio-item">
+                        <input type="radio" id="heatLevel1" name="heatLevel" value="1">
+                        <label for="heatLevel1">Level 1: Closed Door</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="heatLevel2" name="heatLevel" value="2">
+                        <label for="heatLevel2">Level 2: Sweet</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="heatLevel3" name="heatLevel" value="3">
+                        <label for="heatLevel3">Level 3: Warm</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="heatLevel4" name="heatLevel" value="4">
+                        <label for="heatLevel4">Level 4: Hot</label>
+                    </div>
+                    <div class="radio-item">
+                        <input type="radio" id="heatLevel5" name="heatLevel" value="5">
+                        <label for="heatLevel5">Level 5: Scorching</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="heatLevelWhy">Why this heat level serves my target reader</label>
+                <textarea id="heatLevelWhy" placeholder="What does your reader expect and need?"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="scenesContent">Scenes/content I'm planning to include</label>
+                <textarea id="scenesContent" placeholder="Describe the key intimate/emotional moments you're envisioning..."></textarea>
+            </div>
+        </div>
+
+        <!-- SIGNATURE TROPES -->
+        <div class="section">
+            <h2>Signature Tropes</h2>
+            <p style="margin-bottom: 1rem; color: var(--gray-text);">Identify 3-5 tropes that define your stories and resonate with your target reader.</p>
+
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="trope1">Trope #1</label>
+                    <input type="text" id="trope1" placeholder="e.g., Forced Proximity">
+                </div>
+                <div class="form-group">
+                    <label for="trope2">Trope #2</label>
+                    <input type="text" id="trope2">
+                </div>
+                <div class="form-group">
+                    <label for="trope3">Trope #3</label>
+                    <input type="text" id="trope3">
+                </div>
+                <div class="form-group">
+                    <label for="trope4">Trope #4 (optional)</label>
+                    <input type="text" id="trope4">
+                </div>
+                <div class="form-group">
+                    <label for="trope5">Trope #5 (optional)</label>
+                    <input type="text" id="trope5">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tropesMatter">Why these tropes matter to me</label>
+                <textarea id="tropesMatter" placeholder="What do these tropes say about your author brand and values?"></textarea>
+            </div>
+        </div>
+
+        <!-- TARGET READER PROFILE -->
+        <div class="section">
+            <h2>Target Reader Profile</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--gray-text);">Create a vivid picture of your ideal reader. Be specific and emotional.</p>
+
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="readerAge">Age Range</label>
+                    <input type="text" id="readerAge" placeholder="e.g., 25-45">
+                </div>
+                <div class="form-group">
+                    <label for="readerLifeStage">Life Stage</label>
+                    <input type="text" id="readerLifeStage" placeholder="e.g., Working professional, new parent">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="readerEmotionalCore">What does she read for? (emotional core)</label>
+                <textarea id="readerEmotionalCore" placeholder="What emotional needs does your book fulfill? (e.g., escapism, validation, hope)"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label><strong>What appeals to her?</strong></label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="appealsEmotional" value="Emotional depth">
+                        <label for="appealsEmotional">Emotional depth</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="appealsAction" value="Action/adventure">
+                        <label for="appealsAction">Action/adventure</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="appealsSpice" value="Heat/spice">
+                        <label for="appealsSpice">Heat/spice</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="appealsFamily" value="Found family">
+                        <label for="appealsFamily">Found family</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="appealsHEA" value="Guaranteed happy ending">
+                        <label for="appealsHEA">Guaranteed happy ending</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="appealsComplex" value="Complex characters">
+                        <label for="appealsComplex">Complex characters</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="readerIrritates">What irritates her in books?</label>
+                <textarea id="readerIrritates" placeholder="What tropes, elements, or writing styles does she hate? (This helps you avoid alienating her)"></textarea>
+            </div>
+
+            <div class="two-column">
+                <div class="form-group">
+                    <label for="readerHeatPreference">What heat level does she prefer?</label>
+                    <input type="text" id="readerHeatPreference" placeholder="e.g., Level 4 (Hot)">
+                </div>
+                <div class="form-group">
+                    <label for="readerReadTiming">When is she most likely to read your books?</label>
+                    <input type="text" id="readerReadTiming" placeholder="e.g., Late night, weekends, during commute">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="readerSentence">In one sentence: Who is your reader?</label>
+                <input type="text" id="readerSentence" placeholder="Craft a concise, vivid description...">
+            </div>
+        </div>
+
+        <!-- AUTHOR VOICE & TONE -->
+        <div class="section">
+            <h2>Your Author Voice & Tone</h2>
+            <p style="margin-bottom: 1rem; color: var(--gray-text);">How do you write? What's uniquely YOU about your prose?</p>
+
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="voiceWord1">Word #1</label>
+                    <input type="text" id="voiceWord1" placeholder="e.g., Lyrical">
+                </div>
+                <div class="form-group">
+                    <label for="voiceWord2">Word #2</label>
+                    <input type="text" id="voiceWord2">
+                </div>
+                <div class="form-group">
+                    <label for="voiceWord3">Word #3</label>
+                    <input type="text" id="voiceWord3">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="voiceExamples">Examples of your voice in action</label>
+                <textarea id="voiceExamples" placeholder="Share 2-3 snippets from your writing that exemplify this voice. Or describe scenes that showcase it."></textarea>
+            </div>
+        </div>
+
+        <!-- VISUAL BRAND IDENTITY -->
+        <div class="section">
+            <h2>Visual Brand Identity</h2>
+
+            <h3>Color Palette</h3>
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="colorPrimary">Primary Color (+ hex or description)</label>
+                    <input type="text" id="colorPrimary" placeholder="e.g., Deep Navy #001F3F">
+                </div>
+                <div class="form-group">
+                    <label for="colorSecondary">Secondary Color (+ hex or description)</label>
+                    <input type="text" id="colorSecondary">
+                </div>
+                <div class="form-group">
+                    <label for="colorTertiary">Tertiary Color (optional)</label>
+                    <input type="text" id="colorTertiary">
+                </div>
+            </div>
+
+            <h3>Typography</h3>
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="fontPrimary">Primary Font Style</label>
+                    <input type="text" id="fontPrimary" placeholder="e.g., Elegant serif (Garamond)">
+                </div>
+                <div class="form-group">
+                    <label for="fontSecondary">Secondary Font Style</label>
+                    <input type="text" id="fontSecondary" placeholder="e.g., Clean sans-serif (Open Sans)">
+                </div>
+            </div>
+
+            <h3>Logo & Design</h3>
+            <div class="form-group">
+                <label for="logoIdea">Logo Idea</label>
+                <textarea id="logoIdea" placeholder="Describe your logo concept. Include any symbols, imagery, or style elements."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="visualBrandWhy">How does your visual brand reflect your genre/target reader?</label>
+                <textarea id="visualBrandWhy" placeholder="Connect your design choices to your reader's psychology and expectations."></textarea>
+            </div>
+        </div>
+
+        <!-- AUTHOR BIO -->
+        <div class="section">
+            <h2>Author Bio</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--gray-text);">Craft bios in three lengths for different platforms.</p>
+
+            <h3>Short Bio (30-50 words)</h3>
+            <div class="form-group">
+                <label for="bioShort">Write your short author bio</label>
+                <textarea id="bioShort" placeholder="Keep it punchy. Include your name, pen name (if different), and what makes you unique."></textarea>
+                <div class="word-counter" id="bioShortCounter">0 / 50 words</div>
+            </div>
+
+            <h3>Medium Bio (75-125 words)</h3>
+            <div class="form-group">
+                <label for="bioMedium">Write your medium author bio</label>
+                <textarea id="bioMedium" placeholder="Add more detail. Include your genres, writing inspiration, personal touches, and a call to action."></textarea>
+                <div class="word-counter" id="bioMediumCounter">0 / 125 words</div>
+            </div>
+
+            <h3>Long Bio (150-250 words)</h3>
+            <div class="form-group">
+                <label for="bioLong">Write your long author bio</label>
+                <textarea id="bioLong" placeholder="Full story. Background, career journey, what drives your writing, personal details that connect with readers, and social media/website links."></textarea>
+                <div class="word-counter" id="bioLongCounter">0 / 250 words</div>
+            </div>
+        </div>
+
+        <!-- AUTHOR TAGLINE -->
+        <div class="section">
+            <h2>Author Tagline</h2>
+            <p style="margin-bottom: 1rem; color: var(--gray-text);">A short, memorable phrase that captures your author brand. This appears in book metadata, headers, and social bios.</p>
+
+            <div class="input-group">
+                <div class="form-group">
+                    <label for="tagline1">Candidate #1</label>
+                    <input type="text" id="tagline1" placeholder="e.g., Happily ever after, always">
+                </div>
+                <div class="form-group">
+                    <label for="tagline2">Candidate #2</label>
+                    <input type="text" id="tagline2">
+                </div>
+                <div class="form-group">
+                    <label for="tagline3">Candidate #3</label>
+                    <input type="text" id="tagline3">
+                </div>
+                <div class="form-group">
+                    <label for="tagline4">Candidate #4</label>
+                    <input type="text" id="tagline4">
+                </div>
+                <div class="form-group">
+                    <label for="tagline5">Candidate #5</label>
+                    <input type="text" id="tagline5">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="finalTagline"><strong>Final Tagline Choice</strong></label>
+                <input type="text" id="finalTagline">
+            </div>
+
+            <div class="form-group">
+                <label for="taglineWhy">Why this tagline represents my author brand</label>
+                <textarea id="taglineWhy" placeholder="How does it capture your essence as a writer?"></textarea>
+            </div>
+        </div>
+
+        <!-- COMPLETION CHECKLIST -->
+        <div class="section">
+            <h2>Completion Checklist</h2>
+            <p style="margin-bottom: 1rem; color: var(--gray-text);">Mark each item as you complete it. This ensures you've built a solid foundation for your pen name.</p>
+
+            <div class="completion-checklist">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check1">
+                    <label for="check1">Pen name chosen and verified</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Genre and subgenre identified</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check3">
+                    <label for="check3">Heat level chosen</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check4">
+                    <label for="check4">3-5 signature tropes identified</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check5">
+                    <label for="check5">Target reader profile written</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check6">
+                    <label for="check6">Author voice/tone defined</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check7">
+                    <label for="check7">Color palette selected</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check8">
+                    <label for="check8">Primary and secondary fonts selected</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check9">
+                    <label for="check9">Logo concept created or sketched</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check10">
+                    <label for="check10">Short, medium, and long author bios written</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="check11">
+                    <label for="check11">Author tagline created</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEXT STEPS -->
+        <div class="next-steps">
+            <h3>Next Steps</h3>
+            <ol>
+                <li><strong>Review your foundation.</strong> Read through all your answers. Do they feel authentic? Does your pen name align with your genre, voice, and reader?</li>
+                <li><strong>Refine as needed.</strong> You can come back and edit any section. There's no "right" answer—only what works for YOU.</li>
+                <li><strong>Gather your assets.</strong> Start collecting color swatches, font samples, and logo sketches. Build a visual mood board.</li>
+                <li><strong>Test your pen name.</strong> Say it out loud. Does it roll off the tongue? Would you be proud to see it on a book cover?</li>
+                <li><strong>Move to Lesson 2.</strong> Once you're confident in your pen name identity, you're ready to build your author platform and establish your digital presence.</li>
+            </ol>
+        </div>
+    </div>
+
+    <footer>
+        <p>A product of <strong>The Invisible Pen</strong> — AI-powered author education by Jessica Waldron</p>
+        <p style="margin-top: 1rem; font-size: 0.85rem;">© 2026 The Invisible Pen. All rights reserved.</p>
+    </footer>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>Clear All Data?</h3>
+            <p>This will erase all your progress on this worksheet. This action cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="btn-danger" onclick="confirmClear()">Yes, Clear All</button>
+                <button class="btn-primary" onclick="hideClearConfirm()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'lesson1-pen-name-worksheet';
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            setupWordCounters();
+            setupAutoSave();
+        });
+
+        // Set up word counters for bio fields
+        function setupWordCounters() {
+            const bioFields = [
+                { field: 'bioShort', counter: 'bioShortCounter', max: 50 },
+                { field: 'bioMedium', counter: 'bioMediumCounter', max: 125 },
+                { field: 'bioLong', counter: 'bioLongCounter', max: 250 }
+            ];
+
+            bioFields.forEach(item => {
+                const field = document.getElementById(item.field);
+                const counter = document.getElementById(item.counter);
+
+                if (field && counter) {
+                    field.addEventListener('input', function() {
+                        const words = this.value.trim().split(/\s+/).filter(w => w.length > 0).length;
+                        const text = `${words} / ${item.max} words`;
+                        counter.textContent = text;
+
+                        if (words > item.max) {
+                            counter.classList.add('error');
+                            counter.classList.remove('warning');
+                        } else if (words > item.max - 10) {
+                            counter.classList.add('warning');
+                            counter.classList.remove('error');
+                        } else {
+                            counter.classList.remove('warning', 'error');
+                        }
+                    });
+
+                    // Initialize counter
+                    field.dispatchEvent(new Event('input'));
+                }
+            });
+        }
+
+        // Auto-save functionality
+        function setupAutoSave() {
+            const formElements = document.querySelectorAll('input, textarea');
+            formElements.forEach(element => {
+                element.addEventListener('change', saveProgress);
+            });
+        }
+
+        // Save progress to localStorage
+        function saveProgress() {
+            const data = {};
+            const formElements = document.querySelectorAll('input, textarea');
+
+            formElements.forEach(element => {
+                if (element.type === 'checkbox') {
+                    data[element.id] = element.checked;
+                } else if (element.type === 'radio') {
+                    if (element.checked) {
+                        data[element.name] = element.value;
+                    }
+                } else {
+                    data[element.id] = element.value;
+                }
+            });
+
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            showSaveIndicator('Saved', 'success');
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+
+            const data = JSON.parse(saved);
+
+            Object.keys(data).forEach(key => {
+                const element = document.getElementById(key);
+                if (!element) {
+                    // Handle radio buttons by name
+                    const radioElements = document.getElementsByName(key);
+                    radioElements.forEach(radio => {
+                        if (radio.value === data[key]) {
+                            radio.checked = true;
+                        }
+                    });
+                    return;
+                }
+
+                if (element.type === 'checkbox') {
+                    element.checked = data[key];
+                } else if (element.type === 'radio') {
+                    if (element.value === data[key]) {
+                        element.checked = true;
+                    }
+                } else {
+                    element.value = data[key];
+                }
+            });
+
+            // Trigger input events to update word counters
+            document.querySelectorAll('textarea').forEach(ta => {
+                ta.dispatchEvent(new Event('input'));
+            });
+        }
+
+        // Show save indicator
+        function showSaveIndicator(message, type) {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.textContent = message;
+            indicator.className = `save-indicator show ${type}`;
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 2000);
+        }
+
+        // Print worksheet
+        function printWorksheet() {
+            window.print();
+        }
+
+        // Show clear confirmation modal
+        function showClearConfirm() {
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // Hide clear confirmation modal
+        function hideClearConfirm() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // Confirm clear all data
+        function confirmClear() {
+            localStorage.removeItem(STORAGE_KEY);
+            document.querySelectorAll('input, textarea').forEach(element => {
+                if (element.type === 'checkbox' || element.type === 'radio') {
+                    element.checked = false;
+                } else {
+                    element.value = '';
+                }
+            });
+            document.querySelectorAll('textarea').forEach(ta => {
+                ta.dispatchEvent(new Event('input'));
+            });
+            hideClearConfirm();
+            showSaveIndicator('All data cleared', 'success');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideClearConfirm();
+            }
+        });
+    </script>
+</body>
+</html>

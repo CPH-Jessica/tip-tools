@@ -1,0 +1,8 @@
+{
+  "name": "psychological-thriller-skill",
+  "version": "1.0.0",
+  "description": "Genre writing system for psychological thrillers — confined-space, domestic suspense, and surreal horror",
+  "author": {"name": "The Invisible Pen", "url": "https://theinvisiblepen.com"},
+  "repository": "https://github.com/CPH-Jessica/tip-tools",
+  "keywords": ["writing", "thriller", "psychological-thriller", "fiction", "genre-writing"]
+}

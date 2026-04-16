@@ -1,0 +1,11 @@
+{
+  "name": "pen-name-launcher",
+  "version": "1.0.0",
+  "description": "Complete 10-phase pen name launch system for indie romance authors — from identity through first book launch",
+  "author": {
+    "name": "The Invisible Pen",
+    "url": "https://theinvisiblepen.com"
+  },
+  "repository": "https://github.com/CPH-Jessica/tip-tools",
+  "keywords": ["writing", "romance", "pen-name", "indie-publishing", "author", "kdp"]
+}
