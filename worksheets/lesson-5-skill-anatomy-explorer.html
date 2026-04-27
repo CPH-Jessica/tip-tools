@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 5: Skill Anatomy Explorer — Foundations of Claude</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: #faf8f5;
+            color: #2d2a26;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 760px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #d4a574;
+        }
+        .header .brand {
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #d4a574;
+            margin-bottom: 0.5rem;
+        }
+        .header h1 { font-size: 1.8rem; color: #2d2a26; margin-bottom: 0.25rem; }
+        .header .subtitle { font-size: 1rem; color: #7a756e; font-style: italic; }
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .section h2 {
+            font-size: 1.3rem;
+            color: #2d2a26;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #ece8e1;
+        }
+        .section p { margin-bottom: 1rem; color: #4a463f; }
+
+        /* Skill File Viewer */
+        .skill-viewer {
+            background: #2d2a26;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .skill-viewer-header {
+            background: #3d3a36;
+            padding: 0.6rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-r { background: #ff5f57; }
+        .dot-y { background: #febc2e; }
+        .dot-g { background: #28c840; }
+        .skill-viewer-title {
+            color: #b0a99f;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            font-family: 'Courier New', monospace;
+        }
+        .skill-line {
+            padding: 0.35rem 1rem 0.35rem 3.5rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #e8e4de;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.15s;
+            line-height: 1.5;
+        }
+        .skill-line:hover { background: rgba(212,165,116,0.1); }
+        .skill-line.active { background: rgba(212,165,116,0.2); border-left: 3px solid #d4a574; }
+        .skill-line .line-num {
+            position: absolute;
+            left: 0.75rem;
+            color: #7a756e;
+            font-size: 0.75rem;
+            user-select: none;
+        }
+        .skill-line .frontmatter { color: #d4a574; }
+        .skill-line .key { color: #8fbcbb; }
+        .skill-line .value { color: #a3be8c; }
+        .skill-line .heading { color: #d4a574; font-weight: bold; }
+        .skill-line .comment { color: #7a756e; font-style: italic; }
+        .skill-line .bullet { color: #e8e4de; }
+        .skill-line .strong { color: #ebcb8b; font-weight: bold; }
+
+        /* Explanation panel */
+        .explain-panel {
+            background: #faf8f5;
+            border-left: 3px solid #d4a574;
+            border-radius: 0 8px 8px 0;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            min-height: 80px;
+            transition: all 0.3s ease;
+        }
+        .explain-panel h3 {
+            font-size: 1rem;
+            color: #d4a574;
+            margin-bottom: 0.5rem;
+        }
+        .explain-panel p {
+            font-size: 0.9rem;
+            color: #4a463f;
+            margin-bottom: 0.5rem;
+        }
+        .explain-panel .tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 0.25rem;
+        }
+        .tag-required { background: #fce4ec; color: #c62828; }
+        .tag-important { background: #fff3e0; color: #e65100; }
+        .tag-optional { background: #e8f5e9; color: #2e7d32; }
+
+        /* Quiz */
+        .quiz-q {
+            background: #faf8f5;
+            border: 1px solid #ece8e1;
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .quiz-q h4 { font-size: 0.95rem; color: #2d2a26; margin-bottom: 0.75rem; }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            border: 2px solid #ece8e1;
+            border-radius: 8px;
+            background: #fff;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 0.9rem;
+            color: #4a463f;
+            margin-bottom: 0.5rem;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { border-color: #d4a574; }
+        .quiz-option.correct { border-color: #2e7d32; background: #e8f5e9; color: #2e7d32; }
+        .quiz-option.wrong { border-color: #c62828; background: #fce4ec; color: #c62828; }
+        .quiz-option:disabled { cursor: default; opacity: 0.7; }
+        .quiz-option:disabled:hover { border-color: #ece8e1; }
+        .quiz-option.correct:disabled, .quiz-option.wrong:disabled { opacity: 1; }
+        .quiz-feedback {
+            margin-top: 0.5rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.right { background: #e8f5e9; color: #2e7d32; }
+        .quiz-feedback.wrong-fb { background: #fce4ec; color: #c62828; }
+
+        /* Progress */
+        .progress-bar {
+            background: #ece8e1;
+            border-radius: 20px;
+            height: 12px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #d4a574, #c4956a);
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        .progress-text {
+            text-align: center;
+            font-size: 0.85rem;
+            color: #7a756e;
+            margin-top: 0.5rem;
+        }
+
+        .tip-box {
+            background: #fff8e1;
+            border: 1px solid #ffe082;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin-top: 1rem;
+        }
+        .tip-box strong { color: #f9a825; }
+
+        /* Layers visual */
+        .layer-stack { margin: 1.5rem 0; }
+        .layer {
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .layer:hover { transform: translateX(4px); }
+        .layer-1 { background: #e8f5e9; border-left: 4px solid #2e7d32; color: #2e7d32; }
+        .layer-2 { background: #fff3e0; border-left: 4px solid #e65100; color: #e65100; }
+        .layer-3 { background: #f3e5f5; border-left: 4px solid #7b1fa2; color: #7b1fa2; }
+        .layer strong { display: block; font-size: 1rem; }
+        .layer span { font-size: 0.85rem; opacity: 0.8; }
+        .layer-detail {
+            display: none;
+            padding: 0.75rem 1rem;
+            font-size: 0.85rem;
+            color: #4a463f;
+            background: #faf8f5;
+            border-radius: 0 0 8px 8px;
+            margin-top: -0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .layer-detail.show { display: block; }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0 1rem;
+            color: #b0a99f;
+            font-size: 0.85rem;
+        }
+        .footer a { color: #d4a574; text-decoration: none; }
+
+        @media print {
+            body { padding: 0; background: #fff; }
+            .section { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand">The Invisible Pen</div>
+            <h1>Lesson 5: Skill Anatomy Explorer</h1>
+            <div class="subtitle">Foundations of Claude — Week 2</div>
+        </div>
+
+        <!-- LAYER VISUAL -->
+        <div class="section">
+            <h2>How Skills Fit In</h2>
+            <p>Click each layer to see what it does. You built Layer 1 last week. This week you're building Layer 2.</p>
+            <div class="layer-stack">
+                <div class="layer layer-3" onclick="toggleLayer(this)">
+                    <strong>Layer 3: Projects (Week 3)</strong>
+                    <span>A workspace where skills and context come together</span>
+                </div>
+                <div class="layer-detail" id="detail-3">Projects are dedicated workspaces in Claude's desktop app. You attach skills, upload manuscripts, and everything stays organized. One project for each pen name or book. Coming in Week 3.</div>
+
+                <div class="layer layer-2" onclick="toggleLayer(this)">
+                    <strong>Layer 2: Skills (This Week)</strong>
+                    <span>Instructions that teach Claude how to do specific jobs</span>
+                </div>
+                <div class="layer-detail" id="detail-2">A skill is a document that tells Claude how to do one thing really well — write in your voice, give you honest feedback, edit your chapters. Without skills, Claude gives generic help. With skills, it gives help that matches your brand.</div>
+
+                <div class="layer layer-1" onclick="toggleLayer(this)">
+                    <strong>Layer 1: Preferences (Week 1)</strong>
+                    <span>Claude knows who you are and how you work</span>
+                </div>
+                <div class="layer-detail" id="detail-1">Your personal preferences from Week 1. Claude knows your personality, your communication style, and your basic rules. This is the foundation everything else builds on. If you skipped Week 1, go back.</div>
+            </div>
+        </div>
+
+        <!-- INTERACTIVE SKILL VIEWER -->
+        <div class="section">
+            <h2>Explore a Real Skill File</h2>
+            <p>Click any line below to see what it does and why it matters. Every skill file follows this same structure.</p>
+
+            <div class="skill-viewer">
+                <div class="skill-viewer-header">
+                    <div class="dot dot-r"></div>
+                    <div class="dot dot-y"></div>
+                    <div class="dot dot-g"></div>
+                    <span class="skill-viewer-title">pen-name-voice-skill.md</span>
+                </div>
+                <div id="skillLines"></div>
+            </div>
+
+            <div class="explain-panel" id="explainPanel">
+                <h3 id="explainTitle">Click any line above</h3>
+                <p id="explainText">Click a line in the skill file to learn what that part does and why it matters.</p>
+                <div id="explainTags"></div>
+            </div>
+        </div>
+
+        <!-- KNOWLEDGE CHECK -->
+        <div class="section">
+            <h2>Knowledge Check</h2>
+            <p>Quick quiz — make sure you've got the basics before you start building.</p>
+
+            <div class="progress-bar"><div class="progress-fill" id="quizProgress"></div></div>
+            <div class="progress-text" id="quizText">0 of 4 correct</div>
+
+            <div style="margin-top: 1.5rem;">
+                <div class="quiz-q" id="q1">
+                    <h4>1. What's the most important part of a skill's header?</h4>
+                    <button class="quiz-option" onclick="answer(1, this, false)">The name — Claude needs to know what to call it</button>
+                    <button class="quiz-option" onclick="answer(1, this, true)">The description — it tells Claude when to activate the skill</button>
+                    <button class="quiz-option" onclick="answer(1, this, false)">The formatting — it has to be in the right syntax</button>
+                    <div class="quiz-feedback" id="fb1"></div>
+                </div>
+
+                <div class="quiz-q" id="q2">
+                    <h4>2. What's the difference between preferences and skills?</h4>
+                    <button class="quiz-option" onclick="answer(2, this, false)">Preferences are for writing, skills are for editing</button>
+                    <button class="quiz-option" onclick="answer(2, this, false)">They're the same thing, just organized differently</button>
+                    <button class="quiz-option" onclick="answer(2, this, true)">Preferences tell Claude who you are; skills tell Claude how to do specific jobs</button>
+                    <div class="quiz-feedback" id="fb2"></div>
+                </div>
+
+                <div class="quiz-q" id="q3">
+                    <h4>3. What happens if your skill description is vague?</h4>
+                    <button class="quiz-option" onclick="answer(3, this, true)">Claude won't know when to use the skill, so it won't activate</button>
+                    <button class="quiz-option" onclick="answer(3, this, false)">Claude will ask you to clarify every time</button>
+                    <button class="quiz-option" onclick="answer(3, this, false)">Nothing — Claude figures it out from context</button>
+                    <div class="quiz-feedback" id="fb3"></div>
+                </div>
+
+                <div class="quiz-q" id="q4">
+                    <h4>4. In the skill body, what makes the biggest difference in output quality?</h4>
+                    <button class="quiz-option" onclick="answer(4, this, false)">Using proper markdown formatting</button>
+                    <button class="quiz-option" onclick="answer(4, this, true)">Specific rules and examples of good vs. bad output</button>
+                    <button class="quiz-option" onclick="answer(4, this, false)">Keeping it under 500 words</button>
+                    <div class="quiz-feedback" id="fb4"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WHAT YOU'RE BUILDING -->
+        <div class="section" style="text-align: center; background: #f5f0ea;">
+            <h2 style="border: none;">Ready to Build?</h2>
+            <p>Now you know what a skill looks like and how it works. In Lesson 6, you'll build your first one — a pen name voice skill for your primary writing name. It's the most impactful skill you'll create.</p>
+        </div>
+
+        <div class="footer">
+            <p>Foundations of Claude — The Invisible Pen</p>
+            <p><a href="https://theinvisiblepen.com">theinvisiblepen.com</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Skill file lines data
+        const lines = [
+            { text: '<span class="frontmatter">---</span>', zone: 'frontmatter-open', title: 'Frontmatter Opening', explain: 'The three dashes mark the start of the skill header (called "frontmatter"). Everything between the opening and closing dashes is metadata that Claude reads before the instructions.', tags: ['required'] },
+            { text: '<span class="key">name:</span> <span class="value">sarah-westbrook-voice</span>', zone: 'name', title: 'Skill Name', explain: 'The skill\'s identifier. Use lowercase with hyphens. This is how Claude internally references the skill. Keep it descriptive — "sarah-westbrook-voice" is better than "skill-1."', tags: ['required'] },
+            { text: '<span class="key">description:</span> <span class="value">"Voice and style guide for Sarah</span>', zone: 'description', title: 'Skill Description (Trigger)', explain: 'This is the MOST IMPORTANT part. The description tells Claude WHEN to use this skill. Include the pen name, genre, heat level, and specific trigger words. Be pushy — list every scenario where this skill should activate. If this is vague, Claude won\'t know when to use it.', tags: ['required'] },
+            { text: '<span class="value">  Westbrook pen name. Use when writing</span>', zone: 'description', title: 'Skill Description (continued)', explain: 'Notice the description includes "Use when writing" — this is a trigger phrase. Be explicit about when Claude should pull up this skill. "Use when writing, editing, brainstorming, or developing fiction for Sarah Westbrook."', tags: ['required'] },
+            { text: '<span class="value">  small-town romance, heat level 3."</span>', zone: 'description', title: 'Skill Description (continued)', explain: 'Genre and heat level in the description help Claude match the right skill to the right request. If you have multiple pen names, this specificity is what prevents Claude from mixing up voices.', tags: ['important'] },
+            { text: '<span class="frontmatter">---</span>', zone: 'frontmatter-close', title: 'Frontmatter Closing', explain: 'The closing three dashes end the header section. Everything after this is the skill body — your actual instructions.', tags: ['required'] },
+            { text: '', zone: 'blank', title: '', explain: '' },
+            { text: '<span class="heading"># Sarah Westbrook Voice Guide</span>', zone: 'title', title: 'Skill Title', explain: 'The main heading of your skill. This is for readability — it helps Claude understand the purpose at a glance and helps YOU find and edit the skill later.', tags: ['important'] },
+            { text: '', zone: 'blank', title: '', explain: '' },
+            { text: '<span class="heading">## Genre & Heat</span>', zone: 'section-genre', title: 'Genre Section', explain: 'Organizing your skill into clear sections with headings makes it easier for Claude to find and apply specific rules. Start with the basics — genre and heat level set the foundation for everything else.', tags: ['important'] },
+            { text: '<span class="bullet">- Small-town contemporary romance</span>', zone: 'genre-detail', title: 'Genre Specification', explain: 'Be specific. Not just "romance" — specify the subgenre. "Small-town contemporary romance" tells Claude about setting, time period, and reader expectations all in one line.', tags: ['important'] },
+            { text: '<span class="bullet">- Heat level: 3/5 (sensual, on-page but not explicit)</span>', zone: 'heat-detail', title: 'Heat Level', explain: 'The number alone isn\'t enough — add what it means. "3/5 (sensual, on-page but not explicit)" removes all ambiguity. Claude knows to write tension and intimacy but not graphic scenes.', tags: ['important'] },
+            { text: '', zone: 'blank', title: '', explain: '' },
+            { text: '<span class="heading">## Voice Rules</span>', zone: 'section-voice', title: 'Voice Rules Section', explain: 'This is the core of a pen name skill. Voice rules define HOW this pen name sounds — the prose style, rhythm, tone, and personality that makes this pen name distinct from your others.', tags: ['required'] },
+            { text: '<span class="bullet">- Warm, grounded, conversational</span>', zone: 'voice-tone', title: 'Tone Descriptors', explain: 'Three adjectives that capture the vibe. These are your north star — every sentence Claude writes should feel warm, grounded, and conversational. Pick words that differentiate this pen name from your others.', tags: ['important'] },
+            { text: '<span class="bullet">- Humor woven into even emotional scenes</span>', zone: 'voice-humor', title: 'Emotional Texture', explain: 'This is a signature instruction. It tells Claude that humor isn\'t just for light moments — it should appear even in serious scenes. These specific instructions are what make your skill output feel like YOUR writing, not generic AI.', tags: ['optional'] },
+            { text: '<span class="bullet">- Short paragraphs, varied sentence length</span>', zone: 'voice-rhythm', title: 'Prose Rhythm', explain: 'Rhythm and structure instructions. "Short paragraphs, varied sentence length" creates a specific reading pace. Compare this to a skill that says "long, flowing paragraphs with complex sentences" — completely different feel.', tags: ['optional'] },
+            { text: '<span class="bullet">- Em-dashes for asides (signature move)</span>', zone: 'voice-signature', title: 'Signature Technique', explain: 'This is gold. A specific, identifiable writing habit that makes your prose feel authentically yours. If you have a signature move — a punctuation habit, a sentence structure you love — document it here.', tags: ['optional'] },
+            { text: '', zone: 'blank', title: '', explain: '' },
+            { text: '<span class="heading">## What to Avoid</span>', zone: 'section-avoid', title: 'Avoidance Rules', explain: '"Never do" rules are just as important as "always do" rules. This section prevents Claude from falling into bad habits. Be direct — "Never" not "try to avoid." Claude follows firm instructions better than suggestions.', tags: ['important'] },
+            { text: '<span class="bullet">- Purple prose</span>', zone: 'avoid-1', title: 'Banned Style: Purple Prose', explain: 'Short, direct bans work. Claude knows what purple prose is — you don\'t need to define it. If you have specific examples of what you mean, you can add them, but the ban alone works.', tags: ['important'] },
+            { text: '<span class="bullet">- Overly poetic descriptions</span>', zone: 'avoid-2', title: 'Banned Style: Overwriting', explain: 'This reinforces the "no purple prose" rule with a specific application. Layering related rules helps Claude understand the pattern, not just individual items.', tags: ['optional'] },
+            { text: '<span class="bullet">- Head-hopping between characters</span>', zone: 'avoid-3', title: 'Banned Technique: Head-Hopping', explain: 'A craft rule — single POV per scene. This prevents Claude from accidentally writing what another character is thinking or feeling when it\'s not their POV chapter.', tags: ['important'] },
+            { text: '', zone: 'blank', title: '', explain: '' },
+            { text: '<span class="heading">## Chapter Rules</span>', zone: 'section-chapter', title: 'Chapter Structure Rules', explain: 'Structural rules that apply to every chapter. These are your non-negotiables — the rules that define how your pen name handles scene structure, pacing, and chapter endings.', tags: ['important'] },
+            { text: '<span class="bullet">- Start in action, not setup</span>', zone: 'chapter-open', title: 'Opening Rule', explain: 'Drop the reader into a scene already in motion. No weather descriptions, no waking up, no "she looked in the mirror." This single rule will improve Claude\'s chapter openings more than anything else.', tags: ['important'] },
+            { text: '<span class="bullet">- Single POV per chapter</span>', zone: 'chapter-pov', title: 'POV Rule', explain: 'Reinforces the head-hopping ban with a structural rule. One character\'s perspective per chapter. Clear, unambiguous, no room for Claude to get creative with it.', tags: ['required'] },
+            { text: '<span class="bullet">- End mid-scene with momentum</span>', zone: 'chapter-end', title: 'Chapter Ending Rule', explain: 'The last line of the skill — and one of the most important rules. Don\'t let chapters end with resolution. End in the middle of something happening. This creates the page-turner effect your readers expect.', tags: ['important'] },
+        ];
+
+        const feedbacks = {
+            1: { right: 'Exactly. The description is Claude\'s trigger — it decides when the skill activates. A perfect skill with a bad description never gets used.', wrong: 'Not quite. The name is just an identifier. The description is what tells Claude WHEN to use the skill — it\'s the trigger mechanism.' },
+            2: { right: 'That\'s it. Preferences = who you are. Skills = how to do specific work. They\'re different layers that work together.', wrong: 'Not quite. Preferences tell Claude about YOU (personality, communication style, rules). Skills tell Claude how to do SPECIFIC JOBS (write in a voice, give feedback, edit chapters).' },
+            3: { right: 'Right. If the description doesn\'t clearly say when to trigger, Claude won\'t know to use it. Specificity is everything.', wrong: 'Not quite. Claude relies on the description to know when to activate a skill. Vague description = skill sits unused.' },
+            4: { right: 'Yes. Specific rules and concrete examples of what\'s good vs. bad give Claude a clear target. Length doesn\'t matter — precision does.', wrong: 'Not quite. Formatting helps readability, but it\'s the specific rules and examples that drive output quality. Show Claude what good looks like.' }
+        };
+
+        // Render skill lines
+        const container = document.getElementById('skillLines');
+        lines.forEach((line, i) => {
+            if (line.zone === 'blank') {
+                const div = document.createElement('div');
+                div.className = 'skill-line';
+                div.innerHTML = `<span class="line-num">${i + 1}</span>&nbsp;`;
+                container.appendChild(div);
+                return;
+            }
+            const div = document.createElement('div');
+            div.className = 'skill-line';
+            div.dataset.idx = i;
+            div.innerHTML = `<span class="line-num">${i + 1}</span>${line.text}`;
+            div.onclick = () => showExplanation(i);
+            container.appendChild(div);
+        });
+
+        function showExplanation(idx) {
+            const line = lines[idx];
+            if (!line.title) return;
+
+            document.querySelectorAll('.skill-line').forEach(el => el.classList.remove('active'));
+            const el = document.querySelector(`.skill-line[data-idx="${idx}"]`);
+            if (el) el.classList.add('active');
+
+            document.getElementById('explainTitle').textContent = line.title;
+            document.getElementById('explainText').textContent = line.explain;
+
+            const tagsEl = document.getElementById('explainTags');
+            tagsEl.innerHTML = '';
+            if (line.tags) {
+                line.tags.forEach(t => {
+                    const span = document.createElement('span');
+                    span.className = 'tag tag-' + t;
+                    span.textContent = t === 'required' ? 'REQUIRED' : t === 'important' ? 'HIGH IMPACT' : 'NICE TO HAVE';
+                    tagsEl.appendChild(span);
+                });
+            }
+        }
+
+        // Quiz
+        let quizScore = 0;
+        let answered = {};
+
+        function answer(qNum, btn, isCorrect) {
+            if (answered[qNum]) return;
+            answered[qNum] = true;
+
+            const q = document.getElementById('q' + qNum);
+            q.querySelectorAll('.quiz-option').forEach(b => {
+                b.disabled = true;
+            });
+
+            if (isCorrect) {
+                btn.classList.add('correct');
+                quizScore++;
+                const fb = document.getElementById('fb' + qNum);
+                fb.className = 'quiz-feedback show right';
+                fb.textContent = feedbacks[qNum].right;
+            } else {
+                btn.classList.add('wrong');
+                const fb = document.getElementById('fb' + qNum);
+                fb.className = 'quiz-feedback show wrong-fb';
+                fb.textContent = feedbacks[qNum].wrong;
+                // highlight correct
+                q.querySelectorAll('.quiz-option').forEach(b => {
+                    if (!b.classList.contains('wrong')) {
+                        // Find the correct one by re-checking onclick
+                    }
+                });
+            }
+
+            const pct = Math.round((quizScore / 4) * 100);
+            document.getElementById('quizProgress').style.width = pct + '%';
+            document.getElementById('quizText').textContent = quizScore + ' of 4 correct';
+        }
+
+        // Layer toggle
+        function toggleLayer(el) {
+            const details = el.nextElementSibling;
+            if (details && details.classList.contains('layer-detail')) {
+                details.classList.toggle('show');
+            }
+        }
+    </script>
+</body>
+</html>
