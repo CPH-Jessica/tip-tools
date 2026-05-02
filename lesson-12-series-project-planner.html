@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 12: Series Project Planner — Foundations of Claude</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Georgia', serif; background: #faf8f5; color: #2d2a26; line-height: 1.7; padding: 2rem 1rem; }
+        .container { max-width: 760px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 2px solid #d4a574; }
+        .header .brand { font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: #d4a574; margin-bottom: 0.5rem; }
+        .header h1 { font-size: 1.8rem; color: #2d2a26; margin-bottom: 0.25rem; }
+        .header .subtitle { font-size: 1rem; color: #7a756e; font-style: italic; }
+
+        .progress-label { text-align: center; font-size: 0.85rem; color: #7a756e; margin-bottom: 0.5rem; }
+        .progress-wrap { background: #ece8e1; border-radius: 20px; height: 12px; margin-bottom: 2rem; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, #d4a574, #c4956a); border-radius: 20px; width: 0%; transition: width 0.5s ease; }
+
+        .section { background: #fff; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .section h2 { font-size: 1.3rem; color: #2d2a26; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #ece8e1; }
+        .section-num { display: inline-block; background: #d4a574; color: #fff; width: 28px; height: 28px; border-radius: 50%; text-align: center; line-height: 28px; font-size: 0.85rem; font-weight: bold; margin-right: 0.5rem; }
+        .section p.desc { color: #7a756e; font-size: 0.95rem; margin-bottom: 1rem; font-style: italic; }
+
+        label { display: block; font-weight: bold; font-size: 0.95rem; margin-bottom: 0.3rem; color: #2d2a26; }
+        .hint { font-size: 0.85rem; color: #7a756e; margin-bottom: 0.5rem; font-style: italic; }
+        input[type="text"], textarea, select {
+            width: 100%; padding: 0.7rem 0.9rem; border: 1.5px solid #ece8e1; border-radius: 8px;
+            font-family: 'Georgia', serif; font-size: 0.95rem; color: #2d2a26; background: #faf8f5; margin-bottom: 1.2rem; transition: border-color 0.3s;
+        }
+        input[type="text"]:focus, textarea:focus, select:focus { outline: none; border-color: #d4a574; background: #fff; }
+        textarea { resize: vertical; min-height: 80px; }
+
+        .tip-box { background: #fdf6ef; border-left: 4px solid #d4a574; padding: 1rem 1.2rem; margin-bottom: 1.2rem; border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #5c574f; }
+        .tip-box strong { color: #d4a574; }
+
+        /* Character entry cards */
+        .char-cards { margin-bottom: 1rem; }
+        .char-card {
+            border: 1.5px solid #ece8e1;
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-bottom: 0.75rem;
+            background: #faf8f5;
+        }
+        .char-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .char-card-num { font-size: 0.8rem; color: #d4a574; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .char-remove { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 1.2rem; }
+        .char-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        .char-grid input, .char-grid select { margin-bottom: 0.5rem; font-size: 0.85rem; padding: 0.5rem; }
+        .char-grid .full { grid-column: 1 / -1; }
+        .char-grid textarea { margin-bottom: 0.5rem; min-height: 40px; font-size: 0.85rem; padding: 0.5rem; }
+
+        .add-btn { padding: 0.6rem 1.2rem; background: #faf8f5; border: 1.5px dashed #d4a574; border-radius: 8px; color: #d4a574; font-family: 'Georgia', serif; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; }
+        .add-btn:hover { background: #fdf6ef; }
+
+        /* Timeline entries */
+        .tl-entries { margin-bottom: 1rem; }
+        .tl-entry {
+            display: grid;
+            grid-template-columns: 100px 1fr auto;
+            gap: 0.75rem;
+            align-items: start;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #ece8e1;
+        }
+        .tl-entry:last-child { border-bottom: none; }
+        .tl-entry input, .tl-entry textarea { margin-bottom: 0; font-size: 0.85rem; padding: 0.5rem; }
+        .tl-entry textarea { min-height: 36px; height: 36px; }
+        .tl-remove { background: none; border: none; color: #c0392b; cursor: pointer; font-size: 1rem; padding-top: 0.3rem; }
+
+        /* Thread tracker */
+        .thread-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .thread-col h4 { font-size: 0.95rem; color: #2d2a26; margin-bottom: 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid #ece8e1; }
+        .thread-col.resolved h4 { color: #8fbc8f; border-bottom-color: #8fbc8f; }
+        .thread-col.ongoing h4 { color: #d4a574; border-bottom-color: #d4a574; }
+
+        /* Output */
+        .output-section { background: #2d2a26; border-radius: 12px; padding: 2rem; margin-bottom: 1.5rem; }
+        .output-section h2 { color: #d4a574; border-bottom-color: #4a463f; margin-bottom: 1rem; }
+        .output-preview {
+            background: #1a1816; border-radius: 8px; padding: 1.5rem; font-family: 'Courier New', monospace;
+            font-size: 0.82rem; line-height: 1.6; color: #e8e4df; white-space: pre-wrap; word-wrap: break-word;
+            max-height: 600px; overflow-y: auto; margin-bottom: 1rem;
+        }
+        .output-preview .heading { color: #d4a574; font-weight: bold; }
+        .output-preview .comment { color: #7a756e; }
+
+        .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+        .btn { padding: 0.8rem 1.5rem; border: none; border-radius: 8px; font-family: 'Georgia', serif; font-size: 0.95rem; cursor: pointer; transition: all 0.3s; }
+        .btn-primary { background: #d4a574; color: #fff; }
+        .btn-primary:hover { background: #c4956a; }
+        .btn-secondary { background: transparent; color: #d4a574; border: 1.5px solid #d4a574; }
+        .btn-secondary:hover { background: #fdf6ef; }
+
+        .copy-toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(20px); background: #2d2a26; color: #d4a574; padding: 0.8rem 1.5rem; border-radius: 8px; font-family: 'Georgia', serif; font-size: 0.95rem; opacity: 0; transition: all 0.3s; pointer-events: none; z-index: 100; }
+        .copy-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        .footer { text-align: center; padding-top: 1.5rem; margin-top: 1rem; border-top: 1px solid #ece8e1; font-size: 0.85rem; color: #7a756e; }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.5rem; }
+            .section { padding: 1.5rem 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .char-grid { grid-template-columns: 1fr; }
+            .thread-grid { grid-template-columns: 1fr; }
+            .tl-entry { grid-template-columns: 1fr; }
+            .btn-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand">The Invisible Pen — Foundations of Claude</div>
+            <h1>Series Project Planner</h1>
+            <div class="subtitle">Lesson 12 — Build your series bible, character tracker, and timeline</div>
+        </div>
+
+        <div class="progress-label"><span id="progressText">0 of 5 sections complete</span></div>
+        <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+        <!-- 1: Series Overview -->
+        <div class="section">
+            <h2><span class="section-num">1</span> Series Overview</h2>
+            <p class="desc">The big picture — what holds this series together?</p>
+
+            <label for="seriesName">Series Name</label>
+            <input type="text" id="seriesName" placeholder="e.g., The Copper Creek Series" oninput="up()">
+
+            <label for="penName">Pen Name</label>
+            <input type="text" id="penName" placeholder="e.g., Sarah Westbrook" oninput="up()">
+
+            <label for="seriesGenre">Genre</label>
+            <input type="text" id="seriesGenre" placeholder="e.g., Small-town contemporary romance" oninput="up()">
+
+            <label for="seriesHook">Series Hook</label>
+            <div class="hint">What's the connecting thread? A family? A town? A friend group? What makes a reader want to read all the books?</div>
+            <textarea id="seriesHook" rows="3" placeholder="e.g., Six estranged siblings return to Copper Creek, Vermont, one by one — each pulled back by a different crisis and each finding love with someone who challenges their reason for leaving in the first place." oninput="up()"></textarea>
+
+            <label for="totalBooks">Planned Number of Books</label>
+            <input type="text" id="totalBooks" placeholder="e.g., 6 books — one per sibling" oninput="up()">
+
+            <label for="currentBook">Currently Writing</label>
+            <input type="text" id="currentBook" placeholder="e.g., Book 3 — Cole's story" oninput="up()">
+        </div>
+
+        <!-- 2: Setting & World Rules -->
+        <div class="section">
+            <h2><span class="section-num">2</span> Setting & World Rules</h2>
+            <p class="desc">The constants of your series world — what's always true.</p>
+
+            <label for="setting">Setting Description</label>
+            <div class="hint">Physical world, key locations, atmosphere. Enough for Claude to describe it consistently.</div>
+            <textarea id="setting" rows="5" placeholder="e.g., Copper Creek, Vermont — a fictional town in the Green Mountains. Population ~3,000. Main Street has a diner (The Wooden Spoon), a bookshop, a hardware store, and a seasonal farmer's market. The Hartwell family homestead sits on 40 acres at the edge of town — Victorian farmhouse, wraparound porch, red barn. Nearest city is Burlington, 45 minutes away. Seasons are central — each book is set in a different season." oninput="up()"></textarea>
+
+            <label for="worldRules">World Rules</label>
+            <div class="hint">Things that are always true in this series. Cultural norms, traditions, recurring elements.</div>
+            <textarea id="worldRules" rows="4" placeholder="e.g.,&#10;Everyone knows everyone — no anonymity in Copper Creek&#10;The Wooden Spoon diner is the information hub — gossip central&#10;Fall Festival is the biggest annual event&#10;The Hartwell name carries weight — founding family&#10;Cell service is unreliable near the mountains" oninput="up()"></textarea>
+        </div>
+
+        <!-- 3: Character Tracker -->
+        <div class="section">
+            <h2><span class="section-num">3</span> Character Tracker</h2>
+            <p class="desc">Every named character who appears in more than one book. Update this after each book.</p>
+
+            <div class="char-cards" id="charCards">
+                <div class="char-card">
+                    <div class="char-card-header">
+                        <span class="char-card-num">Character 1</span>
+                        <button class="char-remove" onclick="removeCard(this)">&times;</button>
+                    </div>
+                    <div class="char-grid">
+                        <input type="text" placeholder="Name" oninput="up()">
+                        <select oninput="up()">
+                            <option value="">Role...</option>
+                            <option value="Lead">Lead</option>
+                            <option value="Supporting">Supporting</option>
+                            <option value="Recurring">Recurring</option>
+                            <option value="Mentioned only">Mentioned only</option>
+                        </select>
+                        <input type="text" placeholder="First appears in..." oninput="up()">
+                        <input type="text" placeholder="Key relationships" oninput="up()">
+                        <textarea class="full" placeholder="Brief description — appearance, personality, current status" oninput="up()"></textarea>
+                        <select class="full" oninput="up()">
+                            <option value="">Arc status...</option>
+                            <option value="Had their book">Had their book (HEA complete)</option>
+                            <option value="Upcoming lead">Upcoming lead</option>
+                            <option value="Supporting — no planned book">Supporting — no planned book</option>
+                            <option value="Potential future lead">Potential future lead</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="add-btn" onclick="addCharCard()">+ Add Character</button>
+
+            <div class="tip-box" style="margin-top:1rem;">
+                <strong>Start with your leads and major recurring characters.</strong> You can always add minor characters later. The ones that matter most are characters who appear in multiple books — they're where continuity errors happen.
+            </div>
+        </div>
+
+        <!-- 4: Timeline -->
+        <div class="section">
+            <h2><span class="section-num">4</span> Timeline</h2>
+            <p class="desc">Chronological events across the series. Include between-book gaps.</p>
+
+            <div class="tl-entries" id="tlEntries">
+                <div class="tl-entry">
+                    <input type="text" placeholder="When" oninput="up()">
+                    <textarea placeholder="What happened" oninput="up()"></textarea>
+                    <button class="tl-remove" onclick="removeTl(this)">&times;</button>
+                </div>
+                <div class="tl-entry">
+                    <input type="text" placeholder="When" oninput="up()">
+                    <textarea placeholder="What happened" oninput="up()"></textarea>
+                    <button class="tl-remove" onclick="removeTl(this)">&times;</button>
+                </div>
+                <div class="tl-entry">
+                    <input type="text" placeholder="When" oninput="up()">
+                    <textarea placeholder="What happened" oninput="up()"></textarea>
+                    <button class="tl-remove" onclick="removeTl(this)">&times;</button>
+                </div>
+            </div>
+            <button class="add-btn" onclick="addTlEntry()">+ Add Event</button>
+        </div>
+
+        <!-- 5: Story Threads -->
+        <div class="section">
+            <h2><span class="section-num">5</span> Story Threads</h2>
+            <p class="desc">Track what's been resolved and what's still developing across books.</p>
+
+            <div class="thread-grid">
+                <div class="thread-col resolved">
+                    <h4>Resolved Threads</h4>
+                    <textarea id="resolvedThreads" rows="6" placeholder="e.g.,&#10;Book 1: Maya and Jake — HEA, reopened the clinic together&#10;Book 2: Lily's inheritance dispute — settled, she kept the bookshop&#10;The old Hartwell barn — renovated into event space in Book 2" oninput="up()"></textarea>
+                </div>
+                <div class="thread-col ongoing">
+                    <h4>Ongoing Threads</h4>
+                    <textarea id="ongoingThreads" rows="6" placeholder="e.g.,&#10;Who is sending anonymous letters to the Hartwells?&#10;The development company trying to buy Main Street properties&#10;Mom's secret about why she really left Copper Creek&#10;The locked room in the farmhouse attic" oninput="up()"></textarea>
+                </div>
+            </div>
+
+            <div class="tip-box">
+                <strong>This is gold for your readers.</strong> Ongoing threads are what make readers buy the next book. Resolved threads are what you must never accidentally reopen. Both need to be documented so Claude gets it right.
+            </div>
+        </div>
+
+        <!-- Output: Series Bible -->
+        <div class="output-section">
+            <h2>Your Generated Series Bible</h2>
+            <p style="color:#7a756e; font-size:0.85rem; margin-bottom:1rem;">This generates a combined series bible document. Upload it as a knowledge file in your series project.</p>
+            <div class="output-preview" id="outputPreview">
+                <span class="comment"># Fill in the sections above to generate your series bible...</span>
+            </div>
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="copyToClipboard()">Copy Series Bible</button>
+                <button class="btn btn-secondary" onclick="downloadFile()">Download as .md</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Foundations of Claude — Week 3, Lesson 12</p>
+            <p style="margin-top:0.3rem;">The Invisible Pen — AI for Authors Over 40</p>
+        </div>
+    </div>
+
+    <div class="copy-toast" id="toast">Copied!</div>
+
+    <script>
+        let charCount = 1;
+
+        function addCharCard() {
+            charCount++;
+            const cards = document.getElementById('charCards');
+            const card = document.createElement('div');
+            card.className = 'char-card';
+            card.innerHTML = '<div class="char-card-header"><span class="char-card-num">Character ' + charCount + '</span><button class="char-remove" onclick="removeCard(this)">&times;</button></div>' +
+                '<div class="char-grid">' +
+                '<input type="text" placeholder="Name" oninput="up()">' +
+                '<select oninput="up()"><option value="">Role...</option><option value="Lead">Lead</option><option value="Supporting">Supporting</option><option value="Recurring">Recurring</option><option value="Mentioned only">Mentioned only</option></select>' +
+                '<input type="text" placeholder="First appears in..." oninput="up()">' +
+                '<input type="text" placeholder="Key relationships" oninput="up()">' +
+                '<textarea class="full" placeholder="Brief description" oninput="up()"></textarea>' +
+                '<select class="full" oninput="up()"><option value="">Arc status...</option><option value="Had their book">Had their book (HEA complete)</option><option value="Upcoming lead">Upcoming lead</option><option value="Supporting — no planned book">Supporting — no planned book</option><option value="Potential future lead">Potential future lead</option></select>' +
+                '</div>';
+            cards.appendChild(card);
+        }
+
+        function removeCard(btn) {
+            const cards = document.querySelectorAll('.char-card');
+            if (cards.length > 1) { btn.closest('.char-card').remove(); up(); }
+        }
+
+        function addTlEntry() {
+            const entries = document.getElementById('tlEntries');
+            const entry = document.createElement('div');
+            entry.className = 'tl-entry';
+            entry.innerHTML = '<input type="text" placeholder="When" oninput="up()"><textarea placeholder="What happened" oninput="up()"></textarea><button class="tl-remove" onclick="removeTl(this)">&times;</button>';
+            entries.appendChild(entry);
+        }
+
+        function removeTl(btn) {
+            const entries = document.querySelectorAll('.tl-entry');
+            if (entries.length > 1) { btn.closest('.tl-entry').remove(); up(); }
+        }
+
+        function getChars() {
+            const chars = [];
+            document.querySelectorAll('.char-card').forEach(card => {
+                const inputs = card.querySelectorAll('input, select, textarea');
+                const name = inputs[0].value.trim();
+                if (!name) return;
+                chars.push({
+                    name,
+                    role: inputs[1].value,
+                    firstAppears: inputs[2].value.trim(),
+                    relationships: inputs[3].value.trim(),
+                    description: inputs[4].value.trim(),
+                    arcStatus: inputs[5].value
+                });
+            });
+            return chars;
+        }
+
+        function getTimeline() {
+            const events = [];
+            document.querySelectorAll('.tl-entry').forEach(e => {
+                const when = e.querySelector('input').value.trim();
+                const what = e.querySelector('textarea').value.trim();
+                if (when || what) events.push({ when, what });
+            });
+            return events;
+        }
+
+        function gv(id) { return document.getElementById(id).value.trim(); }
+
+        function up() { updateProgress(); updatePreview(); }
+
+        function updateProgress() {
+            let done = 0;
+            if (gv('seriesName') && gv('seriesHook')) done++;
+            if (gv('setting') || gv('worldRules')) done++;
+            if (getChars().length > 0) done++;
+            if (getTimeline().length > 0) done++;
+            if (gv('resolvedThreads') || gv('ongoingThreads')) done++;
+            document.getElementById('progressBar').style.width = (done / 5 * 100) + '%';
+            document.getElementById('progressText').textContent = done + ' of 5 sections complete';
+        }
+
+        function updatePreview() {
+            const sn = gv('seriesName');
+            const pn = gv('penName');
+            const genre = gv('seriesGenre');
+            const hook = gv('seriesHook');
+            const totalBooks = gv('totalBooks');
+            const currentBook = gv('currentBook');
+            const setting = gv('setting');
+            const worldRules = gv('worldRules');
+            const chars = getChars();
+            const timeline = getTimeline();
+            const resolved = gv('resolvedThreads');
+            const ongoing = gv('ongoingThreads');
+
+            if (!sn && !hook) {
+                document.getElementById('outputPreview').innerHTML = '<span class="comment"># Fill in the sections above to generate your series bible...</span>';
+                return;
+            }
+
+            let md = '';
+            md += h('# ' + (sn || 'Series') + ' — Series Bible') + '\n';
+            if (pn) md += h('## ' + pn) + '\n';
+            md += '\n';
+
+            // Overview
+            md += h('## Series Overview') + '\n\n';
+            if (genre) md += '**Genre:** ' + genre + '\n';
+            if (totalBooks) md += '**Planned books:** ' + totalBooks + '\n';
+            if (currentBook) md += '**Currently writing:** ' + currentBook + '\n';
+            if (hook) md += '\n' + hook + '\n';
+            md += '\n';
+
+            // Setting
+            if (setting || worldRules) {
+                md += h('## Setting & World') + '\n\n';
+                if (setting) md += setting + '\n\n';
+                if (worldRules) {
+                    md += h('### World Rules') + '\n\n';
+                    worldRules.split('\n').filter(l => l.trim()).forEach(l => {
+                        md += '- ' + l.trim() + '\n';
+                    });
+                    md += '\n';
+                }
+            }
+
+            // Characters
+            if (chars.length) {
+                md += h('## Character Tracker') + '\n\n';
+                chars.forEach(c => {
+                    md += h('### ' + c.name) + '\n';
+                    if (c.role) md += '- **Role:** ' + c.role + '\n';
+                    if (c.firstAppears) md += '- **First appears:** ' + c.firstAppears + '\n';
+                    if (c.relationships) md += '- **Relationships:** ' + c.relationships + '\n';
+                    if (c.arcStatus) md += '- **Arc status:** ' + c.arcStatus + '\n';
+                    if (c.description) md += '- **Description:** ' + c.description + '\n';
+                    md += '\n';
+                });
+            }
+
+            // Timeline
+            if (timeline.length) {
+                md += h('## Timeline') + '\n\n';
+                timeline.forEach(e => {
+                    md += '- **' + (e.when || '???') + ':** ' + (e.what || '') + '\n';
+                });
+                md += '\n';
+            }
+
+            // Threads
+            if (resolved || ongoing) {
+                md += h('## Story Threads') + '\n\n';
+                if (resolved) {
+                    md += h('### Resolved') + '\n';
+                    resolved.split('\n').filter(l => l.trim()).forEach(l => {
+                        md += '- ' + l.trim() + '\n';
+                    });
+                    md += '\n';
+                }
+                if (ongoing) {
+                    md += h('### Ongoing') + '\n';
+                    ongoing.split('\n').filter(l => l.trim()).forEach(l => {
+                        md += '- ' + l.trim() + '\n';
+                    });
+                    md += '\n';
+                }
+            }
+
+            // Continuity instructions
+            md += h('## Continuity Rules') + '\n\n';
+            md += '- Check the Character Tracker before introducing any returning character\n';
+            md += '- Check the Timeline before referencing past events\n';
+            md += '- Never reopen a resolved story thread without explicit author permission\n';
+            md += '- Flag any potential continuity conflicts immediately\n';
+            md += '- When in doubt about a detail from a previous book, ask — don\'t guess\n';
+
+            document.getElementById('outputPreview').innerHTML = esc(md);
+        }
+
+        function h(text) { return '<span class="heading">' + esc(text) + '</span>'; }
+        function esc(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+        function copyToClipboard() {
+            const text = document.getElementById('outputPreview').textContent || '';
+            navigator.clipboard.writeText(text).then(() => showToast('Copied!')).catch(() => {
+                const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Copied!');
+            });
+        }
+
+        function downloadFile() {
+            const text = document.getElementById('outputPreview').textContent || '';
+            const sn = gv('seriesName') || 'series';
+            const slug = sn.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/-$/, '');
+            const blob = new Blob([text], { type: 'text/markdown' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = slug + '-bible.md'; a.click();
+            URL.revokeObjectURL(a.href); showToast('Downloaded!');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+    </script>
+</body>
+</html>
