@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson 9: Project Architecture Explorer — Foundations of Claude</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Georgia', serif;
+            background: #faf8f5;
+            color: #2d2a26;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+        }
+        .container { max-width: 760px; margin: 0 auto; }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid #d4a574;
+        }
+        .header .brand { font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; color: #d4a574; margin-bottom: 0.5rem; }
+        .header h1 { font-size: 1.8rem; color: #2d2a26; margin-bottom: 0.25rem; }
+        .header .subtitle { font-size: 1rem; color: #7a756e; font-style: italic; }
+
+        .section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .section h2 { font-size: 1.3rem; color: #2d2a26; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid #ece8e1; }
+        .section p { margin-bottom: 1rem; color: #4a463f; }
+
+        .tip-box { background: #fdf6ef; border-left: 4px solid #d4a574; padding: 1rem 1.2rem; margin-bottom: 1.2rem; border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #5c574f; }
+        .tip-box strong { color: #d4a574; }
+
+        /* === ARCHITECTURE DIAGRAM === */
+        .arch-wrap {
+            position: relative;
+            padding: 1rem 0;
+        }
+
+        /* Layer Stack */
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+        .layer {
+            border: 2px solid #ece8e1;
+            border-radius: 10px;
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .layer:hover { border-color: #d4a574; }
+        .layer.active { border-color: #d4a574; background: #fdf6ef; box-shadow: 0 2px 12px rgba(212,165,116,0.2); }
+        .layer-num {
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: #d4a574;
+            color: #fff;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 10px;
+            letter-spacing: 1px;
+        }
+        .layer.l-project .layer-num { background: #2d2a26; }
+        .layer.l-skill .layer-num { background: #8fbc8f; }
+        .layer.l-pref .layer-num { background: #d4a574; }
+
+        .layer-title { font-size: 1.1rem; font-weight: bold; color: #2d2a26; margin-bottom: 0.25rem; }
+        .layer-subtitle { font-size: 0.85rem; color: #7a756e; }
+
+        .connector {
+            text-align: center;
+            padding: 0.3rem 0;
+            color: #d4a574;
+            font-size: 1.2rem;
+        }
+
+        /* Detail panel */
+        .detail-panel {
+            background: #fff;
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            display: none;
+        }
+        .detail-panel.show { display: block; }
+        .detail-panel h3 { font-size: 1.1rem; color: #d4a574; margin-bottom: 0.75rem; }
+        .detail-panel p { font-size: 0.95rem; color: #4a463f; margin-bottom: 0.75rem; }
+        .detail-list { list-style: none; padding: 0; margin-bottom: 0.75rem; }
+        .detail-list li { padding: 0.4rem 0 0.4rem 1.5rem; position: relative; font-size: 0.9rem; color: #4a463f; }
+        .detail-list li::before { content: '→'; position: absolute; left: 0; color: #d4a574; font-weight: bold; }
+        .detail-tag {
+            display: inline-block;
+            background: #faf8f5;
+            border: 1px solid #ece8e1;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #7a756e;
+            margin-left: 0.3rem;
+        }
+
+        /* === PROJECT COMPONENTS === */
+        .component-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .comp-card {
+            border: 2px solid #ece8e1;
+            border-radius: 10px;
+            padding: 1.2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .comp-card:hover { border-color: #d4a574; background: #fdf6ef; }
+        .comp-card.active { border-color: #d4a574; background: #fdf6ef; box-shadow: 0 2px 8px rgba(212,165,116,0.15); }
+        .comp-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .comp-label { font-weight: bold; font-size: 0.95rem; color: #2d2a26; }
+        .comp-sub { font-size: 0.8rem; color: #7a756e; margin-top: 0.2rem; }
+
+        .comp-detail {
+            background: #faf8f5;
+            border: 1.5px solid #ece8e1;
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: none;
+            margin-bottom: 1rem;
+        }
+        .comp-detail.show { display: block; }
+        .comp-detail h4 { color: #d4a574; margin-bottom: 0.5rem; font-size: 1rem; }
+        .comp-detail p { font-size: 0.9rem; color: #4a463f; margin-bottom: 0.5rem; }
+
+        /* === SCENARIO BUILDER === */
+        .scenario-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+        }
+        .scenario-tab {
+            flex: 1;
+            padding: 0.7rem 1rem;
+            text-align: center;
+            cursor: pointer;
+            font-family: 'Georgia', serif;
+            font-size: 0.9rem;
+            color: #7a756e;
+            border: 2px solid #ece8e1;
+            border-bottom: none;
+            border-radius: 10px 10px 0 0;
+            background: #faf8f5;
+            transition: all 0.3s;
+        }
+        .scenario-tab:hover { color: #d4a574; }
+        .scenario-tab.active { background: #fff; color: #d4a574; border-color: #d4a574; font-weight: bold; }
+        .scenario-content {
+            border: 2px solid #d4a574;
+            border-top: none;
+            border-radius: 0 0 10px 10px;
+            padding: 1.5rem;
+            background: #fff;
+            display: none;
+        }
+        .scenario-content.active { display: block; }
+        .scenario-content h4 { color: #2d2a26; margin-bottom: 0.75rem; font-size: 1.05rem; }
+
+        .file-tree {
+            background: #2d2a26;
+            border-radius: 8px;
+            padding: 1.2rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #e8e4df;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .file-tree .folder { color: #d4a574; }
+        .file-tree .file { color: #8fbc8f; }
+        .file-tree .comment { color: #7a756e; font-style: italic; }
+        .file-tree .indent { padding-left: 1.5rem; }
+        .file-tree .indent2 { padding-left: 3rem; }
+
+        /* === QUIZ === */
+        .quiz-q { margin-bottom: 1.5rem; }
+        .quiz-q p { font-weight: bold; margin-bottom: 0.5rem; }
+        .quiz-opt {
+            display: block;
+            padding: 0.6rem 1rem;
+            border: 1.5px solid #ece8e1;
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .quiz-opt:hover { border-color: #d4a574; background: #fdf6ef; }
+        .quiz-opt.correct { border-color: #8fbc8f; background: #f5faf5; }
+        .quiz-opt.wrong { border-color: #e8a87c; background: #fdf6ef; }
+        .quiz-feedback {
+            font-size: 0.85rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .quiz-feedback.show { display: block; }
+        .quiz-feedback.correct { background: #f5faf5; color: #2d6a2d; }
+        .quiz-feedback.wrong { background: #fdf6ef; color: #a0522d; }
+
+        .footer { text-align: center; padding-top: 1.5rem; margin-top: 1rem; border-top: 1px solid #ece8e1; font-size: 0.85rem; color: #7a756e; }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem 0.5rem; }
+            .section { padding: 1.5rem 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .component-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="brand">The Invisible Pen — Foundations of Claude</div>
+            <h1>Project Architecture Explorer</h1>
+            <div class="subtitle">Lesson 9 — See how projects, skills, and preferences work together</div>
+        </div>
+
+        <!-- Section 1: The Three Layers -->
+        <div class="section">
+            <h2>The Three-Layer Stack</h2>
+            <p>Click each layer to see what it contains and how it connects to the others.</p>
+
+            <div class="layer-stack">
+                <div class="layer l-project" onclick="showLayer(0)" id="layer-0">
+                    <span class="layer-num">LAYER 3</span>
+                    <div class="layer-title">Project</div>
+                    <div class="layer-subtitle">Book-specific workspace — instructions, knowledge files, conversations</div>
+                </div>
+                <div class="connector">&#8595;</div>
+                <div class="layer l-skill" onclick="showLayer(1)" id="layer-1">
+                    <span class="layer-num">LAYER 2</span>
+                    <div class="layer-title">Skills</div>
+                    <div class="layer-subtitle">Pen name voice, beta reader, and other task-specific instructions</div>
+                </div>
+                <div class="connector">&#8595;</div>
+                <div class="layer l-pref" onclick="showLayer(2)" id="layer-2">
+                    <span class="layer-num">LAYER 1</span>
+                    <div class="layer-title">Preferences</div>
+                    <div class="layer-subtitle">Who you are, how you think, how you want Claude to communicate</div>
+                </div>
+            </div>
+
+            <div class="detail-panel" id="layerDetail-0">
+                <h3>Layer 3: The Project</h3>
+                <p>A project is the workspace where everything comes together for a specific book or series. It's the most specific layer — narrowed down to one creative job.</p>
+                <ul class="detail-list">
+                    <li><strong>Instructions</strong> — book premise, character list, POV rules, specific constraints <span class="detail-tag">set once</span></li>
+                    <li><strong>Knowledge files</strong> — outline, character profiles, previous chapters, voice skill <span class="detail-tag">uploaded</span></li>
+                    <li><strong>Conversations</strong> — drafting, brainstorming, editing sessions <span class="detail-tag">ongoing</span></li>
+                </ul>
+                <p><strong>Key insight:</strong> Your skills from Week 2 get uploaded here as knowledge files. The project doesn't replace your skills — it houses them alongside book-specific context.</p>
+            </div>
+            <div class="detail-panel" id="layerDetail-1">
+                <h3>Layer 2: Skills</h3>
+                <p>Skills are the how-to documents you built in Week 2. They tell Claude how to do specific jobs — write in your voice, give beta feedback, edit with your standards.</p>
+                <ul class="detail-list">
+                    <li><strong>Voice skill</strong> — how this pen name sounds <span class="detail-tag">from Week 2</span></li>
+                    <li><strong>Beta reader skill</strong> — how to evaluate your writing <span class="detail-tag">from Week 2</span></li>
+                    <li><strong>Editing skills</strong> — developmental, line edit, dialogue polish <span class="detail-tag">future</span></li>
+                </ul>
+                <p><strong>Key insight:</strong> One voice skill can be used in multiple projects. Your Sarah Westbrook voice skill goes into every Sarah Westbrook book project.</p>
+            </div>
+            <div class="detail-panel" id="layerDetail-2">
+                <h3>Layer 1: Preferences</h3>
+                <p>Preferences are global — they follow you into every project and every conversation. Claude always knows who you are and how you like to work.</p>
+                <ul class="detail-list">
+                    <li><strong>Communication style</strong> — direct, no fluff, push back on weak ideas <span class="detail-tag">from Week 1</span></li>
+                    <li><strong>Work habits</strong> — how you process, make decisions, handle feedback <span class="detail-tag">from Week 1</span></li>
+                    <li><strong>Personal context</strong> — your background, goals, what matters to you <span class="detail-tag">from Week 1</span></li>
+                </ul>
+                <p><strong>Key insight:</strong> You don't need to repeat preferences in project instructions. They're already there. Projects add specificity on top of what Claude already knows about you.</p>
+            </div>
+        </div>
+
+        <!-- Section 2: Inside a Project -->
+        <div class="section">
+            <h2>Inside a Project — The Three Components</h2>
+            <p>Click each component to see what goes inside and examples for a book project.</p>
+
+            <div class="component-grid">
+                <div class="comp-card" onclick="showComp(0)" id="comp-0">
+                    <div class="comp-icon">&#128221;</div>
+                    <div class="comp-label">Instructions</div>
+                    <div class="comp-sub">Rules of the workspace</div>
+                </div>
+                <div class="comp-card" onclick="showComp(1)" id="comp-1">
+                    <div class="comp-icon">&#128218;</div>
+                    <div class="comp-label">Knowledge</div>
+                    <div class="comp-sub">Reference documents</div>
+                </div>
+                <div class="comp-card" onclick="showComp(2)" id="comp-2">
+                    <div class="comp-icon">&#128172;</div>
+                    <div class="comp-label">Conversations</div>
+                    <div class="comp-sub">Working sessions</div>
+                </div>
+            </div>
+
+            <div class="comp-detail" id="compDetail-0">
+                <h4>Project Instructions</h4>
+                <p>Instructions are the first thing Claude reads when you start a conversation in the project. They set the context, rules, and constraints for everything that happens inside.</p>
+                <p><strong>For a book project, instructions include:</strong></p>
+                <ul class="detail-list">
+                    <li>Pen name and genre</li>
+                    <li>Book premise — 2-3 sentence elevator pitch</li>
+                    <li>Main characters — names, roles, brief descriptions</li>
+                    <li>POV, tense, and structural rules</li>
+                    <li>What Claude should and shouldn't do in this project</li>
+                    <li>Current status — what chapter you're on, what's been drafted</li>
+                </ul>
+                <p><strong>Pro tip:</strong> Instructions should be concise — under 1,000 words. If you're writing a novel's worth of instructions, some of that belongs in a knowledge file instead.</p>
+            </div>
+            <div class="comp-detail" id="compDetail-1">
+                <h4>Knowledge Files</h4>
+                <p>Knowledge files are documents Claude can reference during any conversation in the project. Upload them once, use them forever.</p>
+                <p><strong>For a book project, knowledge files might include:</strong></p>
+                <ul class="detail-list">
+                    <li>Your pen name voice skill (from Week 2)</li>
+                    <li>Your beta reader skill (from Week 2)</li>
+                    <li>Chapter-by-chapter outline</li>
+                    <li>Character profiles and relationship map</li>
+                    <li>World-building notes or setting details</li>
+                    <li>Previously drafted chapters (for continuity)</li>
+                    <li>Research notes</li>
+                </ul>
+                <p><strong>Pro tip:</strong> Claude reads knowledge files when they're relevant to the conversation. Label your files clearly so Claude knows which one to reference.</p>
+            </div>
+            <div class="comp-detail" id="compDetail-2">
+                <h4>Conversations</h4>
+                <p>Every conversation inside a project inherits the instructions and can access the knowledge files. You can run multiple conversations for different purposes.</p>
+                <p><strong>Common conversation types in a book project:</strong></p>
+                <ul class="detail-list">
+                    <li><strong>Drafting session</strong> — writing chapters with Claude</li>
+                    <li><strong>Brainstorming session</strong> — plot problems, character development</li>
+                    <li><strong>Beta read session</strong> — feeding chapters to your beta reader skill</li>
+                    <li><strong>Editing session</strong> — line edits, dialogue polish, pacing review</li>
+                    <li><strong>Research session</strong> — setting details, historical accuracy</li>
+                </ul>
+                <p><strong>Pro tip:</strong> Start a new conversation for each major task rather than using one endless thread. Claude stays sharper with focused conversations.</p>
+            </div>
+        </div>
+
+        <!-- Section 3: Single Book vs Series -->
+        <div class="section">
+            <h2>Single Book vs. Series Project</h2>
+            <p>Click each tab to see what goes into each project type and how they differ.</p>
+
+            <div class="scenario-tabs">
+                <div class="scenario-tab active" onclick="showScenario(0)">Single Book</div>
+                <div class="scenario-tab" onclick="showScenario(1)">Series Project</div>
+            </div>
+
+            <div class="scenario-content active" id="scenario-0">
+                <h4>Single Book Project</h4>
+                <p>Everything Claude needs for one specific novel — the story, the characters, the voice.</p>
+                <div class="file-tree">
+                    <div><span class="folder">&#128193; Project: Copper Creek Book 1</span></div>
+                    <div class="indent"><span class="folder">&#128221; Instructions</span></div>
+                    <div class="indent2"><span class="comment">Pen name, premise, characters, POV rules, current chapter</span></div>
+                    <div class="indent"><span class="folder">&#128218; Knowledge Files</span></div>
+                    <div class="indent2"><span class="file">sarah-westbrook-voice.md</span> <span class="comment">← your voice skill</span></div>
+                    <div class="indent2"><span class="file">book-outline.md</span> <span class="comment">← chapter-by-chapter plan</span></div>
+                    <div class="indent2"><span class="file">characters.md</span> <span class="comment">← profiles &amp; relationships</span></div>
+                    <div class="indent2"><span class="file">setting-notes.md</span> <span class="comment">← Copper Creek town details</span></div>
+                    <div class="indent"><span class="folder">&#128172; Conversations</span></div>
+                    <div class="indent2"><span class="comment">Chapter drafting, brainstorming, beta reads...</span></div>
+                </div>
+                <div style="background:#fdf6ef; padding:0.75rem 1rem; border-radius:8px; font-size:0.9rem; color:#5c574f;">
+                    <strong style="color:#d4a574;">Best for:</strong> Standalone novels, the next book in a series where you don't need to track extensive series-wide continuity, or a first book that might become a series later.
+                </div>
+            </div>
+
+            <div class="scenario-content" id="scenario-1">
+                <h4>Series Project</h4>
+                <p>A master workspace that tracks the big picture across multiple books — plus book-specific context for what you're writing now.</p>
+                <div class="file-tree">
+                    <div><span class="folder">&#128193; Project: Copper Creek Series</span></div>
+                    <div class="indent"><span class="folder">&#128221; Instructions</span></div>
+                    <div class="indent2"><span class="comment">Series overview, recurring characters, world rules, continuity notes</span></div>
+                    <div class="indent"><span class="folder">&#128218; Knowledge Files</span></div>
+                    <div class="indent2"><span class="file">sarah-westbrook-voice.md</span> <span class="comment">← voice skill</span></div>
+                    <div class="indent2"><span class="file">series-bible.md</span> <span class="comment">← master reference document</span></div>
+                    <div class="indent2"><span class="file">character-tracker.md</span> <span class="comment">← all characters across all books</span></div>
+                    <div class="indent2"><span class="file">world-building.md</span> <span class="comment">← town, businesses, geography</span></div>
+                    <div class="indent2"><span class="file">timeline.md</span> <span class="comment">← when things happened across books</span></div>
+                    <div class="indent2"><span class="file">book-3-outline.md</span> <span class="comment">← current book outline</span></div>
+                    <div class="indent2"><span class="file">book-3-characters.md</span> <span class="comment">← this book's leads + arcs</span></div>
+                    <div class="indent"><span class="folder">&#128172; Conversations</span></div>
+                    <div class="indent2"><span class="comment">Chapter drafting, continuity checks, series planning...</span></div>
+                </div>
+                <div style="background:#fdf6ef; padding:0.75rem 1rem; border-radius:8px; font-size:0.9rem; color:#5c574f;">
+                    <strong style="color:#d4a574;">Best for:</strong> Multi-book series where readers expect continuity — recurring characters, evolving relationships, shared world details that must stay consistent across books.
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Knowledge Check -->
+        <div class="section">
+            <h2>Knowledge Check</h2>
+
+            <div class="quiz-q" id="q1">
+                <p>1. Where do the skills you built in Week 2 go inside a project?</p>
+                <div class="quiz-opt" onclick="checkQuiz('q1',this,false)">In the Project Instructions</div>
+                <div class="quiz-opt" onclick="checkQuiz('q1',this,true)">Uploaded as Knowledge Files</div>
+                <div class="quiz-opt" onclick="checkQuiz('q1',this,false)">They replace the project instructions</div>
+                <div class="quiz-opt" onclick="checkQuiz('q1',this,false)">They stay separate — projects don't use skills</div>
+                <div class="quiz-feedback correct" id="q1-correct">Skills get uploaded as knowledge files inside the project. Claude can reference them in every conversation within that project.</div>
+                <div class="quiz-feedback wrong" id="q1-wrong">Not quite. Skills are uploaded as knowledge files — they sit alongside your outline, character profiles, and other reference documents inside the project.</div>
+            </div>
+
+            <div class="quiz-q" id="q2">
+                <p>2. You're writing Book 3 of a series. A character from Book 1 shows up briefly. Which project type handles this better?</p>
+                <div class="quiz-opt" onclick="checkQuiz('q2',this,false)">Single Book Project — just mention the character</div>
+                <div class="quiz-opt" onclick="checkQuiz('q2',this,true)">Series Project — the character tracker has their details</div>
+                <div class="quiz-opt" onclick="checkQuiz('q2',this,false)">Either one — there's no difference</div>
+                <div class="quiz-feedback correct" id="q2-correct">A series project's character tracker and series bible keep all recurring characters consistent. Claude knows their history, appearance, and personality from previous books without you re-explaining.</div>
+                <div class="quiz-feedback wrong" id="q2-wrong">A series project is built for exactly this. The character tracker holds details about every character across all books — so Claude gets them right without you having to re-explain each time.</div>
+            </div>
+
+            <div class="quiz-q" id="q3">
+                <p>3. What's the main difference between Project Instructions and Knowledge Files?</p>
+                <div class="quiz-opt" onclick="checkQuiz('q3',this,false)">Instructions are longer than knowledge files</div>
+                <div class="quiz-opt" onclick="checkQuiz('q3',this,false)">Knowledge files are more important</div>
+                <div class="quiz-opt" onclick="checkQuiz('q3',this,true)">Instructions set rules and context; knowledge files provide reference material</div>
+                <div class="quiz-opt" onclick="checkQuiz('q3',this,false)">There's no real difference — they do the same thing</div>
+                <div class="quiz-feedback correct" id="q3-correct">Instructions are the rules — they tell Claude how to behave. Knowledge files are reference material — they give Claude information to draw on. Instructions should be concise; knowledge files can be detailed.</div>
+                <div class="quiz-feedback wrong" id="q3-wrong">Think of instructions as the rules of the workspace (short, directive) and knowledge files as the reference library (detailed, informational). Different purposes, different formats.</div>
+            </div>
+
+            <div class="quiz-q" id="q4">
+                <p>4. Do you need to repeat your Week 1 preferences in every project's instructions?</p>
+                <div class="quiz-opt" onclick="checkQuiz('q4',this,true)">No — preferences are global and follow you everywhere</div>
+                <div class="quiz-opt" onclick="checkQuiz('q4',this,false)">Yes — each project needs its own copy</div>
+                <div class="quiz-opt" onclick="checkQuiz('q4',this,false)">Only if the project is for a different pen name</div>
+                <div class="quiz-feedback correct" id="q4-correct">Preferences travel with you into every project and conversation. Projects add book-specific context on top of what Claude already knows about you.</div>
+                <div class="quiz-feedback wrong" id="q4-wrong">Preferences are Layer 1 — they're always active. You don't need to restate them. Your project instructions add book-specific details on top of what's already there.</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Foundations of Claude — Week 3, Lesson 9</p>
+            <p style="margin-top:0.3rem;">The Invisible Pen — AI for Authors Over 40</p>
+        </div>
+    </div>
+
+    <script>
+        function showLayer(idx) {
+            document.querySelectorAll('.layer').forEach((l, i) => l.classList.toggle('active', i === idx));
+            for (let i = 0; i < 3; i++) {
+                document.getElementById('layerDetail-' + i).classList.toggle('show', i === idx);
+            }
+        }
+
+        function showComp(idx) {
+            document.querySelectorAll('.comp-card').forEach((c, i) => c.classList.toggle('active', i === idx));
+            for (let i = 0; i < 3; i++) {
+                document.getElementById('compDetail-' + i).classList.toggle('show', i === idx);
+            }
+        }
+
+        function showScenario(idx) {
+            document.querySelectorAll('.scenario-tab').forEach((t, i) => t.classList.toggle('active', i === idx));
+            document.querySelectorAll('.scenario-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+        }
+
+        function checkQuiz(qId, el, correct) {
+            const q = document.getElementById(qId);
+            if (q.dataset.answered) return;
+            q.dataset.answered = 'true';
+            q.querySelectorAll('.quiz-opt').forEach(o => o.style.pointerEvents = 'none');
+            el.classList.add(correct ? 'correct' : 'wrong');
+            document.getElementById(qId + '-' + (correct ? 'correct' : 'wrong')).classList.add('show');
+        }
+    </script>
+</body>
+</html>
