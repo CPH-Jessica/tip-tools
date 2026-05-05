@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill Builder — Beta Reader & Editor Edition | Foundations of Claude</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --paper: #faf8f5;
+    --accent: #8b3a3a;
+    --accent-light: #c97070;
+    --soft: #efe9e0;
+    --border: #d4c8b8;
+    --muted: #6b6b6b;
+    --success: #3a6b4a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: Georgia, 'Iowan Old Style', serif;
+    background: var(--paper);
+    color: var(--ink);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.02em;
+  }
+
+  header .subtitle {
+    color: var(--muted);
+    font-style: italic;
+    margin: 0;
+  }
+
+  .intro {
+    background: var(--soft);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+
+  .intro p { margin: 0.5rem 0; }
+  .intro p:first-child { margin-top: 0; }
+  .intro p:last-child { margin-bottom: 0; }
+
+  .mode-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border: 2px solid var(--ink);
+    border-radius: 4px;
+    padding: 0.25rem;
+    background: white;
+    width: fit-content;
+  }
+
+  .mode-toggle button {
+    font-family: inherit;
+    font-size: 1rem;
+    background: transparent;
+    border: none;
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    border-radius: 3px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .mode-toggle button.active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .mode-toggle button:hover:not(.active) {
+    background: var(--soft);
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .form-panel, .preview-panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+  }
+
+  .preview-panel {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+
+  @media (max-width: 880px) {
+    .preview-panel {
+      position: static;
+      max-height: none;
+    }
+  }
+
+  h2 {
+    font-size: 1.25rem;
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .field {
+    margin-bottom: 1.5rem;
+  }
+
+  .field label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+  }
+
+  .field .hint {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+
+  .field .example {
+    background: var(--soft);
+    border-left: 3px solid var(--accent-light);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .field .example strong {
+    color: var(--ink);
+    font-style: normal;
+  }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="text"]:focus, textarea:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(139, 58, 58, 0.15);
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: inherit;
+  }
+
+  textarea.tall {
+    min-height: 120px;
+  }
+
+  .preview-output {
+    background: #1e1e1e;
+    color: #e8e3d8;
+    padding: 1.25rem;
+    border-radius: 4px;
+    font-family: 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+
+  .preview-output .yaml { color: #b8d4a8; }
+  .preview-output .heading { color: #f4c87a; font-weight: bold; }
+  .preview-output .placeholder { color: #888; font-style: italic; }
+
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.65rem 1.25rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: #6f2e2e; }
+
+  .btn-secondary {
+    background: var(--soft);
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover { background: var(--border); }
+
+  .copy-status {
+    color: var(--success);
+    font-size: 0.85rem;
+    font-weight: 600;
+    align-self: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .copy-status.show { opacity: 1; }
+
+  .filename-display {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: var(--soft);
+    border-radius: 4px;
+    font-size: 0.85rem;
+  }
+
+  .filename-display code {
+    background: white;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    font-family: 'Menlo', 'Consolas', monospace;
+  }
+
+  .footer-note {
+    margin-top: 2rem;
+    padding: 1rem 1.25rem;
+    background: white;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  .footer-note strong { color: var(--ink); }
+
+  .field-group {
+    border-left: 2px solid var(--accent-light);
+    padding-left: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .field-group-title {
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Skill Builder</h1>
+  <p class="subtitle">Beta Reader &amp; Editor Edition · Foundations of Claude · Week 2</p>
+</header>
+
+<div class="intro">
+  <p><strong>What this is:</strong> A guided builder for creating your own beta reader or editor skill file. Fill in the fields on the left. Watch your skill file generate on the right. When you're done, copy or download the file and drop it into your skills folder.</p>
+  <p><strong>Reminder from the lesson:</strong> Building the file is step one. The skill won't activate until you actually load it in a session. Use your Session Opener to trigger it.</p>
+</div>
+
+<div class="mode-toggle" role="tablist">
+  <button id="modeBeta" class="active" onclick="setMode('beta')">Beta Reader</button>
+  <button id="modeEditor" onclick="setMode('editor')">Editor</button>
+</div>
+
+<div class="layout">
+
+  <!-- FORM PANEL -->
+  <div class="form-panel">
+    <h2 id="formHeading">Build Your Beta Reader</h2>
+
+    <div class="field-group">
+      <div class="field-group-title">Identity</div>
+
+      <div class="field">
+        <label for="personaName">Persona Name</label>
+        <div class="hint">The character/persona who's giving the feedback. Make them feel like a real person.</div>
+        <div class="example"><strong>Beta examples:</strong> Paprika Lynn, Cecily Hale, Brinley Chase<br><strong>Editor examples:</strong> Slash, Maeya Gray, Leah Voss</div>
+        <input type="text" id="personaName" placeholder="e.g., Margot Reeves" oninput="render()">
+      </div>
+
+      <div class="field">
+        <label for="skillName">Skill File Name</label>
+        <div class="hint">Lowercase, hyphenated. This is what you'll type when loading the skill.</div>
+        <div class="example"><strong>Format:</strong> first-last-feedback or descriptor-editor</div>
+        <input type="text" id="skillName" placeholder="e.g., margot-reeves-feedback" oninput="render()">
+      </div>
+
+      <div class="field">
+        <label for="oneLiner">One-Line Summary</label>
+        <div class="hint">Who is this persona and what do they do? One sentence.</div>
+        <div class="example" id="oneLinerExample"><strong>Beta:</strong> "Wine-drunk romance bestie who lives for banter and screams about heat scenes at 1am."</div>
+        <input type="text" id="oneLiner" placeholder="e.g., Brutally honest enemies-to-lovers superfan..." oninput="render()">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-title">Voice &amp; Personality</div>
+
+      <div class="field">
+        <label for="voice">Voice Description</label>
+        <div class="hint">How do they talk? Sweary? Restrained? Academic? Wine-drunk? Cold? Be specific — Claude will mirror this.</div>
+        <textarea id="voice" placeholder="e.g., Casual, profanity-friendly, talks like she's texting her best friend at midnight. Doesn't soften criticism but isn't cruel. Uses 'babe' and 'no but seriously.'" oninput="render()"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="personality">Personality Traits</label>
+        <div class="hint">3-5 personality details that make this persona distinct. What do they obsess over? What makes them roll their eyes?</div>
+        <textarea id="personality" placeholder="e.g., Lives for slow-burn tension. Will DNF a book if the meet-cute doesn't land in the first 50 pages. Hates instalove. Cries at grand gestures." oninput="render()"></textarea>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-title">Scope &amp; Focus</div>
+
+      <div class="field">
+        <label for="genre">Genre / Subgenre Focus</label>
+        <div class="hint">What are they qualified to give feedback on? Be specific — broad personas give bland feedback.</div>
+        <div class="example"><strong>Examples:</strong> "Vampire rom-com only" / "Dark romance, mafia and MC" / "Psychological thrillers, single-male-POV" / "Regency historical, slow-burn only"</div>
+        <input type="text" id="genre" placeholder="e.g., Contemporary romcom with workplace settings" oninput="render()">
+      </div>
+
+      <div class="field" id="heatField">
+        <label for="heat">Heat Level Range (Romance only)</label>
+        <div class="hint">What heat range are they reading for? Leave blank if not romance.</div>
+        <select id="heat" onchange="render()">
+          <option value="">— Select or leave blank —</option>
+          <option>1-2 (Sweet/Clean)</option>
+          <option>2-3 (Warm, fade-to-black)</option>
+          <option>3-4 (Open door, moderate)</option>
+          <option>4-5 (Explicit, high heat)</option>
+          <option>5/5 (Dark/extreme)</option>
+        </select>
+      </div>
+
+      <div class="field" id="checkField">
+        <label for="whatTheyCheck">What They're Checking For</label>
+        <div class="hint" id="checkHint">What does this beta look for in a chapter? What makes them love or hate a scene?</div>
+        <div class="example" id="checkExample"><strong>Beta example:</strong> "Whether the banter is actually funny. Whether the chemistry feels earned. Whether she'd keep reading past page 3. Whether the heat is hot enough."</div>
+        <textarea id="whatTheyCheck" class="tall" placeholder="List 4-7 specific things they look for" oninput="render()"></textarea>
+      </div>
+
+      <div class="field" id="editorTypeField" style="display:none;">
+        <label for="editorType">Type of Editing</label>
+        <div class="hint">What level of edit is this persona doing?</div>
+        <select id="editorType" onchange="render()">
+          <option value="">— Select —</option>
+          <option>Developmental (story structure, pacing, character arcs)</option>
+          <option>Line edit (sentence-level prose, voice, rhythm)</option>
+          <option>Slash/cut edit (what doesn't earn its place)</option>
+          <option>Voice audit (pen name consistency)</option>
+          <option>Heat calibration (intimate scene effectiveness)</option>
+          <option>Copy edit (grammar, continuity, technical)</option>
+          <option>Dialogue polish</option>
+          <option>Custom — see Voice section</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-title">Output Style</div>
+
+      <div class="field">
+        <label for="outputFormat">How They Deliver Feedback</label>
+        <div class="hint">Bullet points? Margin notes? Letter-style? Stream of consciousness? Numbered cuts? Be specific about format.</div>
+        <textarea id="outputFormat" placeholder="e.g., Reader reaction first (1-2 sentences of gut reaction), then 3-5 specific moments that worked, then 2-3 things that didn't, then a verdict line: 'Would I keep reading? Yes/No/Maybe — and why.'" oninput="render()"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="loves">What They Love (Specific)</label>
+        <div class="hint">Tropes, moments, choices that make this persona freak out in a good way.</div>
+        <textarea id="loves" placeholder="e.g., Witty banter that reveals character. Emotional climax that lands physically. Heroines with sharp edges. Heroes who actually listen." oninput="render()"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="hates">What They Hate (Specific)</label>
+        <div class="hint">Pet peeves. Things that make them roll their eyes or DNF. Specificity is what gives the persona teeth.</div>
+        <textarea id="hates" placeholder="e.g., Instalove. Big misunderstandings that could be solved with one conversation. Purple prose. 'She let out a breath she didn't know she was holding.'" oninput="render()"></textarea>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <div class="field-group-title">Triggers</div>
+
+      <div class="field">
+        <label for="triggers">When Should Claude Use This Skill?</label>
+        <div class="hint">List the kinds of phrases or contexts that should activate this persona. The more specific, the better Claude triggers it.</div>
+        <div class="example"><strong>Examples:</strong> "Margot read this chapter" / "Brutal feedback please" / "What would a [genre] reader think?" / "Run a slash edit on this scene"</div>
+        <textarea id="triggers" class="tall" placeholder="List 4-8 trigger phrases or contexts (one per line)" oninput="render()"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PREVIEW PANEL -->
+  <div class="preview-panel">
+    <h2>Your Skill File (Live Preview)</h2>
+    <div class="preview-output" id="preview"></div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="copyOutput()">Copy SKILL.md</button>
+      <button class="btn btn-secondary" onclick="downloadOutput()">Download File</button>
+      <span class="copy-status" id="copyStatus">Copied!</span>
+    </div>
+
+    <div class="filename-display">
+      Save as: <code id="filenameDisplay">SKILL.md</code><br>
+      Inside folder: <code id="folderDisplay">your-skill-name/</code>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer-note">
+  <strong>Next step:</strong> Once you save your SKILL.md inside its folder (e.g., <code>margot-reeves-feedback/SKILL.md</code>), drop the folder into your Claude skills directory. Then in your next session, use your Session Opener to load it. Don't assume Claude found it on its own.
+</div>
+
+</div>
+
+<script>
+  let mode = 'beta';
+
+  function setMode(newMode) {
+    mode = newMode;
+    document.getElementById('modeBeta').classList.toggle('active', mode === 'beta');
+    document.getElementById('modeEditor').classList.toggle('active', mode === 'editor');
+
+    document.getElementById('formHeading').textContent =
+      mode === 'beta' ? 'Build Your Beta Reader' : 'Build Your Editor';
+
+    document.getElementById('editorTypeField').style.display =
+      mode === 'editor' ? 'block' : 'none';
+
+    document.getElementById('heatField').style.display =
+      mode === 'beta' ? 'block' : 'block'; // Both can have heat
+
+    // Update example hints based on mode
+    if (mode === 'beta') {
+      document.getElementById('oneLinerExample').innerHTML =
+        '<strong>Beta:</strong> "Wine-drunk romance bestie who lives for banter and screams about heat scenes at 1am."';
+      document.getElementById('checkHint').textContent =
+        'What does this beta look for in a chapter? What makes them love or hate a scene?';
+      document.getElementById('checkExample').innerHTML =
+        '<strong>Beta example:</strong> "Whether the banter is actually funny. Whether the chemistry feels earned. Whether she\'d keep reading past page 3. Whether the heat is hot enough."';
+    } else {
+      document.getElementById('oneLinerExample').innerHTML =
+        '<strong>Editor:</strong> "Ruthless developmental editor who cuts everything that doesn\'t earn its place on the page."';
+      document.getElementById('checkHint').textContent =
+        'What does this editor flag, cut, or improve? What\'s their primary lens?';
+      document.getElementById('checkExample').innerHTML =
+        '<strong>Editor example:</strong> "Scenes that don\'t move the story. Dialogue that explains instead of reveals. Repeated beats. Voice inconsistencies. Lazy openings. Endings that don\'t hook."';
+    }
+
+    render();
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function fmtList(text, fallback) {
+    if (!text || !text.trim()) return fallback;
+    const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length === 0) return fallback;
+    return lines.map(l => l.startsWith('-') ? l : '- ' + l).join('\n');
+  }
+
+  function placeholder(text) {
+    return `<span class="placeholder">${text}</span>`;
+  }
+
+  function buildContent() {
+    const data = {
+      personaName: document.getElementById('personaName').value.trim(),
+      skillName: document.getElementById('skillName').value.trim(),
+      oneLiner: document.getElementById('oneLiner').value.trim(),
+      voice: document.getElementById('voice').value.trim(),
+      personality: document.getElementById('personality').value.trim(),
+      genre: document.getElementById('genre').value.trim(),
+      heat: document.getElementById('heat').value.trim(),
+      whatTheyCheck: document.getElementById('whatTheyCheck').value.trim(),
+      editorType: document.getElementById('editorType').value.trim(),
+      outputFormat: document.getElementById('outputFormat').value.trim(),
+      loves: document.getElementById('loves').value.trim(),
+      hates: document.getElementById('hates').value.trim(),
+      triggers: document.getElementById('triggers').value.trim()
+    };
+
+    const persona = data.personaName || '[Persona Name]';
+    const skill = data.skillName || '[skill-name]';
+    const role = mode === 'beta' ? 'beta reader' : 'editor';
+    const Role = mode === 'beta' ? 'Beta Reader' : 'Editor';
+
+    // Build trigger string for description
+    let triggerKeywords;
+    if (data.triggers) {
+      const triggerLines = data.triggers.split('\n').map(l => l.trim()).filter(Boolean);
+      triggerKeywords = triggerLines.slice(0, 3).map(t => `'${t.replace(/^- /, '').replace(/'/g, "\\'")}'`).join(', ');
+    } else {
+      triggerKeywords = `'[trigger 1]', '[trigger 2]', '[trigger 3]'`;
+    }
+
+    // YAML frontmatter
+    const description = `${persona} is a ${data.oneLiner ? data.oneLiner.toLowerCase() : `[one-line summary describing this ${role}]`} Use this skill when ${mode === 'beta' ? 'giving beta feedback on' : 'editing or running an editorial pass on'} ${data.genre || '[genre]'} fiction${data.heat ? `, heat level ${data.heat}` : ''}. Triggers on: ${triggerKeywords}, or any request for ${role} feedback in this style.`;
+
+    let md = '';
+    md += `---\n`;
+    md += `name: ${skill}\n`;
+    md += `description: "${description.replace(/"/g, '\\"')}"\n`;
+    md += `---\n\n`;
+
+    md += `# ${persona} — ${Role} Skill\n\n`;
+
+    // Voice / Identity
+    md += `## Who ${persona.split(' ')[0] || 'This Persona'} Is\n\n`;
+    md += data.oneLiner ? `${data.oneLiner}\n\n` : `[One-line summary]\n\n`;
+    if (data.personality) {
+      md += `${data.personality}\n\n`;
+    }
+
+    // Voice
+    md += `## Voice\n\n`;
+    md += data.voice ? `${data.voice}\n\n` : `[Describe how this persona talks — tone, vocabulary, energy]\n\n`;
+
+    // Scope
+    md += `## What ${persona.split(' ')[0] || 'They'} Read / Edit\n\n`;
+    md += `**Genre focus:** ${data.genre || '[Genre/subgenre]'}\n`;
+    if (data.heat) md += `**Heat level:** ${data.heat}\n`;
+    if (mode === 'editor' && data.editorType) md += `**Editorial scope:** ${data.editorType}\n`;
+    md += `\n`;
+
+    // What they check for
+    md += mode === 'beta' ? `## What They're Reading For\n\n` : `## What They Flag and Fix\n\n`;
+    md += data.whatTheyCheck ? `${fmtList(data.whatTheyCheck, '[List specific things this persona checks for]')}\n\n` : `[List specific things this persona checks for]\n\n`;
+
+    // Loves
+    if (data.loves || data.hates) {
+      md += `## Calibration\n\n`;
+      if (data.loves) {
+        md += `**What ${persona.split(' ')[0] || 'They'} Love:**\n\n${fmtList(data.loves, '')}\n\n`;
+      }
+      if (data.hates) {
+        md += `**What ${persona.split(' ')[0] || 'They'} Hate:**\n\n${fmtList(data.hates, '')}\n\n`;
+      }
+    }
+
+    // Output format
+    md += `## How They Deliver ${mode === 'beta' ? 'Feedback' : 'Edits'}\n\n`;
+    md += data.outputFormat ? `${data.outputFormat}\n\n` : `[Describe the format of the output — bullets, narrative, margin notes, etc.]\n\n`;
+
+    // Triggers (in body too, for clarity)
+    md += `## When to Trigger This Skill\n\n`;
+    if (data.triggers) {
+      md += `${fmtList(data.triggers, '[List trigger phrases]')}\n\n`;
+    } else {
+      md += `[List trigger phrases — what should activate this persona]\n\n`;
+    }
+
+    // Closing reminder
+    md += `## Reminder\n\n`;
+    md += `This skill must be explicitly loaded each session. Use the Session Opener format:\n\n`;
+    md += `\`\`\`\n`;
+    md += `Load skill: ${skill}\n`;
+    md += `Context: [what manuscript/chapter, what kind of feedback you want]\n`;
+    md += `\`\`\`\n`;
+
+    return md;
+  }
+
+  function render() {
+    const md = buildContent();
+    // Render with simple syntax coloring
+    let html = escapeHtml(md);
+    // Color YAML frontmatter
+    html = html.replace(/(^---[\s\S]*?---\n)/, '<span class="yaml">$1</span>');
+    // Color headings
+    html = html.replace(/^(#{1,3} .+)$/gm, '<span class="heading">$1</span>');
+    // Color bracketed placeholders
+    html = html.replace(/(\[[^\]]+\])/g, '<span class="placeholder">$1</span>');
+
+    document.getElementById('preview').innerHTML = html;
+
+    const skillName = document.getElementById('skillName').value.trim() || 'your-skill-name';
+    document.getElementById('filenameDisplay').textContent = `SKILL.md`;
+    document.getElementById('folderDisplay').textContent = `${skillName}/`;
+  }
+
+  function copyOutput() {
+    const md = buildContent();
+    navigator.clipboard.writeText(md).then(() => {
+      const status = document.getElementById('copyStatus');
+      status.classList.add('show');
+      setTimeout(() => status.classList.remove('show'), 1800);
+    });
+  }
+
+  function downloadOutput() {
+    const md = buildContent();
+    const skillName = document.getElementById('skillName').value.trim() || 'your-skill';
+    const blob = new Blob([md], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SKILL.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // Initial render
+  render();
+</script>
+</body>
+</html>
