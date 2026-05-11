@@ -10,22 +10,22 @@ These are installable Claude plugins that give you a genre-specific AI writing p
 ### Pen Name Launcher
 **Launch a new pen name from zero to published — the complete system.**
 10-phase guided workflow + 6-lesson self-paced class with video scripts, slide decks, printable and fillable worksheets.
-[Purchase on Payhip](https://payhip.com/theinvisiblepen) | [View details](./pen-name-launcher/)
+[Purchase on Payhip](https://payhip.com/b/VF04b) | [View details](./pen-name-launcher/)
 
 ### Psychological Thriller Skill
 **Write confined-space thrillers, domestic suspense, and surreal horror.**
 Genre conventions, voice guidance, 15-point scene checklist, pacing framework, and a `/thriller-check` command for instant scene feedback.
-[Purchase on Payhip](https://payhip.com/theinvisiblepen) | [View details](./psychological-thriller/)
+[Purchase on Payhip](https://payhip.com/b/JiDcm) | [View details](./psychological-thriller/)
 
 ### Regency Romance Skill
 **Write period-accurate Regency romance with confidence.**
 Full language guide (what to say, what never to say), peerage and address tables, courtship progression, heat level calibration, anachronism traps, and a `/regency-check` command.
-[Purchase on Payhip](https://payhip.com/theinvisiblepen) | [View details](./regency-romance/)
+[Purchase on Payhip](https://payhip.com/b/EL4Tj) | [View details](./regency-romance/)
 
 ### Romantic Suspense Skill
 **Master the dual-engine genre — romance and suspense in equal measure.**
 Dual-arc pacing framework, balance rules at scene/chapter/book level, suspense mechanics toolkit, and a `/suspense-check` command.
-[Purchase on Payhip](https://payhip.com/theinvisiblepen) | [View details](./romantic-suspense/)
+[Purchase on Payhip](https://payhip.com/b/vl0ZB) | [View details](./romantic-suspense/)
 
 ## How to Install
 
