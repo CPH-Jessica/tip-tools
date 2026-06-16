@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Series Timeline Builder — The Invisible Pen</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#008080;--coral:#FF6B6B;--gold:#D4A574;--cream:#FFF8F0;
+  --charcoal:#2C2C2C;--teal-light:#e0f2f2;--teal-dark:#006666;
+  --coral-light:#ffe0e0;--gold-light:#f5e6d0;
+  --book1:#008080;--book2:#FF6B6B;--book3:#D4A574;--book4:#6B8E9B;
+  --book5:#9B6B8E;--book6:#8E9B6B;--book7:#6B6B9B;
+  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 4px 16px rgba(0,0,0,.12);
+  --radius:8px;--radius-lg:12px;
+  --transition:all .25s ease;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--cream);color:var(--charcoal);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
+header{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;text-align:center;padding:24px 16px 20px;position:relative}
+header h1{font-size:1.75rem;font-weight:700;letter-spacing:.5px}
+header .tagline{font-size:.85rem;opacity:.85;margin-top:4px;font-style:italic}
+header .series-name-display{font-size:1rem;margin-top:8px;background:rgba(255,255,255,.15);display:inline-block;padding:4px 16px;border-radius:20px}
+footer{background:var(--charcoal);color:#fff;text-align:center;padding:20px 16px;margin-top:auto;font-size:.85rem}
+footer a{color:var(--gold)}
+.container{max-width:1200px;margin:0 auto;padding:16px;width:100%}
+/* Tabs */
+.tab-bar{display:flex;gap:4px;overflow-x:auto;padding:8px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-btn{padding:10px 18px;border:none;background:transparent;color:var(--charcoal);font-size:.9rem;font-weight:500;cursor:pointer;border-radius:var(--radius) var(--radius) 0 0;white-space:nowrap;transition:var(--transition);border-bottom:3px solid transparent}
+.tab-btn:hover{background:var(--teal-light)}
+.tab-btn.active{background:#fff;color:var(--teal);border-bottom-color:var(--teal);font-weight:600}
+.tab-content{display:none;animation:fadeIn .3s ease}
+.tab-content.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+/* Cards */
+.card{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:20px;margin-bottom:16px;animation:slideIn .3s ease;border-left:4px solid var(--teal)}
+.card.coral{border-left-color:var(--coral)}
+.card.gold{border-left-color:var(--gold)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.card-header h3{font-size:1.05rem;color:var(--charcoal)}
+.card-actions{display:flex;gap:6px}
+/* Forms */
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:.85rem;font-weight:600;color:var(--charcoal);margin-bottom:4px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:var(--radius);font-size:.9rem;background:#fff;transition:var(--transition)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,128,128,.1)}
+.form-group textarea{resize:vertical;min-height:60px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row.three{grid-template-columns:1fr 1fr 1fr}
+/* Buttons */
+.btn{padding:8px 16px;border:none;border-radius:var(--radius);font-size:.85rem;font-weight:600;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--teal);color:#fff}.btn-primary:hover{background:var(--teal-dark)}
+.btn-coral{background:var(--coral);color:#fff}.btn-coral:hover{background:#e55a5a}
+.btn-gold{background:var(--gold);color:#fff}.btn-gold:hover{background:#c4955e}
+.btn-outline{background:transparent;border:2px solid var(--teal);color:var(--teal)}.btn-outline:hover{background:var(--teal);color:#fff}
+.btn-sm{padding:5px 10px;font-size:.8rem}
+.btn-danger{background:#dc3545;color:#fff}.btn-danger:hover{background:#c82333}
+.btn-icon{width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font-size:1rem}
+/* Tags */
+.tag{display:inline-block;padding:3px 10px;border-radius:12px;font-size:.75rem;font-weight:600}
+.tag-main{background:var(--teal);color:#fff}
+.tag-supporting{background:var(--gold);color:#fff}
+.tag-mentioned{background:#ccc;color:var(--charcoal)}
+/* Badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:.7rem;font-weight:700;text-transform:uppercase}
+.badge-plot{background:#e0f2f2;color:var(--teal)}
+.badge-character{background:var(--coral-light);color:var(--coral)}
+.badge-world{background:var(--gold-light);color:#8B6914}
+.badge-backstory{background:#e8e0f2;color:#6B4C9A}
+/* Status colors */
+.status-not-started{background:#f0f0f0;color:#999}
+.status-introduced{background:var(--teal-light);color:var(--teal)}
+.status-developing{background:#e6f0ff;color:#2563EB}
+.status-climax{background:var(--coral-light);color:var(--coral)}
+.status-resolved{background:#d4edda;color:#28a745}
+.status-dormant{background:#fff3cd;color:#856404}
+/* Thread tracker */
+.thread-bar{display:flex;gap:2px;margin:8px 0}
+.thread-segment{height:28px;flex:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;min-width:40px;cursor:pointer;transition:var(--transition)}
+.thread-segment:hover{transform:scaleY(1.15);box-shadow:var(--shadow)}
+.thread-segment.st-not-started{background:#ccc;color:#666}
+.thread-segment.st-introduced{background:var(--teal)}
+.thread-segment.st-developing{background:#2563EB}
+.thread-segment.st-climax{background:var(--coral)}
+.thread-segment.st-resolved{background:#28a745}
+.thread-segment.st-dormant{background:#ffc107;color:#333}
+/* Warning */
+.warning{background:#fff3cd;border:1px solid #ffc107;border-radius:var(--radius);padding:10px 14px;font-size:.85rem;color:#856404;margin:8px 0}
+/* Timeline canvas */
+.timeline-container{background:#fff;border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:20px;overflow-x:auto;position:relative}
+.timeline-canvas-wrap{min-height:400px;position:relative}
+#timelineCanvas{display:block;width:100%}
+/* Tooltip */
+.tooltip{position:fixed;background:var(--charcoal);color:#fff;padding:10px 14px;border-radius:var(--radius);font-size:.8rem;max-width:280px;pointer-events:none;z-index:1000;box-shadow:var(--shadow-lg);opacity:0;transition:opacity .15s}
+.tooltip.visible{opacity:1}
+.tooltip .tt-title{font-weight:700;margin-bottom:4px}
+.tooltip .tt-body{opacity:.85;line-height:1.4}
+/* Checkbox group */
+.checkbox-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.checkbox-group label{display:flex;align-items:center;gap:4px;font-size:.85rem;cursor:pointer;padding:4px 8px;border:1px solid #ddd;border-radius:var(--radius);transition:var(--transition)}
+.checkbox-group label:has(input:checked){background:var(--teal-light);border-color:var(--teal)}
+.checkbox-group input[type=checkbox]{accent-color:var(--teal)}
+/* Color swatch */
+.color-swatch{width:16px;height:16px;border-radius:50%;display:inline-block;vertical-align:middle;border:2px solid #fff;box-shadow:0 0 0 1px #ddd}
+/* Empty state */
+.empty-state{text-align:center;padding:40px 20px;color:#999}
+.empty-state .icon{font-size:2.5rem;margin-bottom:12px}
+.empty-state p{font-size:.95rem}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:900;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:var(--radius-lg);padding:24px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
+.modal h3{margin-bottom:16px;color:var(--teal)}
+/* Responsive */
+@media(max-width:768px){
+  .form-row,.form-row.three{grid-template-columns:1fr}
+  .tab-btn{padding:8px 12px;font-size:.8rem}
+  header h1{font-size:1.3rem}
+  .container{padding:12px}
+}
+/* Print */
+@media print{
+  header,.tab-bar,.btn,.card-actions,.form-group,footer{display:none!important}
+  .tab-content{display:block!important}
+  .card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+  body{background:#fff}
+}
+/* Section headers */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.section-header h2{font-size:1.2rem;color:var(--teal)}
+/* Character color dots */
+.char-dot{width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+/* Drag handle */
+.drag-handle{cursor:grab;color:#ccc;font-size:1.1rem;user-select:none;padding:4px}
+.drag-handle:hover{color:var(--teal)}
+.reorder-btns{display:flex;flex-direction:column;gap:2px}
+.reorder-btns .btn-icon{width:24px;height:24px;font-size:.7rem;background:var(--teal-light);color:var(--teal);border:none;cursor:pointer;border-radius:4px}
+.reorder-btns .btn-icon:hover{background:var(--teal);color:#fff}
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0;font-size:.8rem}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:10px;height:10px;border-radius:50%}
+/* Export area */
+.export-preview{background:#f8f8f8;border:1px solid #ddd;border-radius:var(--radius);padding:16px;font-family:'Courier New',monospace;font-size:.8rem;white-space:pre-wrap;max-height:500px;overflow-y:auto;margin:12px 0}
+.export-buttons{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+/* Timeline legend */
+.timeline-legend{margin-top:12px;padding:12px;background:#f9f9f9;border-radius:var(--radius)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Invisible Pen</h1>
+  <div class="tagline">AI for Authors Over 40</div>
+  <div class="series-name-display" id="seriesNameDisplay">Series Timeline Builder</div>
+</header>
+
+<div class="container">
+  <!-- Series Setup Bar -->
+  <div class="card" style="border-left-color:var(--gold)">
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Series Name</label>
+        <input type="text" id="seriesName" placeholder="e.g., The Crown of Thorns Saga" oninput="updateSeriesName()">
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Timeline Mode</label>
+        <select id="timelineMode" onchange="save()">
+          <option value="relative">Relative (Year 1, Month 3...)</option>
+          <option value="absolute">Absolute (Real dates)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-tab="books" role="tab">Books</button>
+    <button class="tab-btn" data-tab="characters" role="tab">Characters</button>
+    <button class="tab-btn" data-tab="events" role="tab">Events</button>
+    <button class="tab-btn" data-tab="threads" role="tab">Plot Threads</button>
+    <button class="tab-btn" data-tab="timeline" role="tab">Timeline</button>
+    <button class="tab-btn" data-tab="export" role="tab">Export</button>
+  </div>
+
+  <!-- BOOKS TAB -->
+  <div class="tab-content active" id="tab-books">
+    <div class="section-header">
+      <h2>Books in Series</h2>
+      <button class="btn btn-primary" onclick="showBookForm()">+ Add Book</button>
+    </div>
+    <div id="bookFormArea" style="display:none">
+      <div class="card gold">
+        <h3 style="margin-bottom:12px;color:var(--gold)">Add / Edit Book</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Book Number</label><input type="number" id="bookNum" min="1" value="1"></div>
+          <div class="form-group"><label>Title</label><input type="text" id="bookTitle" placeholder="Book title"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Timespan Start</label><input type="text" id="bookStart" placeholder="e.g., Year 1 Spring or March 1815"></div>
+          <div class="form-group"><label>Timespan End</label><input type="text" id="bookEnd" placeholder="e.g., Year 1 Summer or June 1815"></div>
+        </div>
+        <div class="form-group"><label>Notes</label><textarea id="bookNotes" placeholder="Synopsis, themes, key notes..."></textarea></div>
+        <input type="hidden" id="editBookId" value="">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveBook()">Save Book</button>
+          <button class="btn btn-outline" onclick="hideBookForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="booksList"></div>
+  </div>
+
+  <!-- CHARACTERS TAB -->
+  <div class="tab-content" id="tab-characters">
+    <div class="section-header">
+      <h2>Characters</h2>
+      <button class="btn btn-primary" onclick="showCharForm()">+ Add Character</button>
+    </div>
+    <div id="charFormArea" style="display:none">
+      <div class="card coral">
+        <h3 style="margin-bottom:12px;color:var(--coral)">Add / Edit Character</h3>
+        <div class="form-row three">
+          <div class="form-group"><label>Name</label><input type="text" id="charName" placeholder="Character name"></div>
+          <div class="form-group"><label>Role</label>
+            <select id="charRole"><option value="Main">Main</option><option value="Supporting">Supporting</option><option value="Mentioned">Mentioned</option></select>
+          </div>
+          <div class="form-group"><label>Color</label><input type="color" id="charColor" value="#008080"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Birth Date/Year</label><input type="text" id="charBirth" placeholder="e.g., Year -20 or 1790"></div>
+          <div class="form-group"><label>Death Date/Year (optional)</label><input type="text" id="charDeath" placeholder="Leave blank if alive"></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="charDesc" placeholder="Physical traits, personality, background..."></textarea></div>
+        <div class="form-group"><label>Appears in Books</label><div id="charBooksCheckboxes" class="checkbox-group"></div></div>
+        <input type="hidden" id="editCharId" value="">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-coral" onclick="saveChar()">Save Character</button>
+          <button class="btn btn-outline" onclick="hideCharForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="charsList"></div>
+  </div>
+
+  <!-- EVENTS TAB -->
+  <div class="tab-content" id="tab-events">
+    <div class="section-header">
+      <h2>Events</h2>
+      <button class="btn btn-primary" onclick="showEventForm()">+ Add Event</button>
+    </div>
+    <div id="eventFormArea" style="display:none">
+      <div class="card">
+        <h3 style="margin-bottom:12px;color:var(--teal)">Add / Edit Event</h3>
+        <div class="form-row">
+          <div class="form-group"><label>Event Title</label><input type="text" id="eventTitle" placeholder="What happens?"></div>
+          <div class="form-group"><label>Event Type</label>
+            <select id="eventType"><option value="Plot Point">Plot Point</option><option value="Character Event">Character Event</option><option value="World Event">World Event</option><option value="Backstory">Backstory</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Date/Time</label><input type="text" id="eventDate" placeholder="e.g., Year 1 Month 6 or April 1815"></div>
+          <div class="form-group"><label>Book</label><select id="eventBook"></select></div>
+        </div>
+        <div class="form-group"><label>Description</label><textarea id="eventDesc" placeholder="Event details..."></textarea></div>
+        <div class="form-group"><label>Characters Involved</label><div id="eventCharsCheckboxes" class="checkbox-group"></div></div>
+        <input type="hidden" id="editEventId" value="">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="saveEvent()">Save Event</button>
+          <button class="btn btn-outline" onclick="hideEventForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="eventsList"></div>
+  </div>
+
+  <!-- PLOT THREADS TAB -->
+  <div class="tab-content" id="tab-threads">
+    <div class="section-header">
+      <h2>Plot Threads</h2>
+      <button class="btn btn-primary" onclick="showThreadForm()">+ Add Thread</button>
+    </div>
+    <div id="threadFormArea" style="display:none">
+      <div class="card gold">
+        <h3 style="margin-bottom:12px;color:var(--gold)">Add / Edit Plot Thread</h3>
+        <div class="form-group"><label>Thread Name</label><input type="text" id="threadName" placeholder="e.g., The Missing Heir"></div>
+        <div class="form-group"><label>Description</label><textarea id="threadDesc" placeholder="What is this thread about?"></textarea></div>
+        <div class="form-group"><label>Introduced in Book</label><select id="threadIntro"></select></div>
+        <div id="threadStatusArea"></div>
+        <input type="hidden" id="editThreadId" value="">
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-gold" onclick="saveThread()">Save Thread</button>
+          <button class="btn btn-outline" onclick="hideThreadForm()">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <div id="threadWarnings"></div>
+    <div id="threadsList"></div>
+  </div>
+
+  <!-- TIMELINE TAB -->
+  <div class="tab-content" id="tab-timeline">
+    <div class="section-header">
+      <h2>Visual Timeline</h2>
+      <button class="btn btn-outline" onclick="drawTimeline()">Refresh</button>
+    </div>
+    <div class="timeline-container">
+      <div class="timeline-canvas-wrap">
+        <canvas id="timelineCanvas"></canvas>
+      </div>
+    </div>
+    <div class="timeline-legend" id="timelineLegend"></div>
+  </div>
+
+  <!-- EXPORT TAB -->
+  <div class="tab-content" id="tab-export">
+    <div class="section-header"><h2>Export Series Bible</h2></div>
+    <div class="export-buttons">
+      <button class="btn btn-primary" onclick="exportMarkdown()">Export Markdown</button>
+      <button class="btn btn-gold" onclick="exportJSON()">Export JSON Backup</button>
+      <button class="btn btn-outline" onclick="importJSON()">Import JSON</button>
+      <button class="btn btn-coral" onclick="window.print()">Print</button>
+    </div>
+    <div id="exportPreview" class="export-preview" style="display:none"></div>
+    <input type="file" id="jsonFileInput" accept=".json" style="display:none" onchange="handleImport(event)">
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-title"></div>
+  <div class="tt-body"></div>
+</div>
+
+<!-- Modal for details -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<footer>
+  <p>The Invisible Pen &mdash; AI for Authors Over 40</p>
+  <p style="margin-top:6px"><a href="https://www.skool.com/the-invisible-pen" target="_blank" rel="noopener">www.skool.com/the-invisible-pen</a></p>
+</footer>
+
+<script>
+// ============================================================
+//  DATA LAYER
+// ============================================================
+const STORAGE_KEY = 'tip_series_timeline';
+const BOOK_COLORS = ['#008080','#FF6B6B','#D4A574','#6B8E9B','#9B6B8E','#8E9B6B','#6B6B9B','#4A9E8E','#E07B53','#8B6914'];
+const STATUS_OPTIONS = ['Not Started','Introduced','Developing','Climax','Resolved','Dormant'];
+const STATUS_CLASSES = {'Not Started':'st-not-started','Introduced':'st-introduced','Developing':'st-developing','Climax':'st-climax','Resolved':'st-resolved','Dormant':'st-dormant'};
+const EVENT_TYPE_BADGES = {'Plot Point':'badge-plot','Character Event':'badge-character','World Event':'badge-world','Backstory':'badge-backstory'};
+
+let data = {
+  seriesName:'',
+  timelineMode:'relative',
+  books:[],
+  characters:[],
+  events:[],
+  threads:[]
+};
+
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function save(){
+  data.seriesName = document.getElementById('seriesName').value;
+  data.timelineMode = document.getElementById('timelineMode').value;
+  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(data))}catch(e){}
+}
+function load(){
+  try{
+    const s=localStorage.getItem(STORAGE_KEY);
+    if(s){data=JSON.parse(s);document.getElementById('seriesName').value=data.seriesName||'';document.getElementById('timelineMode').value=data.timelineMode||'relative';updateSeriesName()}
+  }catch(e){}
+}
+
+// ============================================================
+//  TAB SWITCHING
+// ============================================================
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+    if(btn.dataset.tab==='timeline')drawTimeline();
+    if(btn.dataset.tab==='export')generateExportPreview();
+  });
+});
+
+function updateSeriesName(){
+  const n=document.getElementById('seriesName').value.trim();
+  document.getElementById('seriesNameDisplay').textContent=n||'Series Timeline Builder';
+  save();
+}
+
+// ============================================================
+//  BOOKS
+// ============================================================
+function showBookForm(id){
+  const area=document.getElementById('bookFormArea');area.style.display='block';
+  if(id){
+    const b=data.books.find(x=>x.id===id);
+    if(!b)return;
+    document.getElementById('bookNum').value=b.number;
+    document.getElementById('bookTitle').value=b.title;
+    document.getElementById('bookStart').value=b.start;
+    document.getElementById('bookEnd').value=b.end;
+    document.getElementById('bookNotes').value=b.notes||'';
+    document.getElementById('editBookId').value=id;
+  }else{
+    document.getElementById('bookNum').value=data.books.length+1;
+    document.getElementById('bookTitle').value='';
+    document.getElementById('bookStart').value='';
+    document.getElementById('bookEnd').value='';
+    document.getElementById('bookNotes').value='';
+    document.getElementById('editBookId').value='';
+  }
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideBookForm(){document.getElementById('bookFormArea').style.display='none'}
+function saveBook(){
+  const id=document.getElementById('editBookId').value;
+  const obj={
+    id:id||uid(),
+    number:parseInt(document.getElementById('bookNum').value)||1,
+    title:document.getElementById('bookTitle').value.trim()||'Untitled',
+    start:document.getElementById('bookStart').value.trim(),
+    end:document.getElementById('bookEnd').value.trim(),
+    notes:document.getElementById('bookNotes').value.trim()
+  };
+  if(id){const i=data.books.findIndex(x=>x.id===id);if(i>=0)data.books[i]=obj}
+  else data.books.push(obj);
+  data.books.sort((a,b)=>a.number-b.number);
+  save();hideBookForm();renderBooks();
+}
+function deleteBook(id){
+  if(!confirm('Remove this book? Characters and events referencing it will keep their data.'))return;
+  data.books=data.books.filter(x=>x.id!==id);save();renderBooks();
+}
+function getBookColor(idx){return BOOK_COLORS[idx%BOOK_COLORS.length]}
+function getBookColorById(id){const i=data.books.findIndex(x=>x.id===id);return i>=0?getBookColor(i):'#999'}
+function renderBooks(){
+  const el=document.getElementById('booksList');
+  if(!data.books.length){el.innerHTML='<div class="empty-state"><div class="icon">📚</div><p>No books yet. Add your first book to get started.</p></div>';return}
+  el.innerHTML=data.books.map((b,i)=>`
+    <div class="card" style="border-left-color:${getBookColor(i)}">
+      <div class="card-header">
+        <h3><span class="color-swatch" style="background:${getBookColor(i)};margin-right:8px"></span>Book ${b.number}: ${esc(b.title)}</h3>
+        <div class="card-actions">
+          <button class="btn btn-sm btn-outline" onclick="showBookForm('${b.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteBook('${b.id}')">Del</button>
+        </div>
+      </div>
+      <div style="font-size:.85rem;color:#666">
+        <strong>Timespan:</strong> ${esc(b.start||'—')} to ${esc(b.end||'—')}
+        ${b.notes?'<br><strong>Notes:</strong> '+esc(b.notes):''}
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+//  CHARACTERS
+// ============================================================
+function showCharForm(id){
+  const area=document.getElementById('charFormArea');area.style.display='block';
+  buildCharBookCheckboxes(id?data.characters.find(x=>x.id===id):null);
+  if(id){
+    const c=data.characters.find(x=>x.id===id);
+    if(!c)return;
+    document.getElementById('charName').value=c.name;
+    document.getElementById('charRole').value=c.role;
+    document.getElementById('charColor').value=c.color;
+    document.getElementById('charBirth').value=c.birth||'';
+    document.getElementById('charDeath').value=c.death||'';
+    document.getElementById('charDesc').value=c.description||'';
+    document.getElementById('editCharId').value=id;
+  }else{
+    document.getElementById('charName').value='';
+    document.getElementById('charRole').value='Main';
+    document.getElementById('charColor').value=BOOK_COLORS[data.characters.length%BOOK_COLORS.length];
+    document.getElementById('charBirth').value='';
+    document.getElementById('charDeath').value='';
+    document.getElementById('charDesc').value='';
+    document.getElementById('editCharId').value='';
+  }
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideCharForm(){document.getElementById('charFormArea').style.display='none'}
+function buildCharBookCheckboxes(char){
+  const el=document.getElementById('charBooksCheckboxes');
+  el.innerHTML=data.books.map(b=>`<label><input type="checkbox" value="${b.id}" ${char&&char.books&&char.books.includes(b.id)?'checked':''}> Book ${b.number}: ${esc(b.title)}</label>`).join('');
+}
+function saveChar(){
+  const id=document.getElementById('editCharId').value;
+  const books=Array.from(document.querySelectorAll('#charBooksCheckboxes input:checked')).map(x=>x.value);
+  const obj={
+    id:id||uid(),
+    name:document.getElementById('charName').value.trim()||'Unnamed',
+    role:document.getElementById('charRole').value,
+    color:document.getElementById('charColor').value,
+    birth:document.getElementById('charBirth').value.trim(),
+    death:document.getElementById('charDeath').value.trim(),
+    description:document.getElementById('charDesc').value.trim(),
+    books
+  };
+  if(id){const i=data.characters.findIndex(x=>x.id===id);if(i>=0)data.characters[i]=obj}
+  else data.characters.push(obj);
+  save();hideCharForm();renderChars();
+}
+function deleteChar(id){
+  if(!confirm('Remove this character?'))return;
+  data.characters=data.characters.filter(x=>x.id!==id);save();renderChars();
+}
+function calcAge(birthStr,eventStr){
+  const bNum=parseTimeStr(birthStr);const eNum=parseTimeStr(eventStr);
+  if(bNum===null||eNum===null)return null;
+  return Math.floor(eNum-bNum);
+}
+function parseTimeStr(s){
+  if(!s)return null;
+  // Try absolute year
+  const ym=s.match(/(\d{4})/);if(ym)return parseInt(ym[1]);
+  // Try relative: Year X
+  const rm=s.match(/year\s*(-?\d+)/i);if(rm)return parseInt(rm[1]);
+  return null;
+}
+function renderChars(){
+  const el=document.getElementById('charsList');
+  if(!data.characters.length){el.innerHTML='<div class="empty-state"><div class="icon">👤</div><p>No characters yet. Add your first character.</p></div>';return}
+  el.innerHTML=data.characters.map(c=>{
+    const roleClass=c.role==='Main'?'tag-main':c.role==='Supporting'?'tag-supporting':'tag-mentioned';
+    const bookNames=c.books?c.books.map(bid=>{const b=data.books.find(x=>x.id===bid);return b?'Book '+b.number:'?'}).join(', '):'—';
+    return `
+    <div class="card" style="border-left-color:${c.color}">
+      <div class="card-header">
+        <h3><span class="char-dot" style="background:${c.color}"></span>${esc(c.name)} <span class="tag ${roleClass}">${c.role}</span></h3>
+        <div class="card-actions">
+          <button class="btn btn-sm btn-outline" onclick="showCharForm('${c.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteChar('${c.id}')">Del</button>
+        </div>
+      </div>
+      <div style="font-size:.85rem;color:#666">
+        ${c.birth?'<strong>Born:</strong> '+esc(c.birth):''}${c.death?' &mdash; <strong>Died:</strong> '+esc(c.death):''}
+        <br><strong>Appears in:</strong> ${esc(bookNames)}
+        ${c.description?'<br><strong>Description:</strong> '+esc(c.description):''}
+      </div>
+    </div>`}).join('');
+}
+
+// ============================================================
+//  EVENTS
+// ============================================================
+function showEventForm(id){
+  const area=document.getElementById('eventFormArea');area.style.display='block';
+  buildEventBookSelect();buildEventCharCheckboxes(id?data.events.find(x=>x.id===id):null);
+  if(id){
+    const e=data.events.find(x=>x.id===id);
+    if(!e)return;
+    document.getElementById('eventTitle').value=e.title;
+    document.getElementById('eventType').value=e.type;
+    document.getElementById('eventDate').value=e.date||'';
+    document.getElementById('eventBook').value=e.bookId||'';
+    document.getElementById('eventDesc').value=e.description||'';
+    document.getElementById('editEventId').value=id;
+  }else{
+    document.getElementById('eventTitle').value='';
+    document.getElementById('eventType').value='Plot Point';
+    document.getElementById('eventDate').value='';
+    document.getElementById('eventBook').value=data.books.length?data.books[0].id:'';
+    document.getElementById('eventDesc').value='';
+    document.getElementById('editEventId').value='';
+  }
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideEventForm(){document.getElementById('eventFormArea').style.display='none'}
+function buildEventBookSelect(){
+  const el=document.getElementById('eventBook');
+  el.innerHTML='<option value="">— No book —</option>'+data.books.map(b=>`<option value="${b.id}">Book ${b.number}: ${esc(b.title)}</option>`).join('');
+}
+function buildEventCharCheckboxes(ev){
+  const el=document.getElementById('eventCharsCheckboxes');
+  el.innerHTML=data.characters.map(c=>`<label><input type="checkbox" value="${c.id}" ${ev&&ev.characters&&ev.characters.includes(c.id)?'checked':''}> <span class="char-dot" style="background:${c.color}"></span>${esc(c.name)}</label>`).join('');
+}
+function saveEvent(){
+  const id=document.getElementById('editEventId').value;
+  const chars=Array.from(document.querySelectorAll('#eventCharsCheckboxes input:checked')).map(x=>x.value);
+  const obj={
+    id:id||uid(),
+    title:document.getElementById('eventTitle').value.trim()||'Untitled Event',
+    type:document.getElementById('eventType').value,
+    date:document.getElementById('eventDate').value.trim(),
+    bookId:document.getElementById('eventBook').value,
+    description:document.getElementById('eventDesc').value.trim(),
+    characters:chars,
+    order:id?data.events.find(x=>x.id===id)?.order||Date.now():Date.now()
+  };
+  if(id){const i=data.events.findIndex(x=>x.id===id);if(i>=0)data.events[i]=obj}
+  else data.events.push(obj);
+  save();hideEventForm();renderEvents();
+}
+function deleteEvent(id){
+  if(!confirm('Remove this event?'))return;
+  data.events=data.events.filter(x=>x.id!==id);save();renderEvents();
+}
+function moveEvent(id,dir){
+  const i=data.events.findIndex(x=>x.id===id);
+  if(i<0)return;
+  const ni=i+dir;
+  if(ni<0||ni>=data.events.length)return;
+  [data.events[i],data.events[ni]]=[data.events[ni],data.events[i]];
+  data.events.forEach((e,idx)=>e.order=idx);
+  save();renderEvents();
+}
+function renderEvents(){
+  const el=document.getElementById('eventsList');
+  if(!data.events.length){el.innerHTML='<div class="empty-state"><div class="icon">📌</div><p>No events yet. Add your first event.</p></div>';return}
+  el.innerHTML=data.events.map((e,idx)=>{
+    const book=data.books.find(b=>b.id===e.bookId);
+    const bookColor=book?getBookColorById(e.bookId):'#999';
+    const charNames=e.characters?e.characters.map(cid=>{const c=data.characters.find(x=>x.id===cid);return c?c.name:'?'}).join(', '):'—';
+    const badgeClass=EVENT_TYPE_BADGES[e.type]||'badge-plot';
+    return `
+    <div class="card" style="border-left-color:${bookColor}">
+      <div class="card-header">
+        <h3>${esc(e.title)} <span class="badge ${badgeClass}">${e.type}</span></h3>
+        <div class="card-actions">
+          <div class="reorder-btns">
+            <button class="btn-icon" onclick="moveEvent('${e.id}',-1)" title="Move up">&#9650;</button>
+            <button class="btn-icon" onclick="moveEvent('${e.id}',1)" title="Move down">&#9660;</button>
+          </div>
+          <button class="btn btn-sm btn-outline" onclick="showEventForm('${e.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteEvent('${e.id}')">Del</button>
+        </div>
+      </div>
+      <div style="font-size:.85rem;color:#666">
+        <strong>When:</strong> ${esc(e.date||'—')} ${book?'&mdash; <strong>Book '+book.number+':</strong> '+esc(book.title):''}
+        <br><strong>Characters:</strong> ${esc(charNames)}
+        ${e.description?'<br><strong>Details:</strong> '+esc(e.description):''}
+      </div>
+    </div>`}).join('');
+}
+
+// ============================================================
+//  PLOT THREADS
+// ============================================================
+function showThreadForm(id){
+  const area=document.getElementById('threadFormArea');area.style.display='block';
+  buildThreadBookSelect();
+  if(id){
+    const t=data.threads.find(x=>x.id===id);
+    if(!t)return;
+    document.getElementById('threadName').value=t.name;
+    document.getElementById('threadDesc').value=t.description||'';
+    document.getElementById('threadIntro').value=t.introBook||'';
+    document.getElementById('editThreadId').value=id;
+    buildThreadStatusInputs(t);
+  }else{
+    document.getElementById('threadName').value='';
+    document.getElementById('threadDesc').value='';
+    document.getElementById('threadIntro').value=data.books.length?data.books[0].id:'';
+    document.getElementById('editThreadId').value='';
+    buildThreadStatusInputs(null);
+  }
+  area.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function hideThreadForm(){document.getElementById('threadFormArea').style.display='none'}
+function buildThreadBookSelect(){
+  const el=document.getElementById('threadIntro');
+  el.innerHTML=data.books.map(b=>`<option value="${b.id}">Book ${b.number}: ${esc(b.title)}</option>`).join('');
+}
+function buildThreadStatusInputs(thread){
+  const el=document.getElementById('threadStatusArea');
+  if(!data.books.length){el.innerHTML='<p style="color:#999;font-size:.85rem">Add books first to set thread status per book.</p>';return}
+  el.innerHTML='<label style="font-weight:600;font-size:.85rem;display:block;margin:12px 0 8px">Status per Book</label>'+
+    data.books.map(b=>{
+      const val=thread&&thread.statusPerBook?thread.statusPerBook[b.id]||'Not Started':'Not Started';
+      return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="min-width:120px;font-size:.85rem"><span class="color-swatch" style="background:${getBookColorById(b.id)}"></span> Book ${b.number}</span>
+        <select class="thread-status-select" data-book="${b.id}" style="flex:1;padding:6px 8px;border:1px solid #ddd;border-radius:4px;font-size:.85rem">
+          ${STATUS_OPTIONS.map(s=>`<option value="${s}" ${val===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>`}).join('');
+}
+function saveThread(){
+  const id=document.getElementById('editThreadId').value;
+  const statusPerBook={};
+  document.querySelectorAll('.thread-status-select').forEach(sel=>{statusPerBook[sel.dataset.book]=sel.value});
+  const obj={
+    id:id||uid(),
+    name:document.getElementById('threadName').value.trim()||'Untitled Thread',
+    description:document.getElementById('threadDesc').value.trim(),
+    introBook:document.getElementById('threadIntro').value,
+    statusPerBook
+  };
+  if(id){const i=data.threads.findIndex(x=>x.id===id);if(i>=0)data.threads[i]=obj}
+  else data.threads.push(obj);
+  save();hideThreadForm();renderThreads();
+}
+function deleteThread(id){
+  if(!confirm('Remove this plot thread?'))return;
+  data.threads=data.threads.filter(x=>x.id!==id);save();renderThreads();
+}
+function renderThreads(){
+  const el=document.getElementById('threadsList');
+  const warn=document.getElementById('threadWarnings');
+  // Find unresolved threads
+  const warnings=[];
+  data.threads.forEach(t=>{
+    const statuses=Object.values(t.statusPerBook||{});
+    const introduced=statuses.some(s=>s!=='Not Started');
+    const resolved=statuses.includes('Resolved');
+    if(introduced&&!resolved)warnings.push(t.name);
+  });
+  warn.innerHTML=warnings.length?warnings.map(n=>`<div class="warning">Thread "${esc(n)}" is introduced but never resolved across the series.</div>`).join(''):'';
+
+  if(!data.threads.length){el.innerHTML='<div class="empty-state"><div class="icon">🧵</div><p>No plot threads yet. Add your first thread.</p></div>';return}
+  el.innerHTML=data.threads.map(t=>{
+    const bar=data.books.map(b=>{
+      const st=t.statusPerBook?t.statusPerBook[b.id]||'Not Started':'Not Started';
+      const cls=STATUS_CLASSES[st]||'st-not-started';
+      const abbr=st==='Not Started'?'—':st.slice(0,3).toUpperCase();
+      return `<div class="thread-segment ${cls}" title="Book ${b.number}: ${st}">${abbr}</div>`;
+    }).join('');
+    return `
+    <div class="card gold">
+      <div class="card-header">
+        <h3>${esc(t.name)}</h3>
+        <div class="card-actions">
+          <button class="btn btn-sm btn-outline" onclick="showThreadForm('${t.id}')">Edit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteThread('${t.id}')">Del</button>
+        </div>
+      </div>
+      ${t.description?'<p style="font-size:.85rem;color:#666;margin-bottom:8px">'+esc(t.description)+'</p>':''}
+      <div class="thread-bar">${bar}</div>
+      <div class="legend" style="margin-top:4px">
+        ${data.books.map(b=>`<span class="legend-item"><span class="legend-dot" style="background:${getBookColorById(b.id)}"></span>Bk ${b.number}</span>`).join('')}
+      </div>
+    </div>`}).join('');
+}
+
+// ============================================================
+//  VISUAL TIMELINE (Canvas)
+// ============================================================
+function drawTimeline(){
+  const canvas=document.getElementById('timelineCanvas');
+  const wrap=canvas.parentElement;
+  const dpr=window.devicePixelRatio||1;
+  const books=data.books;
+  if(!books.length){
+    canvas.width=wrap.clientWidth*dpr;canvas.height=200*dpr;
+    canvas.style.width=wrap.clientWidth+'px';canvas.style.height='200px';
+    const ctx=canvas.getContext('2d');ctx.scale(dpr,dpr);
+    ctx.fillStyle='#999';ctx.font='16px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Add books and events to see the timeline.',wrap.clientWidth/2,100);
+    return;
+  }
+
+  const PAD_TOP=60,PAD_BOTTOM=120,PAD_LEFT=50,PAD_RIGHT=30;
+  const BOOK_H=50,BOOK_GAP=12,CHAR_H=18,CHAR_GAP=4,EVENT_R=8;
+  const totalBooks=books.length;
+  const chars=data.characters.filter(c=>c.books&&c.books.length);
+  const events=data.events;
+
+  // Calculate height
+  const booksHeight=totalBooks*(BOOK_H+BOOK_GAP);
+  const charsHeight=chars.length*(CHAR_H+CHAR_GAP)+40;
+  const totalHeight=PAD_TOP+booksHeight+charsHeight+PAD_BOTTOM+60;
+  const W=Math.max(wrap.clientWidth,600);
+
+  canvas.width=W*dpr;canvas.height=totalHeight*dpr;
+  canvas.style.width=W+'px';canvas.style.height=totalHeight+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,W,totalHeight);
+
+  // Background
+  ctx.fillStyle='#fff';
+  ctx.fillRect(0,0,W,totalHeight);
+
+  const trackW=W-PAD_LEFT-PAD_RIGHT;
+
+  // Title
+  ctx.fillStyle='var(--teal)';ctx.fillStyle='#008080';
+  ctx.font='bold 16px sans-serif';ctx.textAlign='center';
+  ctx.fillText((data.seriesName||'Series')+' Timeline',W/2,30);
+
+  // Section: Books
+  ctx.font='bold 13px sans-serif';ctx.textAlign='left';ctx.fillStyle='#008080';
+  ctx.fillText('BOOKS',PAD_LEFT,PAD_TOP-8);
+
+  const bookRects=[];
+  books.forEach((b,i)=>{
+    const y=PAD_TOP+i*(BOOK_H+BOOK_GAP);
+    const color=getBookColor(i);
+    // Book block
+    ctx.fillStyle=color+'22';
+    ctx.strokeStyle=color;ctx.lineWidth=2;
+    roundRect(ctx,PAD_LEFT,y,trackW,BOOK_H,6,true,true);
+    // Book label
+    ctx.fillStyle=color;ctx.font='bold 13px sans-serif';ctx.textAlign='left';
+    ctx.fillText('Book '+b.number+': '+b.title,PAD_LEFT+12,y+20);
+    ctx.font='11px sans-serif';ctx.fillStyle='#666';
+    ctx.fillText((b.start||'?')+' → '+(b.end||'?'),PAD_LEFT+12,y+38);
+    bookRects.push({id:b.id,x:PAD_LEFT,y,w:trackW,h:BOOK_H,color,book:b});
+
+    // Events within this book
+    const bookEvents=events.filter(e=>e.bookId===b.id);
+    if(bookEvents.length){
+      const evSpacing=trackW/(bookEvents.length+1);
+      bookEvents.forEach((ev,ei)=>{
+        const ex=PAD_LEFT+evSpacing*(ei+1);
+        const ey=y+BOOK_H/2;
+        // Event dot
+        ctx.beginPath();ctx.arc(ex,ey,EVENT_R,0,Math.PI*2);
+        const evColor=ev.type==='Plot Point'?'#008080':ev.type==='Character Event'?'#FF6B6B':ev.type==='World Event'?'#D4A574':'#6B4C9A';
+        ctx.fillStyle=evColor;ctx.fill();
+        ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+        // Store for hover
+        bookRects.push({id:ev.id,x:ex-EVENT_R,y:ey-EVENT_R,w:EVENT_R*2,h:EVENT_R*2,event:ev,isEvent:true});
+      });
+    }
+  });
+
+  // Section: Character Lifespans
+  const charY0=PAD_TOP+booksHeight+30;
+  ctx.fillStyle='#008080';ctx.font='bold 13px sans-serif';ctx.textAlign='left';
+  ctx.fillText('CHARACTER APPEARANCES',PAD_LEFT,charY0-8);
+
+  chars.forEach((c,ci)=>{
+    const y=charY0+ci*(CHAR_H+CHAR_GAP);
+    // Find which books this character appears in
+    const bookIndices=c.books.map(bid=>data.books.findIndex(x=>x.id===bid)).filter(i=>i>=0).sort();
+    if(!bookIndices.length)return;
+    const minIdx=bookIndices[0];
+    const maxIdx=bookIndices[bookIndices.length-1];
+    const segW=trackW/data.books.length;
+    const x1=PAD_LEFT+minIdx*segW;
+    const x2=PAD_LEFT+(maxIdx+1)*segW;
+    // Bar
+    ctx.fillStyle=c.color+'44';
+    ctx.strokeStyle=c.color;ctx.lineWidth=1.5;
+    roundRect(ctx,x1,y,x2-x1,CHAR_H,4,true,true);
+    // Dots for each book
+    bookIndices.forEach(bi=>{
+      const dx=PAD_LEFT+bi*segW+segW/2;
+      ctx.beginPath();ctx.arc(dx,y+CHAR_H/2,4,0,Math.PI*2);
+      ctx.fillStyle=c.color;ctx.fill();
+    });
+    // Label
+    ctx.fillStyle=c.color;ctx.font='bold 11px sans-serif';ctx.textAlign='left';
+    const roleTag=c.role==='Main'?' (M)':c.role==='Supporting'?' (S)':' (m)';
+    ctx.fillText(c.name+roleTag,x1+6,y+CHAR_H/2+4);
+  });
+
+  // Book number axis at bottom
+  const axisY=charY0+chars.length*(CHAR_H+CHAR_GAP)+20;
+  const segW=trackW/data.books.length;
+  data.books.forEach((b,i)=>{
+    const x=PAD_LEFT+i*segW+segW/2;
+    ctx.fillStyle=getBookColor(i);ctx.font='bold 11px sans-serif';ctx.textAlign='center';
+    ctx.fillText('Bk '+b.number,x,axisY);
+  });
+
+  // Legend
+  buildTimelineLegend();
+
+  // Hover handling
+  canvas._rects=bookRects;
+  canvas.onmousemove=function(e){
+    const rect=canvas.getBoundingClientRect();
+    const mx=(e.clientX-rect.left);
+    const my=(e.clientY-rect.top);
+    const hit=bookRects.find(r=>r.isEvent&&mx>=r.x&&mx<=r.x+r.w&&my>=r.y&&my<=r.y+r.h);
+    const tt=document.getElementById('tooltip');
+    if(hit&&hit.event){
+      tt.querySelector('.tt-title').textContent=hit.event.title;
+      const book=data.books.find(b=>b.id===hit.event.bookId);
+      const charNames=hit.event.characters?hit.event.characters.map(cid=>{const c=data.characters.find(x=>x.id===cid);return c?c.name:'?'}).join(', '):'—';
+      tt.querySelector('.tt-body').innerHTML=hit.event.type+'<br>'+hit.event.date+(book?' | Book '+book.number:'')+'<br>Characters: '+charNames+(hit.event.description?'<br>'+hit.event.description:'');
+      tt.style.left=Math.min(e.clientX+12,window.innerWidth-300)+'px';
+      tt.style.top=(e.clientY-60)+'px';
+      tt.classList.add('visible');
+    }else{tt.classList.remove('visible')}
+  };
+  canvas.onmouseleave=function(){document.getElementById('tooltip').classList.remove('visible')};
+}
+
+function buildTimelineLegend(){
+  const el=document.getElementById('timelineLegend');
+  let html='<div class="legend">';
+  html+='<strong style="font-size:.85rem;margin-right:8px">Event Types:</strong>';
+  html+='<span class="legend-item"><span class="legend-dot" style="background:#008080"></span>Plot Point</span>';
+  html+='<span class="legend-item"><span class="legend-dot" style="background:#FF6B6B"></span>Character Event</span>';
+  html+='<span class="legend-item"><span class="legend-dot" style="background:#D4A574"></span>World Event</span>';
+  html+='<span class="legend-item"><span class="legend-dot" style="background:#6B4C9A"></span>Backstory</span>';
+  html+='</div>';
+  html+='<div class="legend" style="margin-top:4px">';
+  html+='<strong style="font-size:.85rem;margin-right:8px">Books:</strong>';
+  data.books.forEach((b,i)=>{html+='<span class="legend-item"><span class="legend-dot" style="background:'+getBookColor(i)+'"></span>Bk '+b.number+': '+esc(b.title)+'</span>'});
+  html+='</div>';
+  html+='<div class="legend" style="margin-top:4px">';
+  html+='<strong style="font-size:.85rem;margin-right:8px">Thread Status:</strong>';
+  STATUS_OPTIONS.forEach(s=>{
+    const cls=STATUS_CLASSES[s];
+    const colors={'st-not-started':'#ccc','st-introduced':'#008080','st-developing':'#2563EB','st-climax':'#FF6B6B','st-resolved':'#28a745','st-dormant':'#ffc107'};
+    html+='<span class="legend-item"><span class="legend-dot" style="background:'+colors[cls]+'"></span>'+s+'</span>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+  if(fill)ctx.fill();if(stroke)ctx.stroke();
+}
+
+// ============================================================
+//  EXPORT
+// ============================================================
+function generateExportPreview(){
+  document.getElementById('exportPreview').style.display='block';
+  document.getElementById('exportPreview').textContent=buildMarkdown();
+}
+function buildMarkdown(){
+  let md='# '+( data.seriesName||'Untitled Series')+' — Series Bible\n\n';
+  md+='*Generated by The Invisible Pen Series Timeline Builder*\n\n';
+  md+='---\n\n';
+  // Books
+  md+='## Books\n\n';
+  data.books.forEach(b=>{
+    md+='### Book '+b.number+': '+b.title+'\n';
+    md+='- **Timespan:** '+(b.start||'?')+' to '+(b.end||'?')+'\n';
+    if(b.notes)md+='- **Notes:** '+b.notes+'\n';
+    md+='\n';
+  });
+  // Characters
+  md+='## Characters\n\n';
+  data.characters.forEach(c=>{
+    md+='### '+c.name+' ('+c.role+')\n';
+    if(c.birth)md+='- **Born:** '+c.birth+'\n';
+    if(c.death)md+='- **Died:** '+c.death+'\n';
+    const bookNames=c.books?c.books.map(bid=>{const b=data.books.find(x=>x.id===bid);return b?'Book '+b.number+': '+b.title:'?'}).join(', '):'—';
+    md+='- **Appears in:** '+bookNames+'\n';
+    if(c.description)md+='- **Description:** '+c.description+'\n';
+    // Calculate ages at book starts
+    if(c.birth){
+      data.books.forEach(b=>{
+        if(c.books&&c.books.includes(b.id)){
+          const age=calcAge(c.birth,b.start);
+          if(age!==null)md+='- Age at Book '+b.number+' start: '+age+'\n';
+        }
+      });
+    }
+    md+='\n';
+  });
+  // Events
+  md+='## Events (Chronological)\n\n';
+  data.events.forEach(e=>{
+    const book=data.books.find(b=>b.id===e.bookId);
+    const charNames=e.characters?e.characters.map(cid=>{const c=data.characters.find(x=>x.id===cid);return c?c.name:'?'}).join(', '):'—';
+    md+='### '+e.title+' ['+e.type+']\n';
+    md+='- **When:** '+(e.date||'?')+(book?' — Book '+book.number+': '+book.title:'')+'\n';
+    md+='- **Characters:** '+charNames+'\n';
+    if(e.description)md+='- **Details:** '+e.description+'\n';
+    md+='\n';
+  });
+  // Threads
+  md+='## Plot Threads\n\n';
+  data.threads.forEach(t=>{
+    md+='### '+t.name+'\n';
+    if(t.description)md+='- **Description:** '+t.description+'\n';
+    md+='- **Status by book:**\n';
+    data.books.forEach(b=>{
+      const st=t.statusPerBook?t.statusPerBook[b.id]||'Not Started':'Not Started';
+      md+='  - Book '+b.number+': '+st+'\n';
+    });
+    const statuses=Object.values(t.statusPerBook||{});
+    if(statuses.some(s=>s!=='Not Started')&&!statuses.includes('Resolved')){
+      md+='- **WARNING: Thread introduced but never resolved!**\n';
+    }
+    md+='\n';
+  });
+  return md;
+}
+function exportMarkdown(){
+  const md=buildMarkdown();
+  download(md,(data.seriesName||'series-bible').replace(/\s+/g,'-').toLowerCase()+'.md','text/markdown');
+}
+function exportJSON(){
+  download(JSON.stringify(data,null,2),(data.seriesName||'series-backup').replace(/\s+/g,'-').toLowerCase()+'.json','application/json');
+}
+function importJSON(){document.getElementById('jsonFileInput').click()}
+function handleImport(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const imported=JSON.parse(ev.target.result);
+      if(imported.books&&imported.characters){
+        data=imported;
+        document.getElementById('seriesName').value=data.seriesName||'';
+        document.getElementById('timelineMode').value=data.timelineMode||'relative';
+        updateSeriesName();save();renderAll();
+        alert('Import successful!');
+      }else{alert('Invalid file format.')}
+    }catch(err){alert('Error parsing JSON: '+err.message)}
+  };
+  reader.readAsText(file);
+  e.target.value='';
+}
+function download(content,filename,type){
+  const blob=new Blob([content],{type});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ============================================================
+//  UTILITIES
+// ============================================================
+function esc(s){if(!s)return'';const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('active')}
+
+function renderAll(){renderBooks();renderChars();renderEvents();renderThreads()}
+
+// ============================================================
+//  INIT
+// ============================================================
+load();
+renderAll();
+window.addEventListener('resize',()=>{
+  if(document.querySelector('[data-tab="timeline"]').classList.contains('active'))drawTimeline();
+});
+</script>
+</body>
+</html>

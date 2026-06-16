@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blurb Builder | The Invisible Pen</title>
+<style>
+:root {
+  --teal: #008080;
+  --teal-dark: #006666;
+  --teal-light: #00a0a0;
+  --coral: #FF6B6B;
+  --coral-dark: #e55555;
+  --gold: #D4A574;
+  --gold-light: #e0bb93;
+  --cream: #FFF8F0;
+  --charcoal: #2C2C2C;
+  --charcoal-light: #444444;
+  --gray-100: #f7f7f7;
+  --gray-200: #e8e8e8;
+  --gray-300: #d1d1d1;
+  --gray-400: #a0a0a0;
+  --gray-500: #737373;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --transition: 0.25s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--cream);
+  color: var(--charcoal);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* HEADER */
+.header {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  padding: 24px 0;
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  position: relative;
+}
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral), var(--gold), var(--coral));
+}
+.header h1 {
+  color: var(--white);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+.header p {
+  color: rgba(255,255,255,0.85);
+  font-size: 15px;
+  font-weight: 400;
+}
+.header .brand-mark {
+  display: inline-block;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* PROGRESS DOTS */
+.progress-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 36px;
+  padding: 20px 0;
+}
+.progress-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: default;
+  position: relative;
+  z-index: 1;
+}
+.progress-step.clickable { cursor: pointer; }
+.progress-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  border: 3px solid var(--gray-300);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-400);
+  transition: all var(--transition);
+}
+.progress-step.active .progress-dot {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
+  box-shadow: 0 0 0 4px rgba(0,128,128,0.15);
+}
+.progress-step.completed .progress-dot {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
+}
+.progress-step.completed .progress-dot::after {
+  content: '\2713';
+  font-size: 16px;
+}
+.progress-step.completed .dot-number { display: none; }
+.progress-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray-400);
+  margin-top: 6px;
+  transition: color var(--transition);
+}
+.progress-step.active .progress-label,
+.progress-step.completed .progress-label { color: var(--teal); }
+.progress-connector {
+  width: 40px;
+  height: 3px;
+  background: var(--gray-200);
+  margin: 0 4px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  transition: background var(--transition);
+}
+.progress-connector.filled { background: var(--teal); }
+
+/* STEP CARD */
+.step-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.step-header {
+  margin-bottom: 28px;
+}
+.step-number {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  color: var(--white);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.step-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+}
+.step-subtitle {
+  font-size: 14px;
+  color: var(--gray-500);
+}
+
+/* FORM ELEMENTS */
+.field-group {
+  margin-bottom: 22px;
+}
+.field-group:last-of-type { margin-bottom: 0; }
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.field-hint {
+  font-size: 12px;
+  color: var(--gray-500);
+  font-weight: 400;
+  margin-left: 4px;
+}
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--charcoal);
+  background: var(--white);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  outline: none;
+}
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0,128,128,0.1);
+}
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--gray-400);
+}
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23737373' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+/* PILL CHECKBOXES */
+.pill-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.pill-checkbox {
+  display: none;
+}
+.pill-label {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 2px solid var(--gray-200);
+  border-radius: 24px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+.pill-label:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: rgba(0,128,128,0.04);
+}
+.pill-checkbox:checked + .pill-label {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--white);
+}
+
+/* BUTTONS */
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 32px;
+  gap: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(0,128,128,0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,128,128,0.35);
+}
+.btn-secondary {
+  background: var(--white);
+  color: var(--charcoal);
+  border: 2px solid var(--gray-200);
+}
+.btn-secondary:hover {
+  border-color: var(--gray-300);
+  background: var(--gray-100);
+}
+.btn-coral {
+  background: linear-gradient(135deg, var(--coral), var(--coral-dark));
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(255,107,107,0.3);
+}
+.btn-coral:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(255,107,107,0.35);
+}
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 13px;
+}
+.btn-spacer { flex: 1; }
+.btn:active { transform: translateY(0); }
+
+/* CUSTOM GENRE INPUT */
+#customGenreWrap {
+  margin-top: 10px;
+  display: none;
+}
+#customGenreWrap.visible { display: block; }
+
+/* RESULTS PAGE */
+.results-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.results-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 6px;
+}
+.results-header p {
+  color: var(--gray-500);
+  font-size: 14px;
+}
+.results-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.blurb-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--gray-200);
+  position: relative;
+  animation: fadeIn 0.4s ease;
+}
+.blurb-card:nth-child(2) { animation-delay: 0.1s; }
+.blurb-card:nth-child(3) { animation-delay: 0.2s; }
+.blurb-variant-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.variant-a { background: rgba(0,128,128,0.1); color: var(--teal); }
+.variant-b { background: rgba(255,107,107,0.1); color: var(--coral); }
+.variant-c { background: rgba(212,165,116,0.1); color: #b8884a; }
+
+.blurb-content {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--charcoal);
+  white-space: pre-wrap;
+  min-height: 100px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: background var(--transition);
+}
+.blurb-content:focus {
+  background: rgba(0,128,128,0.03);
+}
+.blurb-content:hover:not(:focus) {
+  background: var(--gray-100);
+}
+
+.blurb-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-200);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.char-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-500);
+}
+.char-count.warning { color: var(--coral); font-weight: 600; }
+.char-count.danger { color: #cc0000; font-weight: 700; }
+
+.copy-btns {
+  display: flex;
+  gap: 8px;
+}
+
+/* AMAZON PREVIEW */
+.amazon-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+  user-select: none;
+}
+.amazon-toggle:hover { color: var(--teal-dark); }
+.amazon-preview {
+  display: none;
+  margin-top: 14px;
+  padding: 20px;
+  background: var(--cream);
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--gray-300);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--charcoal);
+}
+.amazon-preview.visible { display: block; }
+.amazon-preview b { font-weight: 700; }
+.amazon-preview i { font-style: italic; }
+.amazon-preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--charcoal);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 32px 20px;
+  font-size: 13px;
+  color: var(--gray-500);
+  border-top: 1px solid var(--gray-200);
+  margin-top: 40px;
+}
+.footer a {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 600;
+}
+.footer a:hover { text-decoration: underline; }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .container { padding: 20px 14px 40px; }
+  .step-card { padding: 24px 20px; }
+  .header h1 { font-size: 22px; }
+  .progress-connector { width: 20px; }
+  .progress-dot { width: 30px; height: 30px; font-size: 12px; }
+  .progress-label { font-size: 8px; }
+  .btn-row { flex-wrap: wrap; }
+  .btn { width: 100%; justify-content: center; }
+  .btn-spacer { display: none; }
+  .blurb-card { padding: 20px 16px; }
+  .copy-btns { width: 100%; justify-content: flex-end; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Blurb Builder</h1>
+  <p>Craft compelling book blurbs in minutes &mdash; by <span class="brand-mark">The Invisible Pen</span></p>
+</div>
+
+<div class="container">
+  <!-- PROGRESS BAR -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- WIZARD STEPS -->
+  <div id="wizardArea"></div>
+
+  <!-- RESULTS -->
+  <div id="resultsArea" style="display:none;"></div>
+</div>
+
+<div class="footer">
+  Built by <a href="https://theinvisiblepen.com" target="_blank" rel="noopener">The Invisible Pen</a> | theinvisiblepen.com
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  const STEPS = [
+    { key: 'genre', label: 'Genre', num: 1 },
+    { key: 'character', label: 'Character', num: 2 },
+    { key: 'incident', label: 'Incident', num: 3 },
+    { key: 'stakes', label: 'Stakes', num: 4 },
+    { key: 'emotion', label: 'Emotion', num: 5 },
+    { key: 'comp', label: 'Comp Hook', num: 6 }
+  ];
+
+  const GENRES = [
+    'Contemporary Romance','Romantic Suspense','Paranormal Romance','Dark Romance',
+    'Romantasy','Historical Romance','Regency Romance','Cozy Mystery',
+    'Thriller/Suspense','Fantasy','Sci-Fi','Horror','Literary Fiction',
+    "Women's Fiction",'Young Adult','Other'
+  ];
+
+  const THEMES = [
+    'Second Chance','Forbidden Love','Enemies to Lovers','Found Family','Redemption',
+    'Survival','Identity','Revenge','Justice','Secrets','Betrayal'
+  ];
+
+  const TONES = [
+    'Witty','Dark','Steamy','Heartwarming','Edge-of-Your-Seat',
+    'Lyrical','Gritty','Quirky','Emotional','Atmospheric'
+  ];
+
+  let currentStep = 0;
+  let formData = {};
+  let blurbs = [];
+
+  // ---- INIT ----
+  function init() {
+    buildProgress();
+    renderStep(0);
+  }
+
+  // ---- PROGRESS BAR ----
+  function buildProgress() {
+    const bar = document.getElementById('progressBar');
+    bar.innerHTML = '';
+    STEPS.forEach((s, i) => {
+      if (i > 0) {
+        const conn = document.createElement('div');
+        conn.className = 'progress-connector' + (i <= currentStep ? ' filled' : '');
+        conn.id = 'conn-' + i;
+        bar.appendChild(conn);
+      }
+      const step = document.createElement('div');
+      step.className = 'progress-step' + (i === currentStep ? ' active' : '') + (i < currentStep ? ' completed clickable' : '');
+      step.innerHTML = `<div class="progress-dot"><span class="dot-number">${s.num}</span></div><div class="progress-label">${s.label}</div>`;
+      if (i < currentStep) {
+        step.addEventListener('click', () => goToStep(i));
+      }
+      step.id = 'pstep-' + i;
+      bar.appendChild(step);
+    });
+  }
+
+  function updateProgress() {
+    STEPS.forEach((s, i) => {
+      const el = document.getElementById('pstep-' + i);
+      if (!el) return;
+      el.className = 'progress-step' + (i === currentStep ? ' active' : '') + (i < currentStep ? ' completed clickable' : '');
+      // Re-bind click
+      el.replaceWith(el.cloneNode(true));
+      const fresh = document.getElementById('pstep-' + i);
+      if (i < currentStep) {
+        fresh.classList.add('clickable');
+        fresh.addEventListener('click', () => goToStep(i));
+      }
+      if (i > 0) {
+        const conn = document.getElementById('conn-' + i);
+        if (conn) conn.className = 'progress-connector' + (i <= currentStep ? ' filled' : '');
+      }
+    });
+  }
+
+  // ---- SAVE / LOAD STEP DATA ----
+  function saveCurrentStep() {
+    const s = currentStep;
+    if (s === 0) {
+      const sel = document.getElementById('genreSelect');
+      formData.genre = sel ? sel.value : '';
+      if (formData.genre === 'Other') {
+        const c = document.getElementById('customGenre');
+        formData.genreCustom = c ? c.value.trim() : '';
+      }
+    } else if (s === 1) {
+      formData.mcName = val('mcName');
+      formData.mcSituation = val('mcSituation');
+      formData.mcTrait = val('mcTrait');
+    } else if (s === 2) {
+      formData.inciting = val('inciting');
+      formData.disruption = val('disruption');
+    } else if (s === 3) {
+      formData.ifFail = val('ifFail');
+      formData.standToLose = val('standToLose');
+    } else if (s === 4) {
+      formData.coreFeeling = val('coreFeeling');
+      formData.themes = getChecked('theme');
+    } else if (s === 5) {
+      formData.compTitles = val('compTitles');
+      formData.tones = getChecked('tone');
+    }
+  }
+
+  function val(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : '';
+  }
+
+  function getChecked(prefix) {
+    const result = [];
+    document.querySelectorAll(`input[data-group="${prefix}"]`).forEach(cb => {
+      if (cb.checked) result.push(cb.value);
+    });
+    return result;
+  }
+
+  // ---- NAVIGATION ----
+  function goToStep(n) {
+    saveCurrentStep();
+    currentStep = n;
+    updateProgress();
+    renderStep(n);
+    document.getElementById('resultsArea').style.display = 'none';
+    document.getElementById('wizardArea').style.display = '';
+  }
+
+  function nextStep() {
+    saveCurrentStep();
+    if (currentStep < 5) {
+      currentStep++;
+      updateProgress();
+      renderStep(currentStep);
+    } else {
+      showResults();
+    }
+  }
+
+  function prevStep() {
+    saveCurrentStep();
+    if (currentStep > 0) {
+      currentStep--;
+      updateProgress();
+      renderStep(currentStep);
+    }
+  }
+
+  // ---- RENDER STEPS ----
+  function renderStep(n) {
+    const area = document.getElementById('wizardArea');
+    area.style.display = '';
+    let html = '<div class="step-card">';
+
+    if (n === 0) {
+      html += stepHeader(1, 'Genre', 'What genre is your book?');
+      html += '<div class="field-group"><label class="field-label">Select your genre</label>';
+      html += '<select id="genreSelect" onchange="window._bb.genreChange()">';
+      html += '<option value="">Choose a genre...</option>';
+      GENRES.forEach(g => {
+        const sel = formData.genre === g ? ' selected' : '';
+        html += `<option value="${g}"${sel}>${g}</option>`;
+      });
+      html += '</select></div>';
+      html += `<div id="customGenreWrap" class="${formData.genre === 'Other' ? 'visible' : ''}">`;
+      html += `<div class="field-group"><label class="field-label">Your genre</label><input type="text" id="customGenre" placeholder="e.g., Cli-Fi, Afrofuturism, Cozy Fantasy" value="${esc(formData.genreCustom || '')}"></div></div>`;
+    } else if (n === 1) {
+      html += stepHeader(2, 'Main Character', 'Who is the heart of your story?');
+      html += field('mcName', 'Character name', 'text', 'e.g., Elara Thorne');
+      html += fieldArea('mcSituation', 'Situation / role', 'A small-town baker who...');
+      html += field('mcTrait', 'Key trait or flaw', 'text', 'e.g., Refuses to trust anyone');
+    } else if (n === 2) {
+      html += stepHeader(3, 'Inciting Incident', 'What sets your story in motion?');
+      html += fieldArea('inciting', 'Everything changes when...', 'A letter arrives from the past...');
+      html += fieldArea('disruption', 'What disrupts their world?', 'The one person she swore to forget walks back into her bakery...');
+    } else if (n === 3) {
+      html += stepHeader(4, 'Stakes', 'What hangs in the balance?');
+      html += fieldArea('ifFail', 'If they fail...', 'She loses the only home she has ever known...');
+      html += fieldArea('standToLose', 'What they stand to lose', 'Her family legacy, her independence, and the walls she built to keep herself safe.');
+    } else if (n === 4) {
+      html += stepHeader(5, 'Emotional Hook', 'What feeling should the reader carry away?');
+      html += fieldArea('coreFeeling', 'Core feeling or question', 'Can you risk everything for a love you already lost once?');
+      html += '<div class="field-group"><label class="field-label">Themes <span class="field-hint">(select all that apply)</span></label><div class="pill-grid">';
+      THEMES.forEach((t, i) => {
+        const checked = (formData.themes || []).includes(t) ? ' checked' : '';
+        html += `<input type="checkbox" class="pill-checkbox" id="theme${i}" data-group="theme" value="${t}"${checked}><label class="pill-label" for="theme${i}">${t}</label>`;
+      });
+      html += '</div></div>';
+    } else if (n === 5) {
+      html += stepHeader(6, 'Comp Hook', 'Position your book for readers');
+      html += field('compTitles', '"For fans of..." titles or authors', 'text', 'e.g., Emily Henry, The Hating Game, Beach Read');
+      html += '<div class="field-group"><label class="field-label">Tone <span class="field-hint">(select all that apply)</span></label><div class="pill-grid">';
+      TONES.forEach((t, i) => {
+        const checked = (formData.tones || []).includes(t) ? ' checked' : '';
+        html += `<input type="checkbox" class="pill-checkbox" id="tone${i}" data-group="tone" value="${t}"${checked}><label class="pill-label" for="tone${i}">${t}</label>`;
+      });
+      html += '</div></div>';
+    }
+
+    html += '<div class="btn-row">';
+    if (n > 0) html += '<button class="btn btn-secondary" onclick="window._bb.prevStep()">&larr; Back</button>';
+    html += '<div class="btn-spacer"></div>';
+    if (n < 5) html += '<button class="btn btn-primary" onclick="window._bb.nextStep()">Next &rarr;</button>';
+    else html += '<button class="btn btn-coral" onclick="window._bb.nextStep()">Generate Blurbs &rarr;</button>';
+    html += '</div>';
+
+    html += '</div>';
+    area.innerHTML = html;
+    // Scroll to top of card
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function stepHeader(num, title, subtitle) {
+    return `<div class="step-header"><div class="step-number">Step ${num} of 6</div><h2 class="step-title">${title}</h2><p class="step-subtitle">${subtitle}</p></div>`;
+  }
+
+  function field(id, label, type, placeholder) {
+    const v = esc(formData[id] || '');
+    return `<div class="field-group"><label class="field-label" for="${id}">${label}</label><input type="${type}" id="${id}" placeholder="${placeholder}" value="${v}"></div>`;
+  }
+
+  function fieldArea(id, label, placeholder) {
+    const v = esc(formData[id] || '');
+    return `<div class="field-group"><label class="field-label" for="${id}">${label}</label><textarea id="${id}" placeholder="${placeholder}">${v}</textarea></div>`;
+  }
+
+  function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function genreChange() {
+    const sel = document.getElementById('genreSelect');
+    const wrap = document.getElementById('customGenreWrap');
+    if (sel.value === 'Other') {
+      wrap.classList.add('visible');
+    } else {
+      wrap.classList.remove('visible');
+    }
+  }
+
+  // ---- BLURB GENERATION ----
+  function getGenreLabel() {
+    if (formData.genre === 'Other') return formData.genreCustom || 'fiction';
+    return formData.genre || 'fiction';
+  }
+
+  function capitalize(s) {
+    if (!s) return '';
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function ensurePeriod(s) {
+    if (!s) return '';
+    s = s.trim();
+    if (s && !s.match(/[.!?]$/)) s += '.';
+    return s;
+  }
+
+  function stripLeading(s) {
+    // Remove leading "A ", "The ", etc if we need to embed in sentence
+    return s.replace(/^(a |an |the |she |he |they |when |everything )/i, (m) => m.toLowerCase());
+  }
+
+  function buildCompLine() {
+    let parts = [];
+    if (formData.compTitles) {
+      parts.push('For fans of ' + formData.compTitles.trim().replace(/\.$/, ''));
+    }
+    if (formData.tones && formData.tones.length > 0) {
+      const toneStr = formData.tones.join(', ').toLowerCase();
+      if (parts.length > 0) {
+        parts[0] += ' — a ' + toneStr + ' read you won’t put down.';
+      } else {
+        parts.push('A ' + toneStr + ' read you won’t put down.');
+      }
+    } else if (parts.length > 0) {
+      parts[0] += '.';
+    }
+    return parts.join(' ');
+  }
+
+  function buildThemeUndercurrent() {
+    if (!formData.themes || formData.themes.length === 0) return '';
+    const t = formData.themes;
+    if (t.length === 1) return 'a story of ' + t[0].toLowerCase();
+    if (t.length === 2) return 'a story of ' + t[0].toLowerCase() + ' and ' + t[1].toLowerCase();
+    return 'a story of ' + t.slice(0, -1).map(x => x.toLowerCase()).join(', ') + ', and ' + t[t.length - 1].toLowerCase();
+  }
+
+  function genreAdjective() {
+    const g = getGenreLabel().toLowerCase();
+    if (g.includes('romance') || g.includes('romantasy')) return 'sweeping';
+    if (g.includes('thriller') || g.includes('suspense')) return 'pulse-pounding';
+    if (g.includes('horror')) return 'chilling';
+    if (g.includes('mystery')) return 'captivating';
+    if (g.includes('fantasy') || g.includes('sci-fi')) return 'epic';
+    if (g.includes('literary')) return 'luminous';
+    if (g.includes('women')) return 'unforgettable';
+    return 'compelling';
+  }
+
+  function genreNoun() {
+    const g = getGenreLabel().toLowerCase();
+    if (g.includes('romance') || g.includes('romantasy')) return 'romance';
+    if (g.includes('thriller') || g.includes('suspense')) return 'thriller';
+    if (g.includes('horror')) return 'nightmare';
+    if (g.includes('mystery')) return 'mystery';
+    if (g.includes('fantasy')) return 'adventure';
+    if (g.includes('sci-fi')) return 'journey';
+    return 'novel';
+  }
+
+  function hookQuestion() {
+    const feeling = formData.coreFeeling || '';
+    if (feeling.match(/^(can |what |how |will |is |does |should |would |could |when |where |why )/i)) {
+      return capitalize(feeling.trim().replace(/\?*$/, '?'));
+    }
+    // Convert a statement into a question or bold statement
+    if (feeling) {
+      return capitalize(ensurePeriod(feeling));
+    }
+    return 'Some risks are worth everything.';
+  }
+
+  function generateBlurbs() {
+    saveCurrentStep();
+
+    const mc = formData.mcName || 'the protagonist';
+    const situation = formData.mcSituation || '';
+    const trait = formData.mcTrait || '';
+    const inciting = formData.inciting || '';
+    const disruption = formData.disruption || '';
+    const ifFail = formData.ifFail || '';
+    const standToLose = formData.standToLose || '';
+    const coreFeeling = formData.coreFeeling || '';
+    const compLine = buildCompLine();
+    const themeStr = buildThemeUndercurrent();
+    const genre = getGenreLabel();
+    const adj = genreAdjective();
+    const noun = genreNoun();
+
+    // Clean inputs
+    const situationClean = ensurePeriod(situation);
+    const traitSentence = trait ? capitalize(ensurePeriod(trait.replace(/^(she |he |they )/i, ''))) : '';
+    const incitingClean = ensurePeriod(inciting);
+    const disruptionClean = ensurePeriod(disruption);
+    const failClean = ensurePeriod(ifFail);
+    const loseClean = ensurePeriod(standToLose);
+
+    // ---- VARIATION A: HOOK-FIRST ----
+    let a = '';
+    a += hookQuestion() + '\n\n';
+    a += mc + ' has built ' + (situation.match(/^(a |an |the )/i) ? 'a life as ' + stripLeading(situation).replace(/\.\s*$/, '') : 'a life ' + stripLeading(situationClean).replace(/\.\s*$/, '')) + '. ';
+    if (trait) a += capitalize(trait.replace(/\.\s*$/, '')) + ' is the armor that keeps ' + mc.split(' ')[0] + ' safe. ';
+    a += 'But everything changes when ' + stripLeading(incitingClean).replace(/\.\s*$/, '') + '. ';
+    if (disruption) a += capitalize(disruptionClean) + ' ';
+    a += '\n\n';
+    a += 'Now, ' + mc.split(' ')[0] + ' must face an impossible choice. ';
+    if (ifFail) a += 'If ' + mc.split(' ')[0] + ' fails, ' + stripLeading(failClean).replace(/\.\s*$/, '') + '. ';
+    if (standToLose) a += 'At stake: ' + stripLeading(loseClean) + ' ';
+    if (themeStr) a += 'In this ' + adj + ' ' + genre.toLowerCase() + ', ' + themeStr + ' collide in ways no one expects. ';
+    a += '\n\n';
+    if (compLine) a += compLine;
+
+    // ---- VARIATION B: CHARACTER-FIRST ----
+    let b = '';
+    b += mc + ' is ' + stripLeading(situationClean).replace(/\.\s*$/, '') + '. ';
+    if (trait) b += 'With ' + stripLeading(trait).replace(/\.\s*$/, '').toLowerCase() + ' running through every decision, ' + mc.split(' ')[0] + ' has learned to keep the world at arm’s length. ';
+    b += '\n\n';
+    b += 'Then ' + stripLeading(incitingClean).replace(/\.\s*$/, '') + '. ';
+    if (disruption) b += capitalize(disruption.replace(/\.\s*$/, '')) + ', and nothing will ever be the same. ';
+    b += '\n\n';
+    if (ifFail) b += 'Failure means ' + stripLeading(ifFail).replace(/\.\s*$/, '').toLowerCase() + '. ';
+    if (standToLose) b += capitalize(loseClean) + ' ';
+    if (coreFeeling) b += hookQuestion() + ' ';
+    if (themeStr) b += 'This ' + adj + ' ' + noun + ' is ' + themeStr + ' that will stay with you long after the last page. ';
+    b += '\n\n';
+    if (compLine) b += compLine;
+
+    // ---- VARIATION C: STAKES-FIRST ----
+    let c = '';
+    if (ifFail) {
+      c += capitalize(ifFail.replace(/\.\s*$/, '')) + '. ';
+    }
+    if (standToLose) {
+      c += capitalize(standToLose.replace(/\.\s*$/, '')) + '. ';
+    }
+    c += 'For ' + mc + ', the threat is all too real. ';
+    c += '\n\n';
+    c += capitalize(situationClean.replace(/\.\s*$/, '')) + ', ' + mc.split(' ')[0] + ' thought the hardest days were behind ' + (mc.split(' ')[0].match(/^(she|her|ms|mrs|miss|lady|queen|princess)/i) ? 'her' : 'them') + '. ';
+    if (trait) c += 'But ' + stripLeading(trait).replace(/\.\s*$/, '').toLowerCase() + ' has always been both a shield and a cage. ';
+    c += '\n\n';
+    c += 'When ' + stripLeading(incitingClean).replace(/\.\s*$/, '') + ', ' + mc.split(' ')[0] + ' is forced to confront everything ' + (mc.split(' ')[0].match(/^(she|her|ms|mrs|miss|lady|queen|princess)/i) ? 'she' : 'they') + ' buried. ';
+    if (disruption) c += capitalize(disruptionClean) + ' ';
+    if (coreFeeling) c += '\n\n' + hookQuestion() + ' ';
+    if (themeStr) c += 'In this ' + adj + ' ' + noun + ', ' + themeStr + ' drive a story you won’t soon forget. ';
+    c += '\n\n';
+    if (compLine) c += compLine;
+
+    // Clean up double spaces
+    [a, b, c] = [a, b, c].map(x => x.replace(/  +/g, ' ').replace(/\n /g, '\n').trim());
+
+    blurbs = [
+      { label: 'Hook-First', variant: 'a', text: a },
+      { label: 'Character-First', variant: 'b', text: b },
+      { label: 'Stakes-First', variant: 'c', text: c }
+    ];
+  }
+
+  // ---- SHOW RESULTS ----
+  function showResults() {
+    generateBlurbs();
+    document.getElementById('wizardArea').style.display = 'none';
+    const area = document.getElementById('resultsArea');
+    area.style.display = '';
+
+    // Hide progress dots active state
+    document.querySelectorAll('.progress-step').forEach(el => {
+      el.classList.remove('active');
+      el.classList.add('completed','clickable');
+    });
+
+    let html = '';
+    html += '<div class="results-header"><h2>Your Blurbs Are Ready</h2><p>Three variations to choose from. Click any blurb text to edit inline.</p></div>';
+    html += '<div class="results-actions">';
+    html += '<button class="btn btn-coral btn-sm" onclick="window._bb.regenerate()">&#8635; Regenerate</button>';
+    html += '<button class="btn btn-secondary btn-sm" onclick="window._bb.editInputs()">&#9998; Edit Inputs</button>';
+    html += '</div>';
+
+    blurbs.forEach((bl, idx) => {
+      const variantClass = 'variant-' + bl.variant;
+      html += `<div class="blurb-card">`;
+      html += `<div class="blurb-variant-badge ${variantClass}">Variation ${bl.variant.toUpperCase()}: ${bl.label}</div>`;
+      html += `<div class="blurb-content" contenteditable="true" id="blurb-${idx}" oninput="window._bb.updateCount(${idx})">${esc(bl.text)}</div>`;
+      html += `<div class="blurb-footer">`;
+      html += `<span class="char-count" id="count-${idx}"></span>`;
+      html += `<div class="copy-btns">`;
+      html += `<button class="btn btn-secondary btn-sm" onclick="window._bb.copyPlain(${idx})">Copy Plain</button>`;
+      html += `<button class="btn btn-primary btn-sm" onclick="window._bb.copyHTML(${idx})">Copy HTML</button>`;
+      html += `</div></div>`;
+      html += `<div class="amazon-toggle" onclick="window._bb.togglePreview(${idx})"><span id="prevToggle-${idx}">▶</span> Amazon KDP Preview</div>`;
+      html += `<div class="amazon-preview" id="preview-${idx}"></div>`;
+      html += `</div>`;
+    });
+
+    area.innerHTML = html;
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Initial counts + previews
+    blurbs.forEach((_, i) => {
+      updateCount(i);
+      buildAmazonPreview(i);
+    });
+  }
+
+  function updateCount(idx) {
+    const el = document.getElementById('blurb-' + idx);
+    const countEl = document.getElementById('count-' + idx);
+    if (!el || !countEl) return;
+    const text = el.innerText || el.textContent || '';
+    const len = text.length;
+    countEl.textContent = len.toLocaleString() + ' / 4,000 characters';
+    countEl.className = 'char-count';
+    if (len >= 4000) countEl.classList.add('danger');
+    else if (len >= 3800) countEl.classList.add('warning');
+    // Also refresh preview
+    buildAmazonPreview(idx);
+  }
+
+  function buildAmazonPreview(idx) {
+    const el = document.getElementById('blurb-' + idx);
+    const prev = document.getElementById('preview-' + idx);
+    if (!el || !prev) return;
+    const raw = el.innerText || el.textContent || '';
+    const paragraphs = raw.split(/\n\n+/).filter(p => p.trim());
+    let html = '<span class="amazon-preview-label">KDP Description Preview</span>';
+    paragraphs.forEach((p, i) => {
+      const trimmed = p.trim();
+      if (i === 0) {
+        html += '<p><b>' + esc(trimmed) + '</b></p>';
+      } else if (i === paragraphs.length - 1) {
+        html += '<p><i>' + esc(trimmed) + '</i></p>';
+      } else {
+        html += '<p>' + esc(trimmed) + '</p>';
+      }
+    });
+    prev.innerHTML = html;
+  }
+
+  function togglePreview(idx) {
+    const prev = document.getElementById('preview-' + idx);
+    const icon = document.getElementById('prevToggle-' + idx);
+    if (prev.classList.contains('visible')) {
+      prev.classList.remove('visible');
+      icon.textContent = '▶';
+    } else {
+      prev.classList.add('visible');
+      icon.textContent = '▼';
+    }
+  }
+
+  // ---- COPY ----
+  function copyPlain(idx) {
+    const el = document.getElementById('blurb-' + idx);
+    const text = el.innerText || el.textContent || '';
+    navigator.clipboard.writeText(text).then(() => showToast('Plain text copied!')).catch(() => fallbackCopy(text));
+  }
+
+  function copyHTML(idx) {
+    const el = document.getElementById('blurb-' + idx);
+    const raw = el.innerText || el.textContent || '';
+    const paragraphs = raw.split(/\n\n+/).filter(p => p.trim());
+    let html = '';
+    paragraphs.forEach((p, i) => {
+      const trimmed = p.trim();
+      if (i === 0) {
+        html += '<b>' + trimmed + '</b><br><br>';
+      } else if (i === paragraphs.length - 1) {
+        html += '<i>' + trimmed + '</i>';
+      } else {
+        html += trimmed + '<br><br>';
+      }
+    });
+    navigator.clipboard.writeText(html).then(() => showToast('HTML copied for KDP!')).catch(() => fallbackCopy(html));
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('Copied!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2200);
+  }
+
+  function regenerate() {
+    showResults();
+    showToast('Blurbs regenerated!');
+  }
+
+  function editInputs() {
+    currentStep = 0;
+    updateProgress();
+    renderStep(0);
+    document.getElementById('resultsArea').style.display = 'none';
+    document.getElementById('wizardArea').style.display = '';
+  }
+
+  // Expose to global
+  window._bb = {
+    nextStep, prevStep, genreChange, regenerate, editInputs,
+    updateCount, togglePreview, copyPlain, copyHTML
+  };
+
+  init();
+})();
+</script>
+</body>
+</html>

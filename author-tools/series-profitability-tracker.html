@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Series Profitability Tracker | The Invisible Pen</title>
+<style>
+:root {
+  --teal: #008080;
+  --teal-dark: #006666;
+  --teal-light: #00a0a0;
+  --coral: #FF6B6B;
+  --coral-dark: #e55555;
+  --gold: #D4A574;
+  --gold-dark: #c49464;
+  --cream: #FFF8F0;
+  --charcoal: #2C2C2C;
+  --charcoal-light: #444;
+  --white: #ffffff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --green: #10b981;
+  --green-bg: #d1fae5;
+  --red: #ef4444;
+  --red-bg: #fee2e2;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--gray-50);
+  color: var(--charcoal);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+  color: var(--white);
+  padding: 24px 0;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.header-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.header-logo {
+  width: 44px;
+  height: 44px;
+  background: var(--white);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: var(--teal);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.header p {
+  font-size: 13px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+.header-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary {
+  background: var(--teal);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover { background: var(--teal-dark); }
+.btn-coral {
+  background: var(--coral);
+  color: var(--white);
+}
+.btn-coral:hover { background: var(--coral-dark); }
+.btn-gold {
+  background: var(--gold);
+  color: var(--white);
+}
+.btn-gold:hover { background: var(--gold-dark); }
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--gray-300);
+  color: var(--charcoal);
+}
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
+.btn-white {
+  background: var(--white);
+  color: var(--teal);
+}
+.btn-white:hover { background: var(--cream); }
+.btn-danger {
+  background: var(--red);
+  color: var(--white);
+}
+.btn-danger:hover { background: #dc2626; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-icon {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius);
+}
+
+/* Container */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Dashboard Cards */
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-200);
+}
+.card-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--gray-500);
+  margin-bottom: 6px;
+}
+.card-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--charcoal);
+  letter-spacing: -0.5px;
+}
+.card-value.positive { color: var(--green); }
+.card-value.negative { color: var(--red); }
+.card-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+.card-icon.teal { background: #e0f2f1; color: var(--teal); }
+.card-icon.coral { background: #fde8e8; color: var(--coral); }
+.card-icon.gold { background: #fef3e2; color: var(--gold); }
+.card-icon.green { background: var(--green-bg); color: var(--green); }
+
+/* Sections */
+.section {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-200);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.section-header h2 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+.section-body { padding: 20px; }
+
+/* Books Grid */
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+.book-card {
+  background: var(--gray-50);
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 18px;
+  transition: border-color 0.15s;
+}
+.book-card:hover { border-color: var(--teal); }
+.book-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.book-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: var(--white);
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.book-title {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+.book-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--gray-600);
+}
+.book-stat-val { font-weight: 600; color: var(--charcoal); }
+.book-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-200);
+}
+
+/* Read-Through Section */
+.rt-bars { display: flex; flex-direction: column; gap: 14px; }
+.rt-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 14px;
+}
+.rt-label {
+  min-width: 200px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rt-bar-track {
+  flex: 1;
+  height: 24px;
+  background: var(--gray-100);
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+.rt-bar-fill {
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+  min-width: 48px;
+}
+.rt-pct {
+  min-width: 52px;
+  text-align: right;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Table */
+.table-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.filter-select, .search-input {
+  padding: 8px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  background: var(--white);
+  color: var(--charcoal);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.filter-select:focus, .search-input:focus { border-color: var(--teal); }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.data-table thead th {
+  background: var(--gray-50);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--gray-500);
+  border-bottom: 2px solid var(--gray-200);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.data-table thead th:hover { color: var(--teal); }
+.data-table thead th .sort-icon { margin-left: 4px; font-size: 10px; }
+.data-table tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  white-space: nowrap;
+}
+.data-table tbody tr:hover { background: var(--cream); }
+.data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.profit-pos { color: var(--green); font-weight: 600; }
+.profit-neg { color: var(--red); font-weight: 600; }
+
+.table-wrapper { overflow-x: auto; }
+
+/* Chart */
+.chart-container {
+  position: relative;
+  width: 100%;
+  background: var(--white);
+}
+.chart-container canvas {
+  width: 100%;
+  height: 400px;
+}
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.15s ease;
+}
+.modal-overlay.active { display: flex; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.2s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.modal-header h3 { font-size: 17px; font-weight: 700; }
+.modal-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--gray-100);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-500);
+  transition: all 0.15s;
+}
+.modal-close:hover { background: var(--gray-200); color: var(--charcoal); }
+.modal-body { padding: 24px; }
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Form */
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 5px;
+}
+.form-input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1.5px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--charcoal);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,128,128,0.1); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-hint { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
+
+/* Confirm Modal */
+.confirm-text { font-size: 15px; line-height: 1.6; color: var(--gray-700); }
+.confirm-text strong { color: var(--charcoal); }
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--gray-400);
+}
+.empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; margin-bottom: 16px; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 32px 24px;
+  color: var(--gray-500);
+  font-size: 13px;
+}
+.footer a {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 600;
+}
+.footer a:hover { text-decoration: underline; }
+
+/* Legend */
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 12px 0 4px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+.legend-line {
+  width: 24px;
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { padding: 16px; }
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .dashboard { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .card { padding: 14px; }
+  .card-value { font-size: 22px; }
+  .books-grid { grid-template-columns: 1fr; }
+  .modal { max-width: 100%; }
+  .form-row { grid-template-columns: 1fr; }
+  .rt-row { flex-wrap: wrap; }
+  .rt-label { min-width: 100%; }
+  .chart-container canvas { height: 300px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="header-inner">
+    <div class="header-brand">
+      <div class="header-logo">TIP</div>
+      <div>
+        <h1>Series Profitability Tracker</h1>
+        <p>Track revenue, ad spend, and read-through across your series</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-white" onclick="exportCSV()">&#10515; Export CSV</button>
+      <button class="btn btn-gold" onclick="openBookModal()">+ Add Book</button>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Dashboard Cards -->
+  <div class="dashboard">
+    <div class="card">
+      <div class="card-icon teal">&#36;</div>
+      <div class="card-label">Total Revenue</div>
+      <div class="card-value" id="dash-revenue">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="card-icon coral">&#9650;</div>
+      <div class="card-label">Total Ad Spend</div>
+      <div class="card-value" id="dash-spend">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="card-icon green">&#9733;</div>
+      <div class="card-label">Net Profit</div>
+      <div class="card-value" id="dash-profit">$0.00</div>
+    </div>
+    <div class="card">
+      <div class="card-icon gold">&#8635;</div>
+      <div class="card-label">Overall ROAS</div>
+      <div class="card-value" id="dash-roas">0.00x</div>
+    </div>
+    <div class="card">
+      <div class="card-icon teal">&#9782;</div>
+      <div class="card-label">Books</div>
+      <div class="card-value" id="dash-books">0</div>
+    </div>
+  </div>
+
+  <!-- Books Section -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Books in Series</h2>
+      <button class="btn btn-primary btn-sm" onclick="openBookModal()">+ Add Book</button>
+    </div>
+    <div class="section-body">
+      <div id="books-container"></div>
+    </div>
+  </div>
+
+  <!-- Read-Through Rates -->
+  <div class="section" id="rt-section" style="display:none;">
+    <div class="section-header">
+      <h2>Read-Through Rates</h2>
+    </div>
+    <div class="section-body">
+      <div class="rt-bars" id="rt-container"></div>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="section" id="chart-section" style="display:none;">
+    <div class="section-header">
+      <h2>Revenue vs. Spend</h2>
+    </div>
+    <div class="section-body">
+      <div class="chart-container">
+        <canvas id="profitChart"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--teal);"></div> Revenue</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:var(--coral);"></div> Ad Spend</div>
+        <div class="legend-item"><div class="legend-line" style="background:var(--gold);"></div> Net Profit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Monthly Data Table -->
+  <div class="section">
+    <div class="section-header">
+      <h2>Monthly Data</h2>
+      <div class="table-controls">
+        <select class="filter-select" id="filter-book" onchange="renderTable()">
+          <option value="all">All Books</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="openEntryModal()">+ Add Entry</button>
+      </div>
+    </div>
+    <div class="section-body" style="padding:0;">
+      <div class="table-wrapper">
+        <table class="data-table" id="data-table">
+          <thead>
+            <tr>
+              <th data-col="month" onclick="sortTable('month')">Month <span class="sort-icon"></span></th>
+              <th data-col="bookTitle" onclick="sortTable('bookTitle')">Book <span class="sort-icon"></span></th>
+              <th data-col="adSpend" onclick="sortTable('adSpend')" class="num">Ad Spend <span class="sort-icon"></span></th>
+              <th data-col="ebookSales" onclick="sortTable('ebookSales')" class="num">Ebook Sales <span class="sort-icon"></span></th>
+              <th data-col="kuPageReads" onclick="sortTable('kuPageReads')" class="num">KU Reads <span class="sort-icon"></span></th>
+              <th data-col="ebookRevenue" onclick="sortTable('ebookRevenue')" class="num">Ebook Rev <span class="sort-icon"></span></th>
+              <th data-col="kuRevenue" onclick="sortTable('kuRevenue')" class="num">KU Rev <span class="sort-icon"></span></th>
+              <th data-col="printSales" onclick="sortTable('printSales')" class="num">Print Sales <span class="sort-icon"></span></th>
+              <th data-col="printRevenue" onclick="sortTable('printRevenue')" class="num">Print Rev <span class="sort-icon"></span></th>
+              <th data-col="totalRevenue" onclick="sortTable('totalRevenue')" class="num">Total Rev <span class="sort-icon"></span></th>
+              <th data-col="netProfit" onclick="sortTable('netProfit')" class="num">Net Profit <span class="sort-icon"></span></th>
+              <th data-col="roas" onclick="sortTable('roas')" class="num">ROAS <span class="sort-icon"></span></th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="table-empty" style="display:none;">
+        <div class="empty-icon">&#128202;</div>
+        <p>No monthly data yet. Add your first entry to get started.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  Built by <a href="https://theinvisiblepen.com" target="_blank" rel="noopener">The Invisible Pen</a> | theinvisiblepen.com
+</footer>
+
+<!-- Add/Edit Book Modal -->
+<div class="modal-overlay" id="book-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="book-modal-title">Add Book</h3>
+      <button class="modal-close" onclick="closeModal('book-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="book-edit-id">
+      <div class="form-group">
+        <label class="form-label">Book Title</label>
+        <input type="text" class="form-input" id="book-title" placeholder="e.g. The Cowboy's Second Chance">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Book Number in Series</label>
+        <input type="number" class="form-input" id="book-number" placeholder="e.g. 1" min="1">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('book-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveBook()">Save Book</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Entry Modal -->
+<div class="modal-overlay" id="entry-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="entry-modal-title">Add Monthly Entry</h3>
+      <button class="modal-close" onclick="closeModal('entry-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="entry-edit-id">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Book</label>
+          <select class="form-input" id="entry-book"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Month</label>
+          <input type="month" class="form-input" id="entry-month">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Ad Spend ($)</label>
+        <input type="number" class="form-input" id="entry-adspend" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ebook Sales (count)</label>
+          <input type="number" class="form-input" id="entry-ebook-sales" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">KU Page Reads</label>
+          <input type="number" class="form-input" id="entry-ku-reads" placeholder="0" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Ebook Revenue ($)</label>
+          <input type="number" class="form-input" id="entry-ebook-rev" placeholder="0.00" step="0.01" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">KU Revenue ($)</label>
+          <input type="number" class="form-input" id="entry-ku-rev" placeholder="0.00" step="0.01" min="0">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Print Sales (count)</label>
+          <input type="number" class="form-input" id="entry-print-sales" placeholder="0" min="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Print Revenue ($)</label>
+          <input type="number" class="form-input" id="entry-print-rev" placeholder="0.00" step="0.01" min="0">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('entry-modal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal" style="max-width:420px;">
+    <div class="modal-header">
+      <h3>Confirm Delete</h3>
+      <button class="modal-close" onclick="closeModal('confirm-modal')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-text" id="confirm-text"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('confirm-modal')">Cancel</button>
+      <button class="btn btn-danger" id="confirm-btn" onclick="">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'tip_series_tracker';
+
+let state = { books: [], entries: [] };
+let sortCol = 'month';
+let sortDir = -1;
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+    if (!state.books) state.books = [];
+    if (!state.entries) state.entries = [];
+  } catch (e) {
+    state = { books: [], entries: [] };
+  }
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+function fmt(n) {
+  return '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtInt(n) {
+  return Number(n || 0).toLocaleString('en-US');
+}
+
+// --- Modal helpers ---
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// --- Book Modal ---
+function openBookModal(bookId) {
+  const isEdit = !!bookId;
+  document.getElementById('book-modal-title').textContent = isEdit ? 'Edit Book' : 'Add Book';
+  document.getElementById('book-edit-id').value = bookId || '';
+  if (isEdit) {
+    const b = state.books.find(x => x.id === bookId);
+    document.getElementById('book-title').value = b.title;
+    document.getElementById('book-number').value = b.number;
+  } else {
+    document.getElementById('book-title').value = '';
+    document.getElementById('book-number').value = state.books.length + 1;
+  }
+  openModal('book-modal');
+  setTimeout(() => document.getElementById('book-title').focus(), 100);
+}
+
+function saveBook() {
+  const title = document.getElementById('book-title').value.trim();
+  const number = parseInt(document.getElementById('book-number').value) || 1;
+  if (!title) { alert('Please enter a book title.'); return; }
+  const editId = document.getElementById('book-edit-id').value;
+  if (editId) {
+    const b = state.books.find(x => x.id === editId);
+    b.title = title;
+    b.number = number;
+  } else {
+    state.books.push({ id: uid(), title, number });
+  }
+  state.books.sort((a, b) => a.number - b.number);
+  save();
+  closeModal('book-modal');
+  renderAll();
+}
+
+function confirmDeleteBook(bookId) {
+  const b = state.books.find(x => x.id === bookId);
+  document.getElementById('confirm-text').innerHTML =
+    'Are you sure you want to delete <strong>' + escH(b.title) + '</strong> and all its monthly data? This cannot be undone.';
+  document.getElementById('confirm-btn').onclick = function () {
+    state.books = state.books.filter(x => x.id !== bookId);
+    state.entries = state.entries.filter(x => x.bookId !== bookId);
+    save();
+    closeModal('confirm-modal');
+    renderAll();
+  };
+  openModal('confirm-modal');
+}
+
+// --- Entry Modal ---
+function openEntryModal(entryId) {
+  if (state.books.length === 0) {
+    alert('Please add at least one book first.');
+    return;
+  }
+  const isEdit = !!entryId;
+  document.getElementById('entry-modal-title').textContent = isEdit ? 'Edit Entry' : 'Add Monthly Entry';
+  document.getElementById('entry-edit-id').value = entryId || '';
+
+  const sel = document.getElementById('entry-book');
+  sel.innerHTML = state.books.map(b =>
+    '<option value="' + b.id + '">Book ' + b.number + ': ' + escH(b.title) + '</option>'
+  ).join('');
+
+  if (isEdit) {
+    const e = state.entries.find(x => x.id === entryId);
+    sel.value = e.bookId;
+    document.getElementById('entry-month').value = e.month;
+    document.getElementById('entry-adspend').value = e.adSpend;
+    document.getElementById('entry-ebook-sales').value = e.ebookSales;
+    document.getElementById('entry-ku-reads').value = e.kuPageReads;
+    document.getElementById('entry-ebook-rev').value = e.ebookRevenue;
+    document.getElementById('entry-ku-rev').value = e.kuRevenue;
+    document.getElementById('entry-print-sales').value = e.printSales;
+    document.getElementById('entry-print-rev').value = e.printRevenue;
+  } else {
+    const now = new Date();
+    document.getElementById('entry-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    document.getElementById('entry-adspend').value = '';
+    document.getElementById('entry-ebook-sales').value = '';
+    document.getElementById('entry-ku-reads').value = '';
+    document.getElementById('entry-ebook-rev').value = '';
+    document.getElementById('entry-ku-rev').value = '';
+    document.getElementById('entry-print-sales').value = '';
+    document.getElementById('entry-print-rev').value = '';
+  }
+  openModal('entry-modal');
+}
+
+function saveEntry() {
+  const bookId = document.getElementById('entry-book').value;
+  const month = document.getElementById('entry-month').value;
+  if (!bookId || !month) { alert('Please select a book and month.'); return; }
+
+  const adSpend = parseFloat(document.getElementById('entry-adspend').value) || 0;
+  const ebookSales = parseInt(document.getElementById('entry-ebook-sales').value) || 0;
+  const kuPageReads = parseInt(document.getElementById('entry-ku-reads').value) || 0;
+  const ebookRevenue = parseFloat(document.getElementById('entry-ebook-rev').value) || 0;
+  const kuRevenue = parseFloat(document.getElementById('entry-ku-rev').value) || 0;
+  const printSales = parseInt(document.getElementById('entry-print-sales').value) || 0;
+  const printRevenue = parseFloat(document.getElementById('entry-print-rev').value) || 0;
+
+  const totalRevenue = ebookRevenue + kuRevenue + printRevenue;
+  const netProfit = totalRevenue - adSpend;
+  const roas = adSpend > 0 ? totalRevenue / adSpend : 0;
+
+  const editId = document.getElementById('entry-edit-id').value;
+  const entry = {
+    id: editId || uid(),
+    bookId, month, adSpend, ebookSales, kuPageReads,
+    ebookRevenue, kuRevenue, printSales, printRevenue,
+    totalRevenue, netProfit, roas
+  };
+
+  if (editId) {
+    const idx = state.entries.findIndex(x => x.id === editId);
+    state.entries[idx] = entry;
+  } else {
+    state.entries.push(entry);
+  }
+  save();
+  closeModal('entry-modal');
+  renderAll();
+}
+
+function confirmDeleteEntry(entryId) {
+  const e = state.entries.find(x => x.id === entryId);
+  const b = state.books.find(x => x.id === e.bookId);
+  document.getElementById('confirm-text').innerHTML =
+    'Delete the <strong>' + escH(e.month) + '</strong> entry for <strong>' + escH(b ? b.title : 'Unknown') + '</strong>?';
+  document.getElementById('confirm-btn').onclick = function () {
+    state.entries = state.entries.filter(x => x.id !== entryId);
+    save();
+    closeModal('confirm-modal');
+    renderAll();
+  };
+  openModal('confirm-modal');
+}
+
+// --- Rendering ---
+function renderAll() {
+  renderDashboard();
+  renderBooks();
+  renderReadThrough();
+  renderTable();
+  renderChart();
+  updateFilterOptions();
+}
+
+function renderDashboard() {
+  let totalRev = 0, totalSpend = 0;
+  state.entries.forEach(e => {
+    totalRev += e.totalRevenue;
+    totalSpend += e.adSpend;
+  });
+  const netProfit = totalRev - totalSpend;
+  const roas = totalSpend > 0 ? totalRev / totalSpend : 0;
+
+  document.getElementById('dash-revenue').textContent = fmt(totalRev);
+  document.getElementById('dash-spend').textContent = fmt(totalSpend);
+
+  const profitEl = document.getElementById('dash-profit');
+  profitEl.textContent = fmt(netProfit);
+  profitEl.className = 'card-value ' + (netProfit >= 0 ? 'positive' : 'negative');
+
+  document.getElementById('dash-roas').textContent = roas.toFixed(2) + 'x';
+  document.getElementById('dash-books').textContent = state.books.length;
+}
+
+function renderBooks() {
+  const c = document.getElementById('books-container');
+  if (state.books.length === 0) {
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128218;</div><p>No books added yet. Add your first book to start tracking.</p><button class="btn btn-primary" onclick="openBookModal()">+ Add Book</button></div>';
+    return;
+  }
+  let html = '<div class="books-grid">';
+  state.books.forEach(b => {
+    const entries = state.entries.filter(e => e.bookId === b.id);
+    let rev = 0, spend = 0, sales = 0;
+    entries.forEach(e => { rev += e.totalRevenue; spend += e.adSpend; sales += e.ebookSales + e.printSales; });
+    const profit = rev - spend;
+    html += '<div class="book-card">';
+    html += '<div class="book-card-top"><div class="book-number">' + b.number + '</div>';
+    html += '<div style="display:flex;gap:4px;">';
+    html += '<button class="btn btn-sm btn-outline" onclick="openBookModal(\'' + b.id + '\')" title="Edit">&#9998;</button>';
+    html += '<button class="btn btn-sm btn-outline" onclick="confirmDeleteBook(\'' + b.id + '\')" title="Delete" style="color:var(--red);border-color:var(--red);">&times;</button>';
+    html += '</div></div>';
+    html += '<div class="book-title">' + escH(b.title) + '</div>';
+    html += '<div class="book-stats">';
+    html += '<div>Revenue<br><span class="book-stat-val">' + fmt(rev) + '</span></div>';
+    html += '<div>Ad Spend<br><span class="book-stat-val">' + fmt(spend) + '</span></div>';
+    html += '<div>Net Profit<br><span class="book-stat-val" style="color:' + (profit >= 0 ? 'var(--green)' : 'var(--red)') + '">' + fmt(profit) + '</span></div>';
+    html += '<div>Total Sales<br><span class="book-stat-val">' + fmtInt(sales) + '</span></div>';
+    html += '</div>';
+    html += '<div class="book-actions">';
+    html += '<button class="btn btn-sm btn-primary" onclick="openEntryModalForBook(\'' + b.id + '\')">+ Add Data</button>';
+    html += '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  c.innerHTML = html;
+}
+
+function openEntryModalForBook(bookId) {
+  openEntryModal();
+  document.getElementById('entry-book').value = bookId;
+}
+
+function renderReadThrough() {
+  const sec = document.getElementById('rt-section');
+  const c = document.getElementById('rt-container');
+  const sorted = [...state.books].sort((a, b) => a.number - b.number);
+  if (sorted.length < 2) { sec.style.display = 'none'; return; }
+
+  // Calculate total sales per book
+  const bookTotals = {};
+  sorted.forEach(b => {
+    const entries = state.entries.filter(e => e.bookId === b.id);
+    let totalSales = 0;
+    entries.forEach(e => { totalSales += e.ebookSales + e.printSales; });
+    bookTotals[b.id] = totalSales;
+  });
+
+  let html = '';
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const from = sorted[i];
+    const to = sorted[i + 1];
+    const fromSales = bookTotals[from.id];
+    const toSales = bookTotals[to.id];
+    const pct = fromSales > 0 ? (toSales / fromSales) * 100 : 0;
+    const clampPct = Math.min(pct, 100);
+
+    let barColor;
+    if (pct >= 70) barColor = 'var(--green)';
+    else if (pct >= 40) barColor = 'var(--gold)';
+    else barColor = 'var(--coral)';
+
+    html += '<div class="rt-row">';
+    html += '<div class="rt-label">Book ' + from.number + ' &rarr; Book ' + to.number + '</div>';
+    html += '<div class="rt-bar-track"><div class="rt-bar-fill" style="width:' + clampPct + '%;background:' + barColor + ';">' + (clampPct > 15 ? pct.toFixed(1) + '%' : '') + '</div></div>';
+    html += '<div class="rt-pct" style="color:' + barColor + ';">' + pct.toFixed(1) + '%</div>';
+    html += '</div>';
+  }
+  c.innerHTML = html;
+  sec.style.display = '';
+}
+
+function updateFilterOptions() {
+  const sel = document.getElementById('filter-book');
+  const current = sel.value;
+  sel.innerHTML = '<option value="all">All Books</option>';
+  state.books.forEach(b => {
+    sel.innerHTML += '<option value="' + b.id + '">Book ' + b.number + ': ' + escH(b.title) + '</option>';
+  });
+  sel.value = current || 'all';
+}
+
+function sortTable(col) {
+  if (sortCol === col) sortDir *= -1;
+  else { sortCol = col; sortDir = 1; }
+  renderTable();
+}
+
+function renderTable() {
+  const filter = document.getElementById('filter-book').value;
+  let entries = [...state.entries];
+  if (filter !== 'all') entries = entries.filter(e => e.bookId === filter);
+
+  entries.sort((a, b) => {
+    let va = a[sortCol], vb = b[sortCol];
+    if (typeof va === 'string') return va.localeCompare(vb) * sortDir;
+    return ((va || 0) - (vb || 0)) * sortDir;
+  });
+
+  // Update sort icons
+  document.querySelectorAll('.data-table thead th').forEach(th => {
+    const col = th.dataset.col;
+    const icon = th.querySelector('.sort-icon');
+    if (!icon) return;
+    if (col === sortCol) icon.textContent = sortDir === 1 ? ' ▲' : ' ▼';
+    else icon.textContent = '';
+  });
+
+  const tbody = document.getElementById('table-body');
+  const emptyEl = document.getElementById('table-empty');
+
+  if (entries.length === 0) {
+    tbody.innerHTML = '';
+    emptyEl.style.display = '';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  let html = '';
+  entries.forEach(e => {
+    const b = state.books.find(x => x.id === e.bookId);
+    const bookLabel = b ? 'Book ' + b.number + ': ' + escH(b.title) : 'Unknown';
+    const profitClass = e.netProfit >= 0 ? 'profit-pos' : 'profit-neg';
+    html += '<tr>';
+    html += '<td>' + escH(e.month) + '</td>';
+    html += '<td>' + bookLabel + '</td>';
+    html += '<td class="num">' + fmt(e.adSpend) + '</td>';
+    html += '<td class="num">' + fmtInt(e.ebookSales) + '</td>';
+    html += '<td class="num">' + fmtInt(e.kuPageReads) + '</td>';
+    html += '<td class="num">' + fmt(e.ebookRevenue) + '</td>';
+    html += '<td class="num">' + fmt(e.kuRevenue) + '</td>';
+    html += '<td class="num">' + fmtInt(e.printSales) + '</td>';
+    html += '<td class="num">' + fmt(e.printRevenue) + '</td>';
+    html += '<td class="num" style="font-weight:600;">' + fmt(e.totalRevenue) + '</td>';
+    html += '<td class="num ' + profitClass + '">' + fmt(e.netProfit) + '</td>';
+    html += '<td class="num">' + e.roas.toFixed(2) + 'x</td>';
+    html += '<td>';
+    html += '<button class="btn btn-sm btn-outline" onclick="openEntryModal(\'' + e.id + '\')" title="Edit" style="margin-right:4px;">&#9998;</button>';
+    html += '<button class="btn btn-sm btn-outline" onclick="confirmDeleteEntry(\'' + e.id + '\')" title="Delete" style="color:var(--red);border-color:var(--red);">&times;</button>';
+    html += '</td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+// --- Chart (Canvas) ---
+function renderChart() {
+  const sec = document.getElementById('chart-section');
+  if (state.entries.length === 0) { sec.style.display = 'none'; return; }
+  sec.style.display = '';
+
+  // Aggregate by month
+  const monthMap = {};
+  state.entries.forEach(e => {
+    if (!monthMap[e.month]) monthMap[e.month] = { rev: 0, spend: 0, profit: 0 };
+    monthMap[e.month].rev += e.totalRevenue;
+    monthMap[e.month].spend += e.adSpend;
+    monthMap[e.month].profit += e.totalRevenue - e.adSpend;
+  });
+  const months = Object.keys(monthMap).sort();
+  const revs = months.map(m => monthMap[m].rev);
+  const spends = months.map(m => monthMap[m].spend);
+  const profits = months.map(m => monthMap[m].profit);
+
+  const canvas = document.getElementById('profitChart');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  const W = rect.width;
+  const H = 400;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.clearRect(0, 0, W, H);
+
+  const padL = 72, padR = 24, padT = 24, padB = 56;
+  const chartW = W - padL - padR;
+  const chartH = H - padT - padB;
+
+  const allVals = [...revs, ...spends, ...profits];
+  let maxVal = Math.max(...allVals, 1);
+  let minVal = Math.min(...allVals, 0);
+  if (minVal > 0) minVal = 0;
+  const range = maxVal - minVal || 1;
+  const padding = range * 0.1;
+  maxVal += padding;
+  minVal -= padding;
+  const totalRange = maxVal - minVal;
+
+  function yPos(val) {
+    return padT + chartH - ((val - minVal) / totalRange) * chartH;
+  }
+
+  // Grid lines
+  const gridCount = 5;
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#6b7280';
+  ctx.font = '12px ' + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign = 'right';
+
+  for (let i = 0; i <= gridCount; i++) {
+    const val = minVal + (totalRange / gridCount) * i;
+    const y = yPos(val);
+    ctx.beginPath();
+    ctx.setLineDash([4, 4]);
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillText('$' + Math.round(val).toLocaleString(), padL - 8, y + 4);
+  }
+
+  // Zero line
+  if (minVal < 0 && maxVal > 0) {
+    const zeroY = yPos(0);
+    ctx.beginPath();
+    ctx.strokeStyle = '#9ca3af';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([]);
+    ctx.moveTo(padL, zeroY);
+    ctx.lineTo(W - padR, zeroY);
+    ctx.stroke();
+  }
+
+  // Bars
+  const n = months.length;
+  const groupWidth = chartW / n;
+  const barWidth = Math.min(groupWidth * 0.3, 40);
+  const barGap = 4;
+
+  months.forEach((m, i) => {
+    const cx = padL + groupWidth * i + groupWidth / 2;
+
+    // Revenue bar
+    const revH = Math.abs(revs[i] / totalRange) * chartH;
+    const revY = yPos(Math.max(revs[i], 0));
+    ctx.fillStyle = '#008080';
+    roundRect(ctx, cx - barWidth - barGap / 2, revY, barWidth, revH, 3);
+
+    // Spend bar
+    const spendH = Math.abs(spends[i] / totalRange) * chartH;
+    const spendY = yPos(Math.max(spends[i], 0));
+    ctx.fillStyle = '#FF6B6B';
+    roundRect(ctx, cx + barGap / 2, spendY, barWidth, spendH, 3);
+
+    // Month label
+    ctx.fillStyle = '#6b7280';
+    ctx.textAlign = 'center';
+    ctx.font = '11px ' + getComputedStyle(document.body).fontFamily;
+    const label = formatMonthLabel(m);
+    ctx.fillText(label, cx, H - padB + 20);
+  });
+
+  // Profit line
+  if (months.length > 1) {
+    ctx.beginPath();
+    ctx.strokeStyle = '#D4A574';
+    ctx.lineWidth = 3;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    months.forEach((m, i) => {
+      const cx = padL + groupWidth * i + groupWidth / 2;
+      const py = yPos(profits[i]);
+      if (i === 0) ctx.moveTo(cx, py);
+      else ctx.lineTo(cx, py);
+    });
+    ctx.stroke();
+
+    // Dots on profit line
+    months.forEach((m, i) => {
+      const cx = padL + groupWidth * i + groupWidth / 2;
+      const py = yPos(profits[i]);
+      ctx.beginPath();
+      ctx.fillStyle = '#D4A574';
+      ctx.arc(cx, py, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.fillStyle = '#fff';
+      ctx.arc(cx, py, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  } else if (months.length === 1) {
+    const cx = padL + groupWidth * 0 + groupWidth / 2;
+    const py = yPos(profits[0]);
+    ctx.beginPath();
+    ctx.fillStyle = '#D4A574';
+    ctx.arc(cx, py, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.fillStyle = '#fff';
+    ctx.arc(cx, py, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Y axis line
+  ctx.beginPath();
+  ctx.strokeStyle = '#d1d5db';
+  ctx.lineWidth = 1.5;
+  ctx.moveTo(padL, padT);
+  ctx.lineTo(padL, H - padB);
+  ctx.stroke();
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  if (h < 1) return;
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h);
+  ctx.lineTo(x, y + h);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+function formatMonthLabel(m) {
+  const parts = m.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[parseInt(parts[1]) - 1] + ' ' + parts[0].slice(2);
+}
+
+// --- CSV Export ---
+function exportCSV() {
+  if (state.entries.length === 0) { alert('No data to export.'); return; }
+  const headers = ['Month','Book Number','Book Title','Ad Spend','Ebook Sales','KU Page Reads','Ebook Revenue','KU Revenue','Print Sales','Print Revenue','Total Revenue','Net Profit','ROAS'];
+  let csv = headers.join(',') + '\n';
+  state.entries.sort((a, b) => a.month.localeCompare(b.month)).forEach(e => {
+    const b = state.books.find(x => x.id === e.bookId);
+    csv += [
+      e.month,
+      b ? b.number : '',
+      '"' + (b ? b.title.replace(/"/g, '""') : '') + '"',
+      e.adSpend.toFixed(2),
+      e.ebookSales,
+      e.kuPageReads,
+      e.ebookRevenue.toFixed(2),
+      e.kuRevenue.toFixed(2),
+      e.printSales,
+      e.printRevenue.toFixed(2),
+      e.totalRevenue.toFixed(2),
+      e.netProfit.toFixed(2),
+      e.roas.toFixed(2)
+    ].join(',') + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'series-profitability-' + new Date().toISOString().slice(0, 10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function escH(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// --- Keyboard close modals ---
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+  }
+});
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function (e) {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// Resize chart on window resize
+let resizeTimer;
+window.addEventListener('resize', function () {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(renderChart, 150);
+});
+
+// --- Init ---
+load();
+renderAll();
+</script>
+</body>
+</html>

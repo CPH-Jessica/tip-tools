@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Royalty Calculator | The Invisible Pen</title>
+<style>
+:root {
+  --teal: #008080;
+  --teal-dark: #006666;
+  --teal-light: #00a0a0;
+  --coral: #FF6B6B;
+  --coral-dark: #e55a5a;
+  --gold: #D4A574;
+  --gold-light: #e6c9a8;
+  --cream: #FFF8F0;
+  --charcoal: #2C2C2C;
+  --charcoal-light: #4a4a4a;
+  --white: #ffffff;
+  --gray-100: #f7f7f7;
+  --gray-200: #e8e8e8;
+  --gray-300: #d1d1d1;
+  --gray-400: #a0a0a0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--cream);
+  color: var(--charcoal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header {
+  background: linear-gradient(135deg, var(--teal-dark) 0%, var(--teal) 40%, var(--teal-light) 100%);
+  color: var(--white);
+  padding: 2rem 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%),
+              radial-gradient(circle at 80% 50%, rgba(255,255,255,0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.pen-icon {
+  width: 40px;
+  height: 40px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.pen-icon::before {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 28px;
+  background: linear-gradient(to bottom, var(--gold), var(--gold-light));
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-30deg);
+  border-radius: 1px;
+  transform-origin: bottom center;
+}
+
+.pen-icon::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 10px solid var(--gold);
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-30deg);
+  transform-origin: top center;
+}
+
+.feather-detail {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(-30deg);
+  transform-origin: bottom center;
+}
+
+.feather-detail::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 8px;
+  border-radius: 0 80% 0 0;
+  border-top: 2px solid rgba(255,255,255,0.6);
+  border-right: 2px solid rgba(255,255,255,0.6);
+  top: -2px;
+  left: 2px;
+}
+
+.feather-detail::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 6px;
+  border-radius: 80% 0 0 0;
+  border-top: 2px solid rgba(255,255,255,0.4);
+  border-left: 2px solid rgba(255,255,255,0.4);
+  top: 2px;
+  left: -12px;
+}
+
+.brand-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+.header p {
+  font-size: 1rem;
+  opacity: 0.85;
+  font-weight: 400;
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.section {
+  margin-bottom: 2.5rem;
+}
+
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--teal-dark);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--gold-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-title .icon {
+  font-size: 1.1rem;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* ── INPUT SECTION ── */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.input-group label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--charcoal-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.input-group input[type="number"] {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-family: inherit;
+}
+
+.input-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(0,128,128,0.12);
+}
+
+.price-display {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--teal);
+  margin-bottom: 0.25rem;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--teal) 0%, var(--teal) var(--range-pct, 50%), var(--gray-200) var(--range-pct, 50%), var(--gray-200) 100%);
+  outline: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--teal);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: var(--shadow-md);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--teal);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+/* ── TOGGLE SWITCH ── */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.toggle {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--gray-300);
+  border-radius: 28px;
+  transition: background 0.25s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background: var(--white);
+  border-radius: 50%;
+  transition: transform 0.25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.toggle input:checked + .toggle-slider {
+  background: var(--teal);
+}
+
+.toggle input:checked + .toggle-slider::before {
+  transform: translateX(24px);
+}
+
+.toggle-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--charcoal);
+}
+
+.toggle-sub {
+  font-size: 0.8rem;
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+/* ── ROYALTY CARDS GRID ── */
+.royalty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.royalty-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  border: 2px solid var(--gray-200);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.royalty-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.royalty-card.best {
+  border-color: var(--teal);
+}
+
+.royalty-card.best::after {
+  content: 'BEST';
+  position: absolute;
+  top: 8px;
+  right: -20px;
+  background: var(--teal);
+  color: var(--white);
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 2px 24px;
+  transform: rotate(45deg);
+  letter-spacing: 0.08em;
+}
+
+.royalty-card .platform {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--charcoal-light);
+  margin-bottom: 0.15rem;
+}
+
+.royalty-card .rate {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+  margin-bottom: 0.5rem;
+}
+
+.royalty-card .earnings {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--teal);
+  line-height: 1.1;
+}
+
+.royalty-card .earnings.negative {
+  color: var(--coral);
+}
+
+.royalty-card .detail {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  margin-top: 0.35rem;
+  line-height: 1.3;
+}
+
+/* KU card accent */
+.royalty-card.ku-card {
+  border-color: var(--gold);
+  background: linear-gradient(to bottom, #fffdf8, var(--white));
+}
+
+.royalty-card.ku-card .platform {
+  color: var(--gold);
+}
+
+.royalty-card.ku-card .earnings {
+  color: var(--gold);
+}
+
+/* ── KU SECTION ── */
+.ku-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ku-stat {
+  background: linear-gradient(135deg, #f9f5ef, var(--white));
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--gold-light);
+}
+
+.ku-stat .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--charcoal-light);
+  font-weight: 600;
+}
+
+.ku-stat .value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.ku-stat .sub {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+.ku-hidden {
+  display: none;
+}
+
+.ku-notice {
+  background: var(--gray-100);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.25rem;
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ── COMPARISON TABLE ── */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.9rem;
+}
+
+thead th {
+  background: var(--teal);
+  color: var(--white);
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: right;
+  white-space: nowrap;
+}
+
+thead th:first-child {
+  text-align: left;
+  border-radius: var(--radius-sm) 0 0 0;
+}
+
+thead th:last-child {
+  border-radius: 0 var(--radius-sm) 0 0;
+}
+
+thead th.ku-col {
+  background: var(--teal-dark);
+}
+
+thead th.wide-col {
+  background: var(--coral-dark);
+}
+
+tbody td {
+  padding: 0.7rem 1rem;
+  text-align: right;
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+
+tbody td:first-child {
+  text-align: left;
+  font-weight: 700;
+  color: var(--charcoal);
+}
+
+tbody tr:last-child td:first-child {
+  border-radius: 0 0 0 var(--radius-sm);
+}
+
+tbody tr:last-child td:last-child {
+  border-radius: 0 0 var(--radius-sm) 0;
+}
+
+tbody tr:hover {
+  background: rgba(0,128,128,0.03);
+}
+
+td.winner {
+  font-weight: 700;
+  position: relative;
+}
+
+td.winner.ku-winner {
+  color: var(--teal-dark);
+  background: rgba(0,128,128,0.06);
+}
+
+td.winner.wide-winner {
+  color: var(--coral-dark);
+  background: rgba(255,107,107,0.06);
+}
+
+.winner-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 4px;
+  vertical-align: middle;
+  letter-spacing: 0.04em;
+}
+
+.ku-winner .winner-badge {
+  background: var(--teal);
+  color: var(--white);
+}
+
+.wide-winner .winner-badge {
+  background: var(--coral);
+  color: var(--white);
+}
+
+/* ── BREAKEVEN ── */
+.breakeven-inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.cost-input label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--charcoal-light);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.35rem;
+}
+
+.cost-input input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--charcoal);
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.cost-input input:focus {
+  outline: none;
+  border-color: var(--coral);
+  box-shadow: 0 0 0 3px rgba(255,107,107,0.12);
+}
+
+.total-investment {
+  background: linear-gradient(135deg, var(--charcoal), var(--charcoal-light));
+  color: var(--white);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.total-investment .label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
+}
+
+.total-investment .amount {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.breakeven-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1rem;
+}
+
+.breakeven-card {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  text-align: center;
+  border: 2px solid var(--gray-200);
+  transition: border-color 0.2s;
+}
+
+.breakeven-card:hover {
+  border-color: var(--coral);
+}
+
+.breakeven-card .tier {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--charcoal-light);
+  margin-bottom: 0.15rem;
+}
+
+.breakeven-card .royalty-per {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  margin-bottom: 0.4rem;
+}
+
+.breakeven-card .sales-needed {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--coral);
+  line-height: 1.1;
+}
+
+.breakeven-card .sales-label {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  margin-top: 0.15rem;
+}
+
+.breakeven-card.impossible .sales-needed {
+  font-size: 1rem;
+  color: var(--gray-400);
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--gray-200);
+  color: var(--gray-400);
+  font-size: 0.85rem;
+}
+
+.footer a {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer .disclaimer {
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  color: var(--gray-300);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .input-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .brand-name {
+    font-size: 1.2rem;
+  }
+
+  .royalty-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .breakeven-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .breakeven-inputs {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  table {
+    font-size: 0.8rem;
+  }
+
+  thead th, tbody td {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .royalty-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .breakeven-inputs {
+    grid-template-columns: 1fr;
+  }
+
+  .breakeven-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .total-investment {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-content">
+    <div class="brand">
+      <div class="pen-icon">
+        <div class="feather-detail"></div>
+      </div>
+      <span class="brand-name">The Invisible Pen</span>
+    </div>
+    <h1>Royalty Calculator</h1>
+    <p>See exactly what you earn per sale across every platform</p>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- BOOK INPUTS -->
+  <section class="section">
+    <h2 class="section-title"><span class="icon">&#9998;</span> Book Details</h2>
+    <div class="card">
+      <div class="input-grid">
+        <!-- Price -->
+        <div class="input-group">
+          <label for="priceSlider">Ebook List Price</label>
+          <div class="price-display" id="priceDisplay">$4.99</div>
+          <input type="range" id="priceSlider" min="0.99" max="14.99" step="0.01" value="4.99">
+          <input type="number" id="priceNumber" min="0.99" max="14.99" step="0.01" value="4.99" style="margin-top:0.25rem;">
+        </div>
+        <!-- Page Count -->
+        <div class="input-group">
+          <label for="pageCount">Page Count</label>
+          <input type="number" id="pageCount" min="10" max="2000" step="1" value="300" placeholder="300">
+          <span style="font-size:0.78rem;color:var(--gray-400);">Manuscript pages (not KENPC)</span>
+        </div>
+        <!-- KU Toggle -->
+        <div class="input-group">
+          <label>Kindle Unlimited Enrollment</label>
+          <div class="toggle-wrapper">
+            <label class="toggle">
+              <input type="checkbox" id="kuToggle" checked>
+              <span class="toggle-slider"></span>
+            </label>
+            <div>
+              <span class="toggle-label" id="kuLabel">Enrolled</span><br>
+              <span class="toggle-sub">KDP Select exclusivity</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EARNINGS PER SALE -->
+  <section class="section">
+    <h2 class="section-title"><span class="icon">&#36;</span> Earnings Per Sale</h2>
+    <div class="royalty-grid" id="royaltyGrid">
+      <!-- JS populated -->
+    </div>
+  </section>
+
+  <!-- KU SECTION -->
+  <section class="section" id="kuSection">
+    <h2 class="section-title"><span class="icon">&#9733;</span> Kindle Unlimited Estimates</h2>
+    <div class="card">
+      <div class="ku-stats" id="kuStats">
+        <!-- JS populated -->
+      </div>
+      <div id="kuNotice" class="ku-notice ku-hidden">
+        Enable Kindle Unlimited above to see KU earnings estimates.
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPARISON TABLE -->
+  <section class="section" id="comparisonSection">
+    <h2 class="section-title"><span class="icon">&#8644;</span> KU vs. Wide &mdash; Monthly Revenue Comparison</h2>
+    <div class="card">
+      <div class="table-wrapper">
+        <table id="comparisonTable">
+          <thead>
+            <tr>
+              <th>Monthly Sales</th>
+              <th class="ku-col">KU Sales Revenue</th>
+              <th class="ku-col">KU Page Reads</th>
+              <th class="ku-col">KU Total</th>
+              <th class="wide-col">Wide Total (D2D)</th>
+              <th>Winner</th>
+            </tr>
+          </thead>
+          <tbody id="comparisonBody">
+            <!-- JS populated -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- BREAKEVEN -->
+  <section class="section">
+    <h2 class="section-title"><span class="icon">&#9873;</span> Breakeven Calculator</h2>
+    <div class="card">
+      <div class="breakeven-inputs">
+        <div class="cost-input">
+          <label for="editingCost">Editing</label>
+          <input type="number" id="editingCost" min="0" step="50" value="1500" placeholder="1500">
+        </div>
+        <div class="cost-input">
+          <label for="coverCost">Cover Design</label>
+          <input type="number" id="coverCost" min="0" step="25" value="350" placeholder="350">
+        </div>
+        <div class="cost-input">
+          <label for="formattingCost">Formatting</label>
+          <input type="number" id="formattingCost" min="0" step="25" value="150" placeholder="150">
+        </div>
+        <div class="cost-input">
+          <label for="adBudget">Ad Budget</label>
+          <input type="number" id="adBudget" min="0" step="50" value="500" placeholder="500">
+        </div>
+      </div>
+      <div class="total-investment" id="totalInvestment">
+        <span class="label">Total Investment</span>
+        <span class="amount" id="totalAmount">$2,500</span>
+      </div>
+      <div class="breakeven-grid" id="breakevenGrid">
+        <!-- JS populated -->
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  Built by <a href="https://theinvisiblepen.com" target="_blank" rel="noopener">The Invisible Pen</a> | theinvisiblepen.com
+  <div class="disclaimer">Estimates only. Actual royalties vary by retailer terms, delivery costs, and KU fund payouts.</div>
+</footer>
+
+<script>
+(function() {
+  // ── DOM refs ──
+  const priceSlider  = document.getElementById('priceSlider');
+  const priceNumber  = document.getElementById('priceNumber');
+  const priceDisplay = document.getElementById('priceDisplay');
+  const pageCount    = document.getElementById('pageCount');
+  const kuToggle     = document.getElementById('kuToggle');
+  const kuLabel      = document.getElementById('kuLabel');
+
+  const editingCost    = document.getElementById('editingCost');
+  const coverCost      = document.getElementById('coverCost');
+  const formattingCost = document.getElementById('formattingCost');
+  const adBudget       = document.getElementById('adBudget');
+
+  // ── Sync price slider ↔ number ──
+  function syncPrice(source) {
+    const val = parseFloat(source.value);
+    if (isNaN(val)) return;
+    const clamped = Math.min(14.99, Math.max(0.99, val));
+    priceSlider.value = clamped;
+    priceNumber.value = clamped;
+    priceDisplay.textContent = '$' + clamped.toFixed(2);
+    updateSliderTrack();
+    recalcAll();
+  }
+
+  function updateSliderTrack() {
+    const pct = ((priceSlider.value - 0.99) / (14.99 - 0.99)) * 100;
+    priceSlider.style.setProperty('--range-pct', pct + '%');
+  }
+
+  priceSlider.addEventListener('input', () => syncPrice(priceSlider));
+  priceNumber.addEventListener('input', () => syncPrice(priceNumber));
+  priceNumber.addEventListener('change', () => syncPrice(priceNumber));
+
+  kuToggle.addEventListener('change', () => {
+    kuLabel.textContent = kuToggle.checked ? 'Enrolled' : 'Not Enrolled';
+    recalcAll();
+  });
+
+  pageCount.addEventListener('input', recalcAll);
+  pageCount.addEventListener('change', recalcAll);
+  editingCost.addEventListener('input', recalcAll);
+  coverCost.addEventListener('input', recalcAll);
+  formattingCost.addEventListener('input', recalcAll);
+  adBudget.addEventListener('input', recalcAll);
+
+  // ── Calculation helpers ──
+  function getPrice() {
+    return parseFloat(priceSlider.value) || 4.99;
+  }
+
+  function getPages() {
+    return parseInt(pageCount.value) || 300;
+  }
+
+  function isKU() {
+    return kuToggle.checked;
+  }
+
+  // Delivery cost estimate: pages * 0.5KB -> MB -> * $0.06/MB
+  function deliveryCost() {
+    const fileSizeMB = (getPages() * 0.5) / 1024;
+    return fileSizeMB * 0.06;
+  }
+
+  function kdp35() {
+    return getPrice() * 0.35;
+  }
+
+  function kdp70() {
+    return (getPrice() * 0.70) - deliveryCost();
+  }
+
+  function d2dWide() {
+    return getPrice() * 0.60;
+  }
+
+  function appleBooks() {
+    return getPrice() * 0.70;
+  }
+
+  function kobo() {
+    return getPrice() * 0.70;
+  }
+
+  function printProfit() {
+    const listPrice = getPrice() + 5;
+    const printCost = 2.15 + (getPages() * 0.012);
+    // Amazon print royalty: 60% of list price minus print cost
+    const royalty = (listPrice * 0.60) - printCost;
+    return { listPrice, printCost, royalty };
+  }
+
+  function kenpc() {
+    return Math.round(getPages() * 0.55);
+  }
+
+  function kuPerRead() {
+    return kenpc() * 0.0045;
+  }
+
+  function fmt(n) {
+    if (n < 0) return '-$' + Math.abs(n).toFixed(2);
+    return '$' + n.toFixed(2);
+  }
+
+  function fmtInt(n) {
+    return n.toLocaleString('en-US');
+  }
+
+  // ── Render royalty cards ──
+  function renderRoyaltyCards() {
+    const grid = document.getElementById('royaltyGrid');
+    const price = getPrice();
+
+    const cards = [
+      { platform: 'KDP 35%', rate: '35% list price', value: kdp35(), detail: 'No delivery cost deducted' },
+      { platform: 'KDP 70%', rate: '70% minus delivery', value: kdp70(), detail: 'Delivery: ' + fmt(deliveryCost()) },
+      { platform: 'D2D / Wide', rate: '~60% net', value: d2dWide(), detail: 'Draft2Digital aggregate' },
+      { platform: 'Apple Books', rate: '~70% list price', value: appleBooks(), detail: 'Direct or via aggregator' },
+      { platform: 'Kobo', rate: '~70% list price', value: kobo(), detail: 'Kobo Writing Life' },
+    ];
+
+    // Print
+    const p = printProfit();
+    cards.push({
+      platform: 'Print (Amazon)',
+      rate: '60% minus print cost',
+      value: p.royalty,
+      detail: 'List: ' + fmt(p.listPrice) + ' | Print cost: ' + fmt(p.printCost),
+      isPrint: true
+    });
+
+    // KU card
+    if (isKU()) {
+      cards.push({
+        platform: 'KU Full Read',
+        rate: kenpc() + ' KENPC pages',
+        value: kuPerRead(),
+        detail: 'At $0.0045/page KENP rate',
+        isKU: true
+      });
+    }
+
+    // Find best ebook value (exclude print and KU)
+    const ebookCards = cards.filter(c => !c.isPrint && !c.isKU);
+    let bestVal = -Infinity;
+    let bestPlatform = '';
+    ebookCards.forEach(c => {
+      if (c.value > bestVal) { bestVal = c.value; bestPlatform = c.platform; }
+    });
+
+    let html = '';
+    cards.forEach(c => {
+      const isBest = c.platform === bestPlatform;
+      const isNeg = c.value < 0;
+      let cls = 'royalty-card';
+      if (isBest) cls += ' best';
+      if (c.isKU) cls += ' ku-card';
+      html += '<div class="' + cls + '">';
+      html += '<div class="platform">' + c.platform + '</div>';
+      html += '<div class="rate">' + c.rate + '</div>';
+      html += '<div class="earnings' + (isNeg ? ' negative' : '') + '">' + fmt(c.value) + '</div>';
+      html += '<div class="detail">' + c.detail + '</div>';
+      html += '</div>';
+    });
+
+    grid.innerHTML = html;
+  }
+
+  // ── Render KU stats ──
+  function renderKUStats() {
+    const stats = document.getElementById('kuStats');
+    const notice = document.getElementById('kuNotice');
+
+    if (!isKU()) {
+      stats.style.display = 'none';
+      notice.classList.remove('ku-hidden');
+      return;
+    }
+
+    stats.style.display = '';
+    notice.classList.add('ku-hidden');
+
+    const k = kenpc();
+    const perRead = kuPerRead();
+
+    stats.innerHTML =
+      '<div class="ku-stat">' +
+        '<div class="label">Estimated KENPC</div>' +
+        '<div class="value">' + fmtInt(k) + '</div>' +
+        '<div class="sub">pages (page count &times; 0.55)</div>' +
+      '</div>' +
+      '<div class="ku-stat">' +
+        '<div class="label">Per Full Read</div>' +
+        '<div class="value">' + fmt(perRead) + '</div>' +
+        '<div class="sub">at $0.0045/KENP page</div>' +
+      '</div>' +
+      '<div class="ku-stat">' +
+        '<div class="label">100 Full Reads</div>' +
+        '<div class="value">' + fmt(perRead * 100) + '</div>' +
+        '<div class="sub">monthly page-read revenue</div>' +
+      '</div>' +
+      '<div class="ku-stat">' +
+        '<div class="label">500 Full Reads</div>' +
+        '<div class="value">' + fmt(perRead * 500) + '</div>' +
+        '<div class="sub">monthly page-read revenue</div>' +
+      '</div>';
+  }
+
+  // ── Render comparison table ──
+  function renderComparison() {
+    const tbody = document.getElementById('comparisonBody');
+    const volumes = [50, 100, 250, 500, 1000];
+
+    // KU: 70% royalty per sale + page reads (50% of sales as full reads)
+    const kuSaleRoyalty = kdp70();
+    const kuReadRoyalty = kuPerRead();
+    // Wide: D2D ~60%
+    const wideRoyalty = d2dWide();
+
+    let html = '';
+    volumes.forEach(v => {
+      const kuSalesRev = v * kuSaleRoyalty;
+      const kuReads = Math.round(v * 0.5);
+      const kuReadRev = kuReads * kuReadRoyalty;
+      const kuTotal = kuSalesRev + kuReadRev;
+      const wideTotal = v * wideRoyalty;
+
+      const kuWins = kuTotal >= wideTotal;
+      const diff = Math.abs(kuTotal - wideTotal);
+
+      html += '<tr>';
+      html += '<td>' + fmtInt(v) + ' sales</td>';
+      html += '<td>' + fmt(kuSalesRev) + '</td>';
+      html += '<td>' + fmtInt(kuReads) + ' reads &rarr; ' + fmt(kuReadRev) + '</td>';
+
+      const kuCls = kuWins ? ' class="winner ku-winner"' : '';
+      const wideCls = !kuWins ? ' class="winner wide-winner"' : '';
+
+      html += '<td' + kuCls + '>' + fmt(kuTotal);
+      if (kuWins) html += ' <span class="winner-badge">WIN</span>';
+      html += '</td>';
+
+      html += '<td' + wideCls + '>' + fmt(wideTotal);
+      if (!kuWins) html += ' <span class="winner-badge">WIN</span>';
+      html += '</td>';
+
+      html += '<td style="font-size:0.78rem;color:var(--gray-400);">' + (kuWins ? 'KU' : 'Wide') + ' by ' + fmt(diff) + '</td>';
+      html += '</tr>';
+    });
+
+    tbody.innerHTML = html;
+  }
+
+  // ── Render breakeven ──
+  function renderBreakeven() {
+    const total = (parseFloat(editingCost.value) || 0)
+                + (parseFloat(coverCost.value) || 0)
+                + (parseFloat(formattingCost.value) || 0)
+                + (parseFloat(adBudget.value) || 0);
+
+    document.getElementById('totalAmount').textContent = '$' + fmtInt(Math.round(total));
+
+    const tiers = [
+      { name: 'KDP 35%', royalty: kdp35() },
+      { name: 'KDP 70%', royalty: kdp70() },
+      { name: 'D2D / Wide', royalty: d2dWide() },
+      { name: 'Apple Books', royalty: appleBooks() },
+      { name: 'Kobo', royalty: kobo() },
+    ];
+
+    // Add print
+    const p = printProfit();
+    tiers.push({ name: 'Print', royalty: p.royalty });
+
+    // Add KU if enrolled
+    if (isKU()) {
+      // KU breakeven: assume each "sale" = 1 KDP70% sale + 0.5 full reads
+      const combined = kdp70() + (0.5 * kuPerRead());
+      tiers.push({ name: 'KU (sale + reads)', royalty: combined });
+    }
+
+    const grid = document.getElementById('breakevenGrid');
+    let html = '';
+
+    tiers.forEach(t => {
+      if (t.royalty <= 0 || total <= 0) {
+        html += '<div class="breakeven-card impossible">';
+        html += '<div class="tier">' + t.name + '</div>';
+        html += '<div class="royalty-per">' + fmt(t.royalty) + '/unit</div>';
+        html += '<div class="sales-needed">' + (total <= 0 ? '0' : 'N/A') + '</div>';
+        html += '<div class="sales-label">' + (total <= 0 ? 'No cost to recoup' : (t.royalty <= 0 ? 'Negative royalty' : '')) + '</div>';
+        html += '</div>';
+      } else {
+        const needed = Math.ceil(total / t.royalty);
+        html += '<div class="breakeven-card">';
+        html += '<div class="tier">' + t.name + '</div>';
+        html += '<div class="royalty-per">' + fmt(t.royalty) + '/unit</div>';
+        html += '<div class="sales-needed">' + fmtInt(needed) + '</div>';
+        html += '<div class="sales-label">sales to break even</div>';
+        html += '</div>';
+      }
+    });
+
+    grid.innerHTML = html;
+  }
+
+  // ── Master recalc ──
+  function recalcAll() {
+    renderRoyaltyCards();
+    renderKUStats();
+    renderComparison();
+    renderBreakeven();
+  }
+
+  // ── Init ──
+  updateSliderTrack();
+  recalcAll();
+})();
+</script>
+</body>
+</html>

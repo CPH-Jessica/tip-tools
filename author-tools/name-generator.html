@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Character Name Generator — The Invisible Pen</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--teal:#008080;--coral:#FF6B6B;--gold:#D4A574;--cream:#FFF8F0;--charcoal:#2C2C2C;
+--teal-light:#00a0a0;--teal-dark:#006666;--coral-light:#ff8a8a;--gold-light:#e0be94;
+--shadow:0 2px 8px rgba(0,0,0,.1);--radius:8px;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--charcoal);line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
+button{cursor:pointer;border:none;font-family:inherit;font-size:.9rem;border-radius:var(--radius);transition:all .2s}
+select,input{font-family:inherit;font-size:.9rem;border:1px solid #ccc;border-radius:var(--radius);padding:6px 10px;background:#fff}
+select:focus,input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px rgba(0,128,128,.2)}
+
+/* HEADER */
+.site-header{background:linear-gradient(135deg,var(--teal),var(--teal-dark));color:#fff;text-align:center;padding:24px 16px 18px}
+.site-header h1{font-size:1.8rem;font-weight:700;letter-spacing:.5px}
+.site-header .tagline{font-size:.95rem;opacity:.85;margin-top:4px}
+
+/* LAYOUT */
+.app-container{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:20px 16px}
+
+/* FILTER PANEL */
+.filter-toggle{display:none}
+.filter-panel{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.filter-panel h2{font-size:1.1rem;color:var(--teal);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.filter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.filter-group label{display:block;font-size:.78rem;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.filter-group select,.filter-group input{width:100%}
+
+.btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.btn-primary{background:var(--teal);color:#fff;padding:10px 28px;font-size:1rem;font-weight:600}
+.btn-primary:hover{background:var(--teal-light)}
+.btn-secondary{background:var(--coral);color:#fff;padding:8px 18px}
+.btn-secondary:hover{background:var(--coral-light)}
+.btn-outline{background:transparent;border:1.5px solid var(--teal);color:var(--teal);padding:8px 18px}
+.btn-outline:hover{background:var(--teal);color:#fff}
+.btn-small{padding:5px 12px;font-size:.8rem}
+.btn-gold{background:var(--gold);color:#fff;padding:8px 18px}
+.btn-gold:hover{background:var(--gold-light)}
+
+/* RESULTS */
+.results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.results-header h2{font-size:1.1rem;color:var(--teal)}
+.name-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:28px}
+.name-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;position:relative;border-left:4px solid var(--teal);transition:transform .15s,box-shadow .15s}
+.name-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.name-card .full-name{font-size:1.2rem;font-weight:700;color:var(--charcoal);margin-bottom:6px}
+.name-card .meta{font-size:.8rem;color:#777;line-height:1.6}
+.name-card .meta span{display:inline-block;margin-right:12px}
+.name-card .meta .label{font-weight:600;color:#555}
+.card-actions{display:flex;gap:6px;margin-top:10px}
+.card-actions button{font-size:.78rem;padding:4px 10px}
+.btn-lock{background:var(--gold);color:#fff}
+.btn-lock:hover{background:var(--gold-light)}
+.btn-lock.locked{background:var(--coral)}
+.btn-copy{background:#eee;color:var(--charcoal)}
+.btn-copy:hover{background:#ddd}
+
+/* FAVORITES */
+.favorites-panel{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.favorites-panel h2{font-size:1.1rem;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fav-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.fav-chip{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#fff8f0,#fff);border:1.5px solid var(--gold);border-radius:20px;padding:5px 14px;font-size:.85rem;font-weight:500}
+.fav-chip .star{color:var(--gold);font-size:1rem}
+.fav-chip .remove{color:var(--coral);cursor:pointer;font-weight:700;font-size:1rem;line-height:1}
+.fav-chip .remove:hover{color:#d44}
+.fav-actions{display:flex;gap:8px;flex-wrap:wrap}
+.empty-fav{color:#999;font-size:.9rem;font-style:italic}
+
+/* BANNED */
+.banned-panel{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:20px}
+.banned-panel h2{font-size:1.1rem;color:var(--coral);margin-bottom:8px}
+.banned-panel p{font-size:.82rem;color:#888;margin-bottom:8px}
+.banned-panel input{width:100%;max-width:500px}
+
+/* FOOTER */
+.site-footer{background:var(--charcoal);color:#ccc;text-align:center;padding:18px 16px;font-size:.85rem}
+.site-footer a{color:var(--gold)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--teal);color:#fff;padding:10px 20px;border-radius:var(--radius);font-size:.9rem;opacity:0;transform:translateY(10px);transition:all .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .site-header h1{font-size:1.3rem}
+  .filter-grid{grid-template-columns:1fr 1fr}
+  .name-grid{grid-template-columns:1fr}
+  .filter-toggle{display:block;width:100%;margin-bottom:12px}
+  .filter-panel.collapsed .filter-grid,.filter-panel.collapsed .btn-row{display:none}
+  .filter-panel.collapsed .banned-inline{display:none}
+}
+
+/* PRINT */
+@media print{
+  .site-header,.site-footer,.filter-panel,.banned-panel,.btn-row,.card-actions,.fav-actions,.filter-toggle,.toast{display:none!important}
+  .name-card{break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+  .favorites-panel{box-shadow:none;border:1px solid var(--gold)}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>The Invisible Pen</h1>
+  <div class="tagline">AI for Authors Over 40</div>
+</header>
+
+<div class="app-container">
+  <h2 style="text-align:center;font-size:1.4rem;margin:18px 0 6px;color:var(--charcoal)">Character Name Generator</h2>
+  <p style="text-align:center;color:#777;font-size:.9rem;margin-bottom:20px">Find the perfect name for your next fictional character</p>
+
+  <button class="btn-primary filter-toggle" onclick="document.getElementById('filterPanel').classList.toggle('collapsed')">Show / Hide Filters</button>
+
+  <div class="filter-panel" id="filterPanel">
+    <h2>Filters <span style="font-weight:400;font-size:.82rem;color:#999">(all optional)</span></h2>
+    <div class="filter-grid">
+      <div class="filter-group">
+        <label>Genre</label>
+        <select id="fGenre"><option value="">Any</option><option>Romance</option><option>Thriller</option><option>Fantasy</option><option>Historical</option><option>Contemporary</option><option>Sci-Fi</option><option>Western</option><option>Horror</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Era</label>
+        <select id="fEra"><option value="">Any</option><option value="modern">Modern</option><option value="regency">Regency (1811-1820)</option><option value="victorian">Victorian (1837-1901)</option><option value="medieval">Medieval</option><option value="renaissance">Renaissance</option><option value="frontier">Frontier / Old West</option><option value="ancient">Ancient</option><option value="futuristic">Futuristic</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Gender</label>
+        <select id="fGender"><option value="">Any</option><option value="m">Male</option><option value="f">Female</option><option value="n">Neutral / Unisex</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Cultural Background</label>
+        <select id="fCulture"><option value="">Any</option><option value="english">English / British</option><option value="irish">Irish</option><option value="scottish">Scottish</option><option value="french">French</option><option value="italian">Italian</option><option value="spanish">Spanish</option><option value="german">German</option><option value="scandinavian">Scandinavian</option><option value="greek">Greek</option><option value="russian">Russian</option><option value="japanese">Japanese</option><option value="chinese">Chinese</option><option value="korean">Korean</option><option value="indian">Indian</option><option value="arabic">Arabic</option><option value="african">African</option><option value="latin-american">Latin American</option><option value="indigenous">Indigenous American</option></select>
+      </div>
+      <div class="filter-group">
+        <label>First Letter</label>
+        <select id="fLetter"><option value="">Any</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Name Feel</label>
+        <select id="fFeel"><option value="">Any</option><option value="strong">Strong</option><option value="soft">Soft</option><option value="classic">Classic</option><option value="unusual">Unusual</option><option value="noble">Noble</option><option value="rugged">Rugged</option><option value="elegant">Elegant</option><option value="dark">Dark</option><option value="whimsical">Whimsical</option></select>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="generate()">Generate 10 Names</button>
+      <button class="btn-outline" onclick="resetFilters()">Clear Filters</button>
+    </div>
+  </div>
+
+  <div class="banned-panel">
+    <h2>Banned Names</h2>
+    <p>Names to always exclude (comma-separated). Saved automatically.</p>
+    <input type="text" id="bannedInput" placeholder="e.g. John, Mary, Smith" oninput="saveBanned()">
+  </div>
+
+  <div id="resultsSection" style="display:none">
+    <div class="results-header">
+      <h2>Generated Names</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn-outline btn-small" onclick="copyResults()">Copy All</button>
+        <button class="btn-outline btn-small" onclick="window.print()">Print</button>
+      </div>
+    </div>
+    <div class="name-grid" id="nameGrid"></div>
+  </div>
+
+  <div class="favorites-panel" id="favPanel">
+    <h2><span style="color:var(--gold)">&#9733;</span> Saved Names <span id="favCount" style="font-weight:400;font-size:.82rem;color:#999"></span></h2>
+    <div class="fav-list" id="favList"><span class="empty-fav">No saved names yet. Click the heart on a generated name to save it.</span></div>
+    <div class="fav-actions">
+      <button class="btn-gold btn-small" onclick="copyFavorites()">Copy Favorites</button>
+      <button class="btn-outline btn-small" onclick="clearFavorites()">Clear All</button>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  The Invisible Pen &mdash; AI for Authors Over 40 &nbsp;|&nbsp; <a href="https://www.skool.com/the-invisible-pen" target="_blank" rel="noopener">Join our community on Skool</a>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// NAME DATABASE
+// ============================================================
+
+const FIRST_NAMES = [
+// MALE NAMES
+{n:"Alexander",g:"m",c:["english","greek"],e:["modern","regency","victorian","renaissance","ancient"],f:["strong","classic","noble"],m:"Defender of the people"},
+{n:"James",g:"m",c:["english"],e:["modern","regency","victorian","frontier"],f:["classic","strong"],m:"Supplanter"},
+{n:"William",g:"m",c:["english"],e:["modern","regency","victorian","medieval"],f:["classic","noble"],m:"Resolute protector"},
+{n:"Henry",g:"m",c:["english","french"],e:["modern","regency","victorian","medieval","renaissance"],f:["classic","noble"],m:"Ruler of the household"},
+{n:"Thomas",g:"m",c:["english"],e:["modern","regency","victorian","medieval"],f:["classic"],m:"Twin"},
+{n:"Oliver",g:"m",c:["english"],e:["modern","victorian"],f:["classic","soft"],m:"Olive tree"},
+{n:"Sebastian",g:"m",c:["english","spanish","italian"],e:["modern","regency","victorian","renaissance"],f:["elegant","noble"],m:"Venerable, revered"},
+{n:"Theodore",g:"m",c:["english","greek"],e:["modern","victorian"],f:["classic","soft","noble"],m:"Gift of God"},
+{n:"Finn",g:"m",c:["irish"],e:["modern","medieval"],f:["strong","rugged"],m:"Fair, white"},
+{n:"Liam",g:"m",c:["irish","english"],e:["modern"],f:["strong"],m:"Strong-willed warrior"},
+{n:"Declan",g:"m",c:["irish"],e:["modern","medieval"],f:["strong"],m:"Full of goodness"},
+{n:"Rowan",g:"n",c:["irish","scottish","english"],e:["modern","medieval"],f:["whimsical","soft"],m:"Little red-haired one"},
+{n:"Kieran",g:"m",c:["irish"],e:["modern","medieval"],f:["soft","classic"],m:"Little dark one"},
+{n:"Dante",g:"m",c:["italian"],e:["modern","renaissance"],f:["dark","elegant","strong"],m:"Enduring, steadfast"},
+{n:"Marco",g:"m",c:["italian","spanish"],e:["modern","renaissance"],f:["strong","classic"],m:"Warlike"},
+{n:"Rafael",g:"m",c:["spanish","italian"],e:["modern","renaissance"],f:["elegant","noble"],m:"God has healed"},
+{n:"Nikolai",g:"m",c:["russian"],e:["modern","victorian"],f:["strong","dark","noble"],m:"Victory of the people"},
+{n:"Soren",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","unusual"],m:"Stern, severe"},
+{n:"Thane",g:"m",c:["english","scottish"],e:["medieval","modern"],f:["strong","noble","dark"],m:"Clan chieftain"},
+{n:"Rhys",g:"m",c:["english","scottish"],e:["modern","medieval"],f:["strong","rugged"],m:"Enthusiasm, ardor"},
+{n:"Jasper",g:"m",c:["english"],e:["modern","victorian","regency"],f:["elegant","whimsical"],m:"Bringer of treasure"},
+{n:"Callum",g:"m",c:["scottish","irish"],e:["modern","medieval"],f:["strong","classic"],m:"Dove"},
+{n:"Dorian",g:"m",c:["english","greek"],e:["modern","victorian"],f:["elegant","dark"],m:"Gift, descendant of Dorus"},
+{n:"Magnus",g:"m",c:["scandinavian"],e:["modern","medieval","ancient"],f:["strong","noble"],m:"Great, mighty"},
+{n:"Atlas",g:"m",c:["greek"],e:["modern","ancient","futuristic"],f:["strong","unusual"],m:"Bearer of the heavens"},
+{n:"Caspian",g:"m",c:["english"],e:["modern","futuristic"],f:["elegant","unusual","whimsical"],m:"Of the Caspian Sea"},
+{n:"Orion",g:"m",c:["greek"],e:["modern","ancient","futuristic"],f:["strong","unusual","noble"],m:"Rising in the sky, hunter"},
+{n:"Silas",g:"m",c:["english","greek"],e:["modern","victorian","frontier"],f:["strong","dark","rugged"],m:"Of the forest"},
+{n:"Ezra",g:"m",c:["english"],e:["modern","victorian","frontier"],f:["classic","strong"],m:"Helper"},
+{n:"Atticus",g:"m",c:["english","greek"],e:["modern","ancient"],f:["noble","classic","elegant"],m:"Man of Attica"},
+{n:"Edmund",g:"m",c:["english"],e:["regency","victorian","medieval"],f:["classic","noble"],m:"Prosperous protector"},
+{n:"Arthur",g:"m",c:["english"],e:["medieval","victorian","modern"],f:["classic","noble","strong"],m:"Bear king"},
+{n:"Edward",g:"m",c:["english"],e:["regency","victorian","medieval","modern"],f:["classic","noble"],m:"Wealthy guardian"},
+{n:"Charles",g:"m",c:["english","french"],e:["regency","victorian","modern"],f:["classic","noble"],m:"Free man"},
+{n:"Frederick",g:"m",c:["english","german"],e:["regency","victorian"],f:["classic","noble","strong"],m:"Peaceful ruler"},
+{n:"George",g:"m",c:["english","greek"],e:["regency","victorian","modern"],f:["classic"],m:"Farmer"},
+{n:"Richard",g:"m",c:["english"],e:["medieval","regency","victorian"],f:["classic","strong","noble"],m:"Brave ruler"},
+{n:"Hugo",g:"m",c:["french","german","spanish"],e:["modern","victorian"],f:["strong","classic"],m:"Mind, intellect"},
+{n:"Felix",g:"m",c:["english","latin-american"],e:["modern","ancient","victorian"],f:["whimsical","classic"],m:"Happy, fortunate"},
+{n:"Benedict",g:"m",c:["english"],e:["regency","victorian","medieval"],f:["noble","classic","elegant"],m:"Blessed"},
+{n:"Tobias",g:"m",c:["english","german"],e:["modern","victorian"],f:["classic","soft"],m:"God is good"},
+{n:"Gabriel",g:"m",c:["english","french","spanish"],e:["modern","renaissance","medieval"],f:["elegant","noble","soft"],m:"God is my strength"},
+{n:"Matthias",g:"m",c:["german","greek"],e:["medieval","renaissance","modern"],f:["classic","strong"],m:"Gift of God"},
+{n:"Julian",g:"m",c:["english","french"],e:["modern","victorian","ancient"],f:["elegant","classic"],m:"Youthful, downy"},
+{n:"Dominic",g:"m",c:["english","italian"],e:["modern"],f:["strong","classic"],m:"Belonging to the Lord"},
+{n:"Maximilian",g:"m",c:["german","english"],e:["regency","victorian","modern"],f:["noble","elegant","strong"],m:"Greatest"},
+{n:"Phineas",g:"m",c:["english","greek"],e:["victorian","modern"],f:["unusual","whimsical"],m:"Oracle, serpent's mouth"},
+{n:"Alistair",g:"m",c:["scottish"],e:["modern","victorian"],f:["elegant","noble"],m:"Defender of the people"},
+{n:"Gideon",g:"m",c:["english"],e:["victorian","frontier","modern"],f:["strong","dark"],m:"Great warrior"},
+{n:"Cedric",g:"m",c:["english"],e:["medieval","victorian"],f:["noble","classic"],m:"Chief, generous"},
+{n:"Leopold",g:"m",c:["german","english"],e:["victorian","regency"],f:["noble","classic","elegant"],m:"Bold people"},
+{n:"Percival",g:"m",c:["english","french"],e:["medieval","victorian"],f:["noble","elegant"],m:"One who pierces the valley"},
+{n:"Raphael",g:"m",c:["french","italian"],e:["renaissance","modern"],f:["elegant","noble","soft"],m:"God has healed"},
+{n:"Lysander",g:"m",c:["greek"],e:["ancient","renaissance","modern"],f:["elegant","unusual","noble"],m:"Liberator"},
+{n:"Ambrose",g:"m",c:["english"],e:["victorian","medieval"],f:["elegant","classic"],m:"Immortal"},
+{n:"Alaric",g:"m",c:["german"],e:["medieval","modern"],f:["strong","dark","noble"],m:"All-powerful ruler"},
+{n:"Evander",g:"m",c:["greek","scottish"],e:["ancient","modern"],f:["elegant","strong"],m:"Good man"},
+{n:"Cassian",g:"m",c:["english","italian"],e:["ancient","modern"],f:["elegant","dark","unusual"],m:"Hollow, empty"},
+{n:"Lucien",g:"m",c:["french"],e:["modern","victorian","renaissance"],f:["elegant","dark"],m:"Light"},
+{n:"Dashiell",g:"m",c:["french","english"],e:["modern"],f:["unusual","elegant"],m:"Page boy"},
+{n:"Knox",g:"m",c:["scottish","english"],e:["modern","frontier"],f:["strong","rugged"],m:"Round hill"},
+{n:"Sterling",g:"m",c:["english"],e:["modern","victorian"],f:["elegant","strong","noble"],m:"Of high quality"},
+{n:"Barrett",g:"m",c:["english","irish"],e:["modern","medieval"],f:["strong","rugged"],m:"Bear-like strength"},
+{n:"Cormac",g:"m",c:["irish"],e:["modern","medieval"],f:["strong","rugged"],m:"Charioteer"},
+{n:"Niall",g:"m",c:["irish"],e:["modern","medieval"],f:["strong"],m:"Champion, cloud"},
+{n:"Seamus",g:"m",c:["irish"],e:["modern","medieval"],f:["classic","rugged"],m:"Supplanter"},
+{n:"Lorcan",g:"m",c:["irish"],e:["modern","medieval"],f:["strong","dark"],m:"Little fierce one"},
+{n:"Eamon",g:"m",c:["irish"],e:["modern","medieval"],f:["classic","strong"],m:"Wealthy protector"},
+{n:"Oisin",g:"m",c:["irish"],e:["modern","medieval"],f:["whimsical","unusual"],m:"Little deer"},
+{n:"Angus",g:"m",c:["scottish","irish"],e:["modern","medieval"],f:["strong","rugged"],m:"One strength"},
+{n:"Duncan",g:"m",c:["scottish"],e:["modern","medieval"],f:["strong","classic"],m:"Dark warrior"},
+{n:"Hamish",g:"m",c:["scottish"],e:["modern","victorian"],f:["classic","rugged"],m:"Supplanter"},
+{n:"Malcolm",g:"m",c:["scottish"],e:["modern","medieval"],f:["classic","noble","strong"],m:"Devotee of St. Columba"},
+{n:"Fergus",g:"m",c:["scottish","irish"],e:["modern","medieval"],f:["strong","rugged"],m:"Man of vigor"},
+{n:"Lachlan",g:"m",c:["scottish"],e:["modern","medieval"],f:["strong","classic"],m:"From the land of lakes"},
+{n:"Remy",g:"m",c:["french"],e:["modern","renaissance"],f:["soft","elegant"],m:"Oarsman"},
+{n:"Laurent",g:"m",c:["french"],e:["modern","renaissance","regency"],f:["elegant","noble"],m:"Crowned with laurel"},
+{n:"Bastien",g:"m",c:["french"],e:["modern","renaissance"],f:["elegant","strong"],m:"Venerable"},
+{n:"Etienne",g:"m",c:["french"],e:["modern","renaissance","medieval"],f:["elegant","classic"],m:"Crown, garland"},
+{n:"Olivier",g:"m",c:["french"],e:["modern","victorian","regency"],f:["elegant","classic"],m:"Olive tree"}
+{n:"Marcello",g:"m",c:["italian"],e:["modern","renaissance"],f:["elegant","strong"],m:"Little warrior"},
+{n:"Lorenzo",g:"m",c:["italian"],e:["modern","renaissance"],f:["elegant","noble"],m:"From Laurentum"},
+{n:"Matteo",g:"m",c:["italian"],e:["modern","renaissance"],f:["classic","elegant"],m:"Gift of God"},
+{n:"Giovanni",g:"m",c:["italian"],e:["modern","renaissance"],f:["classic","elegant","noble"],m:"God is gracious"},
+{n:"Luca",g:"m",c:["italian"],e:["modern","renaissance"],f:["classic","soft"],m:"Light"},
+{n:"Alessandro",g:"m",c:["italian"],e:["modern","renaissance"],f:["elegant","noble","strong"],m:"Defender of mankind"},
+{n:"Enzo",g:"m",c:["italian"],e:["modern"],f:["strong","rugged"],m:"Ruler of the estate"},
+{n:"Alejandro",g:"m",c:["spanish","latin-american"],e:["modern"],f:["strong","elegant"],m:"Defender of mankind"},
+{n:"Mateo",g:"m",c:["spanish","latin-american"],e:["modern"],f:["classic","soft"],m:"Gift of God"},
+{n:"Diego",g:"m",c:["spanish","latin-american"],e:["modern","renaissance"],f:["strong"],m:"Supplanter"},
+{n:"Santiago",g:"m",c:["spanish","latin-american"],e:["modern"],f:["noble","strong"],m:"Saint James"},
+{n:"Joaquin",g:"m",c:["spanish","latin-american"],e:["modern"],f:["strong","unusual"],m:"God will judge"},
+{n:"Carlos",g:"m",c:["spanish","latin-american"],e:["modern"],f:["classic","strong"],m:"Free man"},
+{n:"Andres",g:"m",c:["spanish","latin-american"],e:["modern"],f:["classic"],m:"Manly, brave"},
+{n:"Stefan",g:"m",c:["german","russian"],e:["modern"],f:["strong","classic"],m:"Crown, garland"},
+{n:"Konrad",g:"m",c:["german"],e:["modern","medieval"],f:["strong","classic"],m:"Bold counsel"},
+{n:"Wolfgang",g:"m",c:["german"],e:["victorian","medieval","modern"],f:["strong","noble","unusual"],m:"Wolf path"},
+{n:"Klaus",g:"m",c:["german"],e:["modern","victorian"],f:["strong","classic"],m:"Victory of the people"},
+{n:"Henrik",g:"m",c:["scandinavian","german"],e:["modern","medieval","victorian"],f:["classic","strong"],m:"Ruler of the home"},
+{n:"Leif",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","rugged"],m:"Heir, descendant"},
+{n:"Bjorn",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","rugged"],m:"Bear"},
+{n:"Erik",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","classic"],m:"Eternal ruler"},
+{n:"Gunnar",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","rugged","dark"],m:"Bold warrior"},
+{n:"Ivar",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","dark"],m:"Bow warrior"},
+{n:"Sigurd",g:"m",c:["scandinavian"],e:["medieval"],f:["strong","noble"],m:"Guardian of victory"},
+{n:"Ragnar",g:"m",c:["scandinavian"],e:["medieval"],f:["strong","rugged","dark"],m:"Warrior of judgment"},
+{n:"Axel",g:"m",c:["scandinavian","german"],e:["modern"],f:["strong","rugged"],m:"Father of peace"},
+{n:"Dmitri",g:"m",c:["russian"],e:["modern","victorian"],f:["strong","dark","noble"],m:"Earth lover"},
+{n:"Alexei",g:"m",c:["russian"],e:["modern","victorian"],f:["elegant","noble"],m:"Defender"},
+{n:"Ivan",g:"m",c:["russian"],e:["modern","victorian","medieval"],f:["strong","classic","dark"],m:"God is gracious"},
+{n:"Sergei",g:"m",c:["russian"],e:["modern"],f:["strong","classic"],m:"Servant, protector"},
+{n:"Boris",g:"m",c:["russian"],e:["modern","victorian"],f:["strong","dark"],m:"Fighter, warrior"},
+{n:"Andrei",g:"m",c:["russian"],e:["modern"],f:["classic","strong"],m:"Manly, brave"},
+{n:"Konstantin",g:"m",c:["russian","greek"],e:["modern","ancient"],f:["noble","classic","strong"],m:"Constant, steadfast"},
+{n:"Dimitrios",g:"m",c:["greek"],e:["modern","ancient"],f:["classic","noble"],m:"Devoted to Demeter"},
+{n:"Stavros",g:"m",c:["greek"],e:["modern","ancient"],f:["strong","classic"],m:"Cross"},
+{n:"Nikos",g:"m",c:["greek"],e:["modern","ancient"],f:["classic"],m:"Victory of the people"},
+{n:"Demetrius",g:"m",c:["greek"],e:["ancient","modern"],f:["noble","classic"],m:"Follower of Demeter"},
+{n:"Theron",g:"m",c:["greek"],e:["ancient","modern"],f:["strong","unusual"],m:"Hunter"},
+{n:"Leander",g:"m",c:["greek"],e:["ancient","modern"],f:["elegant","soft"],m:"Lion man"},
+{n:"Haruki",g:"m",c:["japanese"],e:["modern"],f:["soft","elegant"],m:"Shining brightly"},
+{n:"Kenji",g:"m",c:["japanese"],e:["modern"],f:["strong","classic"],m:"Strong second son"},
+{n:"Takeshi",g:"m",c:["japanese"],e:["modern","medieval"],f:["strong"],m:"Fierce warrior"},
+{n:"Akira",g:"n",c:["japanese"],e:["modern"],f:["strong","classic"],m:"Bright, clear"},
+{n:"Ryu",g:"m",c:["japanese"],e:["modern","medieval"],f:["strong","dark"],m:"Dragon"},
+{n:"Hiroshi",g:"m",c:["japanese"],e:["modern"],f:["classic","noble"],m:"Generous, prosperous"},
+{n:"Ren",g:"n",c:["japanese"],e:["modern"],f:["soft","whimsical"],m:"Lotus, love"},
+{n:"Wei",g:"m",c:["chinese"],e:["modern","ancient"],f:["strong","classic"],m:"Greatness, power"},
+{n:"Jun",g:"n",c:["chinese","korean"],e:["modern"],f:["soft","classic"],m:"Truthful, obedient"},
+{n:"Liang",g:"m",c:["chinese"],e:["modern","ancient"],f:["classic"],m:"Bright, excellent"},
+{n:"Hao",g:"m",c:["chinese"],e:["modern"],f:["strong"],m:"Vast, grand"},
+{n:"Zhen",g:"n",c:["chinese"],e:["modern","ancient"],f:["elegant"],m:"Precious, rare"},
+{n:"Min-jun",g:"m",c:["korean"],e:["modern"],f:["classic","soft"],m:"Clever and handsome"},
+{n:"Jae",g:"n",c:["korean"],e:["modern"],f:["classic"],m:"Talent, wealth"},
+{n:"Hyun",g:"n",c:["korean"],e:["modern"],f:["classic"],m:"Virtuous, worthy"},
+{n:"Soo-jin",g:"m",c:["korean"],e:["modern"],f:["elegant"],m:"Excellence and treasure"},
+{n:"Tae-won",g:"m",c:["korean"],e:["modern"],f:["strong"],m:"Great origin"},
+{n:"Arjun",g:"m",c:["indian"],e:["modern","ancient"],f:["strong","noble"],m:"Bright, shining"},
+{n:"Rohan",g:"m",c:["indian","irish"],e:["modern"],f:["strong","classic"],m:"Ascending"},
+{n:"Vikram",g:"m",c:["indian"],e:["modern","ancient"],f:["strong","noble"],m:"Valor, bravery"},
+{n:"Aditya",g:"m",c:["indian"],e:["modern","ancient"],f:["noble","classic"],m:"Sun, belonging to Aditi"},
+{n:"Ravi",g:"m",c:["indian"],e:["modern","ancient"],f:["classic"],m:"Sun"},
+{n:"Kiran",g:"n",c:["indian"],e:["modern"],f:["soft","whimsical"],m:"Ray of light"},
+{n:"Dev",g:"m",c:["indian"],e:["modern","ancient"],f:["strong","classic"],m:"God, divine"},
+{n:"Naveen",g:"m",c:["indian"],e:["modern"],f:["classic","soft"],m:"New, fresh"},
+{n:"Sanjay",g:"m",c:["indian"],e:["modern"],f:["classic"],m:"Triumphant"},
+{n:"Omar",g:"m",c:["arabic"],e:["modern","medieval","ancient"],f:["strong","classic"],m:"Flourishing, long-lived"},
+{n:"Khalil",g:"m",c:["arabic"],e:["modern","medieval"],f:["elegant","noble"],m:"Friend, companion"},
+{n:"Tariq",g:"m",c:["arabic"],e:["modern","medieval"],f:["strong"],m:"Morning star"},
+{n:"Rashid",g:"m",c:["arabic"],e:["modern","medieval"],f:["strong","noble"],m:"Rightly guided"},
+{n:"Idris",g:"m",c:["arabic","african"],e:["modern","medieval"],f:["elegant","noble"],m:"Studious, interpreter"},
+{n:"Malik",g:"m",c:["arabic","african"],e:["modern","medieval"],f:["strong","noble"],m:"King, sovereign"},
+{n:"Jabari",g:"m",c:["african"],e:["modern"],f:["strong","noble"],m:"Brave, fearless"},
+{n:"Kwame",g:"m",c:["african"],e:["modern"],f:["strong","classic"],m:"Born on Saturday"},
+{n:"Kofi",g:"m",c:["african"],e:["modern"],f:["classic","soft"],m:"Born on Friday"},
+{n:"Zuri",g:"n",c:["african"],e:["modern"],f:["soft","whimsical"],m:"Beautiful"},
+{n:"Amari",g:"n",c:["african"],e:["modern"],f:["soft","elegant"],m:"Strength, eternal"},
+{n:"Obasi",g:"m",c:["african"],e:["modern"],f:["strong"],m:"In honor of the supreme god"},
+{n:"Emeka",g:"m",c:["african"],e:["modern"],f:["strong"],m:"Great deeds"},
+{n:"Matias",g:"m",c:["latin-american","spanish"],e:["modern"],f:["classic","soft"],m:"Gift of God"},
+{n:"Esteban",g:"m",c:["spanish","latin-american"],e:["modern"],f:["classic","strong"],m:"Crown"},
+{n:"Pablo",g:"m",c:["spanish","latin-american"],e:["modern"],f:["classic"],m:"Small, humble"},
+{n:"Tomas",g:"m",c:["spanish","latin-american"],e:["modern"],f:["classic"],m:"Twin"},
+{n:"Chayton",g:"m",c:["indigenous"],e:["modern","frontier"],f:["strong","unusual"],m:"Falcon"},
+{n:"Koda",g:"m",c:["indigenous"],e:["modern"],f:["strong","whimsical"],m:"Friend, companion"},
+{n:"Takoda",g:"m",c:["indigenous"],e:["modern","frontier"],f:["strong","unusual"],m:"Friend to everyone"},
+{n:"Ahanu",g:"m",c:["indigenous"],e:["modern"],f:["soft","unusual"],m:"He laughs"},
+{n:"Wyatt",g:"m",c:["english"],e:["modern","frontier"],f:["strong","rugged"],m:"Brave in war"},
+{n:"Cole",g:"m",c:["english"],e:["modern","frontier"],f:["strong","rugged"],m:"Charcoal, dark"},
+{n:"Jake",g:"m",c:["english"],e:["modern","frontier"],f:["strong","rugged"],m:"Supplanter"},
+{n:"Colton",g:"m",c:["english"],e:["modern","frontier"],f:["rugged"],m:"Coal town"},
+{n:"Wade",g:"m",c:["english"],e:["modern","frontier"],f:["strong","rugged"],m:"River crossing"},
+{n:"Hank",g:"m",c:["english"],e:["modern","frontier"],f:["rugged","strong"],m:"Ruler of the home"},
+{n:"Jace",g:"m",c:["english"],e:["modern","futuristic"],f:["strong"],m:"Healing"},
+{n:"Zephyr",g:"n",c:["greek"],e:["futuristic","ancient"],f:["whimsical","unusual"],m:"West wind"},
+{n:"Orion",g:"m",c:["greek"],e:["futuristic","ancient"],f:["strong","unusual","noble"],m:"Rising in the sky"},
+{n:"Rigel",g:"m",c:["english"],e:["futuristic"],f:["unusual","strong"],m:"Foot (star name)"},
+{n:"Caius",g:"m",c:["english","latin-american"],e:["ancient","futuristic"],f:["noble","elegant"],m:"Rejoice"},
+{n:"Endymion",g:"m",c:["greek"],e:["ancient","futuristic"],f:["unusual","elegant"],m:"To enter, dive into"},
+{n:"Lazarus",g:"m",c:["english","greek"],e:["ancient","medieval","modern"],f:["dark","unusual"],m:"God has helped"},
+{n:"Mordecai",g:"m",c:["english"],e:["victorian","frontier","medieval"],f:["dark","unusual"],m:"Warrior"},
+{n:"Oberon",g:"m",c:["english","french"],e:["medieval","renaissance"],f:["noble","whimsical","elegant"],m:"Noble bear"},
+{n:"Griffin",g:"m",c:["english","irish"],e:["modern","medieval"],f:["strong"],m:"Strong lord"},
+{n:"Heath",g:"m",c:["english"],e:["modern"],f:["strong","rugged"],m:"Untended land"},
+{n:"Milo",g:"m",c:["english","german"],e:["modern"],f:["soft","whimsical"],m:"Gracious, soldier"},
+{n:"Oscar",g:"m",c:["english","irish","scandinavian"],e:["modern","victorian"],f:["classic"],m:"Divine spear"},
+{n:"Beckett",g:"m",c:["english"],e:["modern"],f:["unusual","strong"],m:"Beehive, bee cottage"},
+{n:"Holden",g:"m",c:["english"],e:["modern"],f:["classic","soft"],m:"Hollow valley"},
+{n:"Spencer",g:"m",c:["english"],e:["modern","victorian","regency"],f:["classic","noble"],m:"Steward, dispenser"},
+{n:"Emmett",g:"m",c:["english","irish"],e:["modern","frontier"],f:["classic","strong"],m:"Universal, truth"},
+{n:"Nolan",g:"m",c:["irish"],e:["modern"],f:["classic"],m:"Champion"},
+{n:"Shane",g:"m",c:["irish"],e:["modern","frontier"],f:["strong","rugged"],m:"God is gracious"},
+{n:"Desmond",g:"m",c:["irish"],e:["modern","victorian"],f:["classic","noble"],m:"From South Munster"},
+{n:"Brennan",g:"m",c:["irish"],e:["modern"],f:["strong"],m:"Teardrop, sorrow"},
+{n:"Grant",g:"m",c:["scottish","english"],e:["modern","frontier"],f:["strong","rugged"],m:"Great, large"},
+{n:"Fletcher",g:"m",c:["english"],e:["modern","medieval"],f:["classic","rugged"],m:"Arrow maker"},
+{n:"Pierce",g:"m",c:["english","irish"],e:["modern"],f:["strong","elegant"],m:"Rock"},
+{n:"Vaughn",g:"m",c:["english"],e:["modern"],f:["strong","classic"],m:"Small"},
+{n:"Cyrus",g:"m",c:["english","greek"],e:["ancient","modern"],f:["strong","noble"],m:"Sun, lord"},
+{n:"Darius",g:"m",c:["english","greek"],e:["ancient","modern"],f:["noble","strong"],m:"Possessing goodness"},
+{n:"Ajax",g:"m",c:["greek"],e:["ancient","futuristic"],f:["strong","dark"],m:"Eagle"},
+{n:"Hector",g:"m",c:["greek","spanish"],e:["ancient","modern"],f:["strong","classic"],m:"Holding fast"},
+{n:"Tristan",g:"m",c:["english","french"],e:["medieval","modern"],f:["elegant","soft"],m:"Tumult, outcry"},
+{n:"Gareth",g:"m",c:["english"],e:["medieval","modern"],f:["classic","noble"],m:"Gentle, enclosure"},
+{n:"Roland",g:"m",c:["english","french","german"],e:["medieval","renaissance"],f:["noble","strong"],m:"Famous land"},
+{n:"Lancelot",g:"m",c:["english","french"],e:["medieval"],f:["noble","elegant"],m:"Land, territory"},
+{n:"Claude",g:"m",c:["french"],e:["modern","victorian"],f:["classic","elegant"],m:"Lame, limping"},
+{n:"Rainer",g:"m",c:["german"],e:["modern","victorian"],f:["strong","classic"],m:"Wise army"},
+{n:"Fritz",g:"m",c:["german"],e:["modern","victorian"],f:["classic","rugged"],m:"Peaceful ruler"},
+{n:"Geralt",g:"m",c:["german"],e:["medieval","modern"],f:["strong","dark","unusual"],m:"Spear ruler"},
+{n:"Viggo",g:"m",c:["scandinavian"],e:["modern","medieval"],f:["strong","rugged"],m:"War, battle"},
+{n:"Anders",g:"m",c:["scandinavian"],e:["modern"],f:["classic"],m:"Manly, brave"},
+{n:"Stellan",g:"m",c:["scandinavian"],e:["modern"],f:["unusual","soft"],m:"Calm, peaceful"},
+{n:"Kai",g:"n",c:["scandinavian","japanese","english"],e:["modern","futuristic"],f:["strong","whimsical"],m:"Sea, forgiveness"},
+{n:"Ash",g:"n",c:["english"],e:["modern","futuristic"],f:["strong","rugged"],m:"Ash tree"},
+{n:"River",g:"n",c:["english"],e:["modern","futuristic"],f:["soft","whimsical"],m:"Flowing water"},
+{n:"Phoenix",g:"n",c:["english","greek"],e:["modern","futuristic"],f:["strong","dark","unusual"],m:"Dark red, mythical bird"},
+{n:"Rune",g:"n",c:["scandinavian"],e:["modern","medieval","futuristic"],f:["unusual","dark"],m:"Secret, whisper"},
+{n:"Storm",g:"n",c:["english","scandinavian"],e:["modern","futuristic"],f:["strong","dark","rugged"],m:"Tempest"},
+{n:"Blaze",g:"n",c:["english"],e:["modern","futuristic"],f:["strong","dark","unusual"],m:"Flame, fire"},
+{n:"Jett",g:"m",c:["english"],e:["modern","futuristic"],f:["strong","dark"],m:"Black gemstone"},
+{n:"Raven",g:"n",c:["english"],e:["modern","futuristic"],f:["dark","unusual","whimsical"],m:"Blackbird"},
+{n:"Vesper",g:"n",c:["english"],e:["modern","futuristic"],f:["elegant","dark","unusual"],m:"Evening star"},
+{n:"Salem",g:"n",c:["arabic","english"],e:["modern"],f:["dark","unusual"],m:"Peaceful"},
+{n:"Bram",g:"m",c:["english","german"],e:["modern","victorian"],f:["strong","dark"],m:"Father of many"},
+{n:"Gawain",g:"m",c:["english"],e:["medieval"],f:["noble","strong"],m:"White hawk"},
+{n:"Ansel",g:"m",c:["german","english"],e:["modern"],f:["soft","classic"],m:"God's protection"},
+{n:"Stellan",g:"m",c:["scandinavian"],e:["modern"],f:["unusual","soft"],m:"Calm"},
+{n:"Wren",g:"n",c:["english"],e:["modern"],f:["soft","whimsical"],m:"Small bird"},
+{n:"Lane",g:"n",c:["english"],e:["modern"],f:["classic","soft"],m:"Narrow path"},
+{n:"Quinn",g:"n",c:["irish","english"],e:["modern"],f:["classic","strong"],m:"Wise, chief"},
+{n:"Morgan",g:"n",c:["english","irish"],e:["modern","medieval"],f:["classic","dark"],m:"Sea-born, bright"},
+{n:"Avery",g:"n",c:["english"],e:["modern"],f:["soft","classic"],m:"Ruler of elves"},
+{n:"Casey",g:"n",c:["irish","english"],e:["modern"],f:["classic"],m:"Brave in battle"},
+{n:"Jordan",g:"n",c:["english"],e:["modern"],f:["classic"],m:"To flow down"},
+{n:"Taylor",g:"n",c:["english"],e:["modern"],f:["classic"],m:"Tailor"},
+{n:"Ellis",g:"n",c:["english"],e:["modern","victorian"],f:["classic","soft"],m:"Benevolent"},
+{n:"Sage",g:"n",c:["english"],e:["modern"],f:["soft","whimsical"],m:"Wise, herb"},
+{n:"Reese",g:"n",c:["english"],e:["modern"],f:["classic","soft"],m:"Enthusiasm"},
+{n:"Emerson",g:"n",c:["english"],e:["modern","victorian"],f:["classic","noble"],m:"Son of Emery"},
+{n:"Hayden",g:"n",c:["english"],e:["modern"],f:["classic"],m:"Heather-covered hill"},
+{n:"Dakota",g:"n",c:["indigenous","english"],e:["modern","frontier"],f:["strong","rugged"],m:"Friend, ally"},
+{n:"Indigo",g:"n",c:["english"],e:["modern","futuristic"],f:["unusual","whimsical"],m:"Deep blue dye"},
+{n:"Nova",g:"n",c:["english"],e:["modern","futuristic"],f:["unusual","strong","whimsical"],m:"New, bright star"},
+
+// FEMALE NAMES
+{n:"Eleanor",g:"f",c:["english"],e:["regency","victorian","medieval","modern"],f:["classic","noble","elegant"],m:"Bright, shining one"},
+{n:"Charlotte",g:"f",c:["english","french"],e:["regency","victorian","modern"],f:["classic","elegant"],m:"Free woman"},
+{n:"Vivienne",g:"f",c:["french","english"],e:["modern","victorian"],f:["elegant","strong"],m:"Alive, lively"},
+{n:"Scarlett",g:"f",c:["english"],e:["modern","victorian"],f:["strong","dark"],m:"Red, scarlet"},
+{n:"Aurora",g:"f",c:["english","italian"],e:["modern","renaissance","futuristic"],f:["elegant","whimsical"],m:"Dawn"},
+{n:"Isla",g:"f",c:["scottish","spanish"],e:["modern"],f:["soft","elegant"],m:"Island"},
+{n:"Maeve",g:"f",c:["irish"],e:["modern","medieval"],f:["strong","dark"],m:"She who intoxicates"},
+{n:"Saoirse",g:"f",c:["irish"],e:["modern"],f:["strong","unusual"],m:"Freedom"},
+{n:"Freya",g:"f",c:["scandinavian"],e:["modern","medieval"],f:["strong","noble"],m:"Noble woman, goddess of love"},
+{n:"Luna",g:"f",c:["spanish","italian","english"],e:["modern","futuristic"],f:["soft","whimsical"],m:"Moon"},
+{n:"Seraphina",g:"f",c:["english","italian"],e:["modern","renaissance","medieval"],f:["elegant","noble","whimsical"],m:"Fiery, burning one"},
+{n:"Valentina",g:"f",c:["italian","spanish","latin-american"],e:["modern","renaissance"],f:["elegant","strong"],m:"Strong, vigorous"},
+{n:"Aria",g:"f",c:["italian","english"],e:["modern","futuristic"],f:["soft","elegant"],m:"Air, melody"},
+{n:"Celeste",g:"f",c:["french","italian"],e:["modern","victorian"],f:["elegant","soft"],m:"Heavenly"},
+{n:"Evangeline",g:"f",c:["english","french"],e:["victorian","modern"],f:["elegant","noble","soft"],m:"Bearer of good news"},
+{n:"Rosalind",g:"f",c:["english"],e:["regency","victorian","renaissance"],f:["classic","elegant"],m:"Pretty rose"},
+{n:"Cordelia",g:"f",c:["english"],e:["victorian","renaissance","modern"],f:["elegant","noble","classic"],m:"Heart, daughter of the sea"},
+{n:"Isolde",g:"f",c:["english","german"],e:["medieval","modern"],f:["elegant","dark","unusual"],m:"Ice ruler"},
+{n:"Guinevere",g:"f",c:["english"],e:["medieval"],f:["noble","elegant"],m:"White shadow, white wave"},
+{n:"Elara",g:"f",c:["greek"],e:["modern","futuristic","ancient"],f:["elegant","unusual","whimsical"],m:"Bright, shining"},
+{n:"Briar",g:"f",c:["english"],e:["modern"],f:["strong","dark","whimsical"],m:"Thorny bush"},
+{n:"Ivy",g:"f",c:["english"],e:["modern","victorian"],f:["classic","whimsical"],m:"Climbing vine plant"},
+{n:"Astrid",g:"f",c:["scandinavian"],e:["modern","medieval"],f:["strong","noble"],m:"Divinely beautiful"},
+{n:"Ingrid",g:"f",c:["scandinavian"],e:["modern","medieval"],f:["strong","classic","noble"],m:"Beautiful, beloved"},
+{n:"Katarina",g:"f",c:["russian","german","scandinavian"],e:["modern","victorian"],f:["elegant","strong"],m:"Pure"},
+{n:"Anastasia",g:"f",c:["russian","greek"],e:["modern","victorian"],f:["elegant","noble"],m:"Resurrection"},
+{n:"Dahlia",g:"f",c:["english","scandinavian"],e:["modern","victorian"],f:["elegant","soft"],m:"Valley flower"},
+{n:"Genevieve",g:"f",c:["french","english"],e:["regency","victorian","modern"],f:["elegant","classic","noble"],m:"Woman of the people"},
+{n:"Penelope",g:"f",c:["english","greek"],e:["modern","ancient","victorian"],f:["classic","elegant"],m:"Weaver"},
+{n:"Josephine",g:"f",c:["english","french"],e:["regency","victorian","modern"],f:["classic","noble"],m:"God will increase"},
+{n:"Arabella",g:"f",c:["english"],e:["regency","victorian","modern"],f:["elegant","soft"],m:"Yielding to prayer"},
+{n:"Felicity",g:"f",c:["english"],e:["regency","victorian","modern"],f:["soft","classic"],m:"Happiness"},
+{n:"Louisa",g:"f",c:["english","german"],e:["regency","victorian"],f:["classic","soft","noble"],m:"Renowned warrior"},
+{n:"Beatrice",g:"f",c:["english","italian"],e:["regency","victorian","renaissance","medieval"],f:["classic","noble","elegant"],m:"She who brings happiness"},
+{n:"Harriet",g:"f",c:["english"],e:["regency","victorian"],f:["classic","strong"],m:"Ruler of the home"},
+{n:"Cecilia",g:"f",c:["english","italian","spanish"],e:["regency","victorian","modern"],f:["classic","soft","elegant"],m:"Blind to one's own beauty"},
+{n:"Adelaide",g:"f",c:["english","german","french"],e:["regency","victorian"],f:["classic","noble","elegant"],m:"Noble natured"},
+{n:"Emmeline",g:"f",c:["english","french"],e:["regency","victorian"],f:["classic","soft","elegant"],m:"Rival, industrious"},
+{n:"Lydia",g:"f",c:["english","greek"],e:["regency","victorian","ancient","modern"],f:["classic","soft"],m:"From Lydia"},
+{n:"Helena",g:"f",c:["english","greek"],e:["victorian","ancient","renaissance","modern"],f:["classic","elegant","noble"],m:"Bright, shining"},
+{n:"Victoria",g:"f",c:["english"],e:["victorian","modern"],f:["classic","noble","strong"],m:"Victory"},
+{n:"Marguerite",g:"f",c:["french"],e:["regency","victorian","renaissance"],f:["elegant","classic","noble"],m:"Pearl"},
+{n:"Colette",g:"f",c:["french"],e:["modern","victorian"],f:["elegant","soft"],m:"Victory of the people"},
+{n:"Adeline",g:"f",c:["french","english"],e:["regency","victorian","modern"],f:["classic","soft"],m:"Noble"},
+{n:"Camille",g:"f",c:["french"],e:["modern","victorian"],f:["elegant","classic"],m:"Perfect, unblemished"},
+{n:"Delphine",g:"f",c:["french"],e:["modern","victorian"],f:["elegant","unusual"],m:"Dolphin, from Delphi"},
+{n:"Fleur",g:"f",c:["french"],e:["modern","victorian"],f:["soft","elegant","whimsical"],m:"Flower"},
+{n:"Giselle",g:"f",c:["french","german"],e:["modern","medieval"],f:["elegant","soft"],m:"Pledge, hostage"},
+{n:"Elodie",g:"f",c:["french"],e:["modern"],f:["soft","elegant"],m:"Foreign riches"},
+{n:"Aurelie",g:"f",c:["french"],e:["modern","victorian"],f:["elegant","unusual"],m:"Golden"},
+{n:"Cosette",g:"f",c:["french"],e:["victorian","modern"],f:["soft","elegant"],m:"Little thing"},
+{n:"Chiara",g:"f",c:["italian"],e:["modern","renaissance"],f:["elegant","soft"],m:"Bright, clear"},
+{n:"Francesca",g:"f",c:["italian"],e:["modern","renaissance"],f:["elegant","classic"],m:"Free woman"},
+{n:"Giuliana",g:"f",c:["italian"],e:["modern","renaissance"],f:["elegant"],m:"Youthful"},
+{n:"Bianca",g:"f",c:["italian"],e:["modern","renaissance"],f:["elegant","soft"],m:"White, pure"},
+{n:"Sienna",g:"f",c:["italian","english"],e:["modern"],f:["soft","elegant"],m:"From Siena, reddish-brown"},
+{n:"Alessia",g:"f",c:["italian"],e:["modern"],f:["elegant","soft"],m:"Defender"},
+{n:"Catalina",g:"f",c:["spanish"],e:["modern","renaissance"],f:["elegant","strong"],m:"Pure"},
+{n:"Isabella",g:"f",c:["spanish","italian","english"],e:["modern","renaissance","regency"],f:["elegant","classic","noble"],m:"Devoted to God"},
+{n:"Paloma",g:"f",c:["spanish"],e:["modern"],f:["soft","elegant"],m:"Dove"},
+{n:"Esperanza",g:"f",c:["spanish","latin-american"],e:["modern"],f:["elegant","classic"],m:"Hope"},
+{n:"Lucia",g:"f",c:["spanish","italian"],e:["modern","renaissance"],f:["classic","elegant"],m:"Light"},
+{n:"Carmen",g:"f",c:["spanish","latin-american"],e:["modern"],f:["strong","classic"],m:"Song, garden"},
+{n:"Marisol",g:"f",c:["spanish","latin-american"],e:["modern"],f:["soft","whimsical"],m:"Sea and sun"},
+{n:"Amara",g:"f",c:["african","latin-american"],e:["modern"],f:["soft","elegant"],m:"Grace, eternal"},
+{n:"Nia",g:"f",c:["african","irish"],e:["modern"],f:["soft"],m:"Purpose, radiance"},
+{n:"Zola",g:"f",c:["african","italian"],e:["modern"],f:["unusual","strong"],m:"Earth, quiet"},
+{n:"Aisha",g:"f",c:["arabic","african"],e:["modern","medieval"],f:["soft","classic"],m:"Alive, living"},
+{n:"Amina",g:"f",c:["arabic","african"],e:["modern","medieval"],f:["soft","classic"],m:"Truthful, trustworthy"},
+{n:"Layla",g:"f",c:["arabic"],e:["modern","medieval"],f:["soft","elegant"],m:"Night, dark beauty"},
+{n:"Fatima",g:"f",c:["arabic"],e:["modern","medieval"],f:["classic","noble"],m:"Captivating, one who abstains"},
+{n:"Nadia",g:"f",c:["russian","arabic","french"],e:["modern"],f:["soft","elegant"],m:"Hope"},
+{n:"Leila",g:"f",c:["arabic","english"],e:["modern"],f:["soft","elegant"],m:"Night"},
+{n:"Yasmin",g:"f",c:["arabic"],e:["modern"],f:["soft","elegant"],m:"Jasmine flower"},
+{n:"Tatiana",g:"f",c:["russian"],e:["modern","victorian"],f:["elegant","noble"],m:"Fairy queen"},
+{n:"Natasha",g:"f",c:["russian"],e:["modern","victorian"],f:["elegant","strong"],m:"Born on Christmas Day"},
+{n:"Irina",g:"f",c:["russian"],e:["modern","victorian"],f:["elegant","classic"],m:"Peace"},
+{n:"Yelena",g:"f",c:["russian"],e:["modern","victorian"],f:["elegant","classic"],m:"Bright, shining light"},
+{n:"Mila",g:"f",c:["russian","english"],e:["modern"],f:["soft"],m:"Gracious, dear"},
+{n:"Svetlana",g:"f",c:["russian"],e:["modern","victorian"],f:["elegant"],m:"Light, luminous"},
+{n:"Hana",g:"f",c:["japanese","korean","arabic"],e:["modern"],f:["soft","elegant"],m:"Flower, blossom"},
+{n:"Yuki",g:"f",c:["japanese"],e:["modern"],f:["soft","whimsical"],m:"Snow, happiness"},
+{n:"Sakura",g:"f",c:["japanese"],e:["modern"],f:["soft","elegant","whimsical"],m:"Cherry blossom"},
+{n:"Mei",g:"f",c:["chinese","japanese"],e:["modern"],f:["soft","elegant"],m:"Beautiful, plum"},
+{n:"Aiko",g:"f",c:["japanese"],e:["modern"],f:["soft","elegant"],m:"Love child"},
+{n:"Suki",g:"f",c:["japanese"],e:["modern"],f:["soft","whimsical"],m:"Beloved"},
+{n:"Yuna",g:"f",c:["korean","japanese"],e:["modern"],f:["soft","elegant"],m:"Gentle, patient"},
+{n:"Ji-yeon",g:"f",c:["korean"],e:["modern"],f:["elegant"],m:"Wisdom and beauty"},
+{n:"Soo-yeon",g:"f",c:["korean"],e:["modern"],f:["soft","elegant"],m:"Lotus, beautiful"},
+{n:"Lin",g:"f",c:["chinese"],e:["modern"],f:["soft","classic"],m:"Beautiful jade"},
+{n:"Xiu",g:"f",c:["chinese"],e:["modern","ancient"],f:["elegant"],m:"Elegant, graceful"},
+{n:"Ananya",g:"f",c:["indian"],e:["modern"],f:["elegant","unusual"],m:"Unique, matchless"},
+{n:"Priya",g:"f",c:["indian"],e:["modern"],f:["soft","classic"],m:"Beloved"},
+{n:"Lakshmi",g:"f",c:["indian"],e:["modern","ancient"],f:["noble","elegant"],m:"Goddess of fortune"},
+{n:"Devi",g:"f",c:["indian"],e:["modern","ancient"],f:["noble","classic"],m:"Goddess"},
+{n:"Kavya",g:"f",c:["indian"],e:["modern"],f:["soft","elegant"],m:"Poetry"},
+{n:"Meera",g:"f",c:["indian"],e:["modern","ancient"],f:["soft","classic"],m:"Prosperous, light"},
+{n:"Athena",g:"f",c:["greek"],e:["ancient","modern","futuristic"],f:["strong","noble"],m:"Goddess of wisdom"},
+{n:"Calliope",g:"f",c:["greek"],e:["ancient","modern"],f:["elegant","unusual","whimsical"],m:"Beautiful voice"},
+{n:"Thalia",g:"f",c:["greek"],e:["ancient","modern"],f:["soft","whimsical"],m:"To flourish, blooming"},
+{n:"Persephone",g:"f",c:["greek"],e:["ancient","modern"],f:["dark","elegant","unusual"],m:"Bringer of destruction"},
+{n:"Cressida",g:"f",c:["greek","english"],e:["ancient","renaissance","modern"],f:["elegant","unusual"],m:"Golden"},
+{n:"Ariadne",g:"f",c:["greek"],e:["ancient","modern"],f:["elegant","noble","unusual"],m:"Most holy"},
+{n:"Penthesilea",g:"f",c:["greek"],e:["ancient"],f:["strong","unusual","dark"],m:"Mourned by the people"},
+{n:"Rowena",g:"f",c:["english"],e:["medieval","victorian"],f:["noble","classic"],m:"White-haired, famous friend"},
+{n:"Gwyneth",g:"f",c:["english"],e:["medieval","modern"],f:["elegant","classic"],m:"Blessed, happy"},
+{n:"Elspeth",g:"f",c:["scottish"],e:["victorian","medieval","modern"],f:["classic","unusual"],m:"Pledged to God"},
+{n:"Ailsa",g:"f",c:["scottish"],e:["modern","victorian"],f:["soft","unusual"],m:"Elf victory"},
+{n:"Moira",g:"f",c:["irish","scottish"],e:["modern","medieval"],f:["classic","dark"],m:"Fate, destiny"},
+{n:"Ciara",g:"f",c:["irish"],e:["modern"],f:["dark","elegant"],m:"Dark-haired"},
+{n:"Niamh",g:"f",c:["irish"],e:["modern","medieval"],f:["elegant","whimsical"],m:"Bright, radiant"},
+{n:"Siobhan",g:"f",c:["irish"],e:["modern"],f:["strong","classic"],m:"God is gracious"},
+{n:"Aisling",g:"f",c:["irish"],e:["modern"],f:["soft","whimsical"],m:"Dream, vision"},
+{n:"Deirdre",g:"f",c:["irish"],e:["modern","medieval"],f:["classic","dark"],m:"Sorrowful, broken-hearted"},
+{n:"Brigid",g:"f",c:["irish"],e:["medieval","modern"],f:["strong","classic"],m:"Exalted one"},
+{n:"Fiona",g:"f",c:["scottish","irish"],e:["modern"],f:["soft","classic"],m:"White, fair"},
+{n:"Elke",g:"f",c:["german"],e:["modern"],f:["strong","unusual"],m:"Noble, of noble birth"},
+{n:"Greta",g:"f",c:["german","scandinavian"],e:["modern","victorian"],f:["strong","classic"],m:"Pearl"},
+{n:"Liesel",g:"f",c:["german"],e:["modern","victorian"],f:["soft","classic"],m:"Pledged to God"},
+{n:"Sigrid",g:"f",c:["scandinavian"],e:["medieval","modern"],f:["strong","noble"],m:"Beautiful victory"},
+{n:"Solveig",g:"f",c:["scandinavian"],e:["medieval","modern"],f:["strong","unusual"],m:"Strong house"},
+{n:"Torunn",g:"f",c:["scandinavian"],e:["medieval"],f:["strong","unusual"],m:"Thor's love"},
+{n:"Eira",g:"f",c:["scandinavian","english"],e:["modern","medieval"],f:["soft","whimsical"],m:"Snow, mercy"},
+{n:"Signy",g:"f",c:["scandinavian"],e:["medieval"],f:["strong","dark"],m:"New victory"},
+{n:"Winona",g:"f",c:["indigenous"],e:["modern","frontier"],f:["soft","unusual"],m:"First-born daughter"},
+{n:"Tallulah",g:"f",c:["indigenous","english"],e:["modern","frontier"],f:["whimsical","unusual"],m:"Leaping water"},
+{n:"Kaya",g:"f",c:["indigenous"],e:["modern"],f:["soft","whimsical"],m:"Wise child"},
+{n:"Savannah",g:"f",c:["english"],e:["modern","frontier"],f:["soft","elegant"],m:"Treeless plain"},
+{n:"Ruby",g:"f",c:["english"],e:["modern","victorian","frontier"],f:["strong","classic"],m:"Red gemstone"},
+{n:"Clara",g:"f",c:["english","german","spanish"],e:["modern","victorian","regency"],f:["classic","soft"],m:"Bright, clear"},
+{n:"Alice",g:"f",c:["english"],e:["victorian","modern"],f:["classic","soft","whimsical"],m:"Noble"},
+{n:"Grace",g:"f",c:["english"],e:["modern","victorian","regency"],f:["classic","soft"],m:"God's grace"},
+{n:"Rose",g:"f",c:["english"],e:["modern","victorian","regency"],f:["classic","soft"],m:"Rose flower"},
+{n:"Violet",g:"f",c:["english"],e:["victorian","modern"],f:["soft","classic","whimsical"],m:"Purple flower"},
+{n:"Hazel",g:"f",c:["english"],e:["modern","victorian"],f:["classic","soft"],m:"Hazelnut tree"},
+{n:"Pearl",g:"f",c:["english"],e:["victorian","frontier","modern"],f:["classic","soft","elegant"],m:"Precious gem from the sea"},
+{n:"Opal",g:"f",c:["english"],e:["victorian","modern"],f:["unusual","whimsical"],m:"Precious gemstone"},
+{n:"Lyra",g:"f",c:["greek","english"],e:["modern","futuristic"],f:["soft","whimsical","unusual"],m:"Lyre, constellation"},
+{n:"Cleo",g:"f",c:["greek","english"],e:["modern","ancient"],f:["strong","unusual"],m:"Glory, pride"},
+{n:"Zara",g:"f",c:["arabic","english"],e:["modern"],f:["strong","elegant"],m:"Blooming flower, princess"},
+{n:"Seren",g:"f",c:["english"],e:["modern"],f:["soft","whimsical"],m:"Star"},
+{n:"Thea",g:"f",c:["greek","english"],e:["modern","ancient"],f:["soft","classic"],m:"Goddess, divine"},
+{n:"Esme",g:"f",c:["french","english"],e:["modern"],f:["soft","elegant"],m:"Esteemed, beloved"},
+{n:"Lilith",g:"f",c:["english"],e:["modern","ancient"],f:["dark","strong","unusual"],m:"Of the night"},
+{n:"Morrigan",g:"f",c:["irish"],e:["medieval","modern"],f:["dark","strong","unusual"],m:"Phantom queen"},
+{n:"Rowenna",g:"f",c:["english"],e:["medieval","victorian"],f:["noble","classic"],m:"Famous joy"},
+{n:"Lenore",g:"f",c:["english","french"],e:["victorian","modern"],f:["dark","elegant"],m:"Light"},
+{n:"Ophelia",g:"f",c:["english","greek"],e:["renaissance","victorian","modern"],f:["elegant","dark","soft"],m:"Help, benefit"},
+{n:"Cassandra",g:"f",c:["greek","english"],e:["ancient","modern"],f:["classic","dark","noble"],m:"She who entangles men"},
+{n:"Ravenna",g:"f",c:["italian","english"],e:["modern","renaissance"],f:["dark","elegant","unusual"],m:"Raven"},
+{n:"Adrienne",g:"f",c:["french","english"],e:["modern","victorian"],f:["elegant","classic"],m:"From Hadria"},
+{n:"Willa",g:"f",c:["english","german"],e:["modern","frontier"],f:["strong","classic"],m:"Resolute protector"},
+{n:"Olive",g:"f",c:["english"],e:["modern","victorian"],f:["classic","soft","whimsical"],m:"Olive tree"},
+{n:"Clementine",g:"f",c:["french","english"],e:["victorian","modern","frontier"],f:["classic","soft","whimsical"],m:"Mild, merciful"},
+{n:"Magnolia",g:"f",c:["english"],e:["modern","victorian","frontier"],f:["elegant","soft"],m:"Magnol's flower"},
+{n:"Imogen",g:"f",c:["english"],e:["victorian","renaissance","modern"],f:["classic","elegant"],m:"Maiden, girl"},
+{n:"Eloise",g:"f",c:["french","english"],e:["modern","victorian"],f:["elegant","soft"],m:"Healthy, wide"},
+{n:"Mirabel",g:"f",c:["french","english"],e:["medieval","modern"],f:["elegant","whimsical"],m:"Wonderful, admirable"},
+{n:"Theodora",g:"f",c:["greek","english"],e:["ancient","victorian","modern"],f:["noble","elegant","strong"],m:"Gift of God"},
+{n:"Wisteria",g:"f",c:["english"],e:["modern"],f:["whimsical","elegant","unusual"],m:"Wisteria flower"},
+{n:"Calista",g:"f",c:["greek"],e:["ancient","modern"],f:["elegant","unusual"],m:"Most beautiful"},
+{n:"Odette",g:"f",c:["french"],e:["victorian","modern"],f:["elegant","soft"],m:"Wealth, fortune"},
+{n:"Selene",g:"f",c:["greek"],e:["ancient","modern","futuristic"],f:["elegant","whimsical"],m:"Moon goddess"},
+{n:"Tamsin",g:"f",c:["english"],e:["modern","medieval"],f:["unusual","classic"],m:"Twin"},
+{n:"Yara",g:"f",c:["arabic","latin-american"],e:["modern"],f:["soft","unusual"],m:"Small butterfly"},
+{n:"Xiomara",g:"f",c:["latin-american","spanish"],e:["modern"],f:["strong","unusual"],m:"Ready for battle"},
+{n:"Soraya",g:"f",c:["arabic"],e:["modern"],f:["elegant","unusual"],m:"Jewel, princess"},
+{n:"Tahira",g:"f",c:["arabic"],e:["modern"],f:["elegant","classic"],m:"Pure, virtuous"},
+{n:"Juniper",g:"f",c:["english"],e:["modern"],f:["whimsical","soft"],m:"Juniper tree"},
+{n:"Cora",g:"f",c:["english","greek"],e:["modern","victorian"],f:["classic","soft"],m:"Maiden"},
+{n:"Nyx",g:"f",c:["greek"],e:["ancient","futuristic"],f:["dark","strong","unusual"],m:"Night"},
+{n:"Echo",g:"f",c:["greek"],e:["modern","futuristic","ancient"],f:["unusual","whimsical"],m:"Reverberating sound"},
+{n:"Faye",g:"f",c:["english"],e:["modern","medieval"],f:["soft","whimsical"],m:"Fairy, loyalty"},
+{n:"Willow",g:"f",c:["english"],e:["modern"],f:["soft","whimsical"],m:"Willow tree"},
+{n:"Harlow",g:"f",c:["english"],e:["modern"],f:["elegant","strong"],m:"Rock hill"},
+{n:"Winter",g:"f",c:["english"],e:["modern","futuristic"],f:["unusual","dark"],m:"Winter season"},
+{n:"Ember",g:"f",c:["english"],e:["modern","futuristic"],f:["dark","strong","unusual"],m:"Spark, burning low"},
+{n:"Sable",g:"f",c:["english","french"],e:["modern"],f:["dark","elegant","unusual"],m:"Black"},
+{n:"Dove",g:"f",c:["english"],e:["modern"],f:["soft","whimsical"],m:"Dove bird, peace"},
+
+// ADDITIONAL MALE NAMES
+{n:"Barnaby",g:"m",c:["english"],e:["regency","victorian"],f:["whimsical","classic"],m:"Son of consolation"},
+{n:"Conrad",g:"m",c:["german","english"],e:["modern","victorian","medieval"],f:["strong","classic"],m:"Bold counsel"},
+{n:"Dashiel",g:"m",c:["french","english"],e:["modern"],f:["unusual","elegant"],m:"Page boy"},
+{n:"Everett",g:"m",c:["english"],e:["modern","victorian"],f:["classic","noble"],m:"Brave as a wild boar"},
+{n:"Galen",g:"m",c:["greek","english"],e:["ancient","modern"],f:["soft","classic"],m:"Calm, healer"},
+{n:"Hadrian",g:"m",c:["english","greek"],e:["ancient","modern"],f:["noble","strong"],m:"From Hadria"},
+{n:"Idris",g:"m",c:["arabic","english"],e:["modern","medieval"],f:["strong","unusual"],m:"Studious, lord"},
+{n:"Jareth",g:"m",c:["english"],e:["modern","futuristic"],f:["unusual","dark","whimsical"],m:"Created name, kin to Jared"},
+{n:"Killian",g:"m",c:["irish"],e:["modern","medieval"],f:["strong","dark"],m:"Church, strife"},
+{n:"Leander",g:"m",c:["greek","english"],e:["ancient","modern","renaissance"],f:["elegant","soft","noble"],m:"Lion of a man"},
+{n:"Montgomery",g:"m",c:["english","french"],e:["regency","victorian"],f:["noble","elegant"],m:"Man power"},
+{n:"Nero",g:"m",c:["italian","greek"],e:["ancient","modern"],f:["dark","strong"],m:"Strong, vigorous"},
+{n:"Oswald",g:"m",c:["english","german"],e:["medieval","victorian"],f:["classic","noble"],m:"Divine power"},
+{n:"Preston",g:"m",c:["english"],e:["modern","victorian"],f:["classic","noble"],m:"Priest's town"},
+{n:"Quentin",g:"m",c:["english","french"],e:["modern","victorian"],f:["elegant","classic"],m:"Fifth"},
+{n:"Reginald",g:"m",c:["english"],e:["regency","victorian"],f:["noble","classic"],m:"Counsel power"},
+{n:"Sullivan",g:"m",c:["irish"],e:["modern"],f:["strong","classic"],m:"Dark-eyed"},
+{n:"Ulric",g:"m",c:["german","english"],e:["medieval"],f:["strong","dark"],m:"Wolf ruler"},
+{n:"Varian",g:"m",c:["english"],e:["modern","futuristic"],f:["unusual","elegant"],m:"Variable, changeable"},
+{n:"Wesley",g:"m",c:["english"],e:["modern","victorian"],f:["classic","soft"],m:"Western meadow"},
+{n:"Xavier",g:"m",c:["spanish","french","english"],e:["modern"],f:["strong","elegant","unusual"],m:"New house, bright"},
+{n:"Yael",g:"m",c:["arabic","english"],e:["modern","ancient"],f:["soft","unusual"],m:"Mountain goat"},
+{n:"Zane",g:"m",c:["english"],e:["modern","frontier"],f:["strong","rugged"],m:"God is gracious"},
+{n:"Alden",g:"m",c:["english"],e:["modern","victorian"],f:["classic","soft"],m:"Old friend"},
+{n:"Beckett",g:"m",c:["english","irish"],e:["modern"],f:["unusual","strong"],m:"Bee cottage"},
+{n:"Corwin",g:"m",c:["english"],e:["medieval","modern"],f:["strong","unusual"],m:"Heart's friend"},
+{n:"Draven",g:"m",c:["english"],e:["modern","futuristic"],f:["dark","strong","unusual"],m:"Hunter"},
+{n:"Elias",g:"m",c:["english","greek"],e:["modern","victorian","ancient"],f:["classic","elegant"],m:"The Lord is my God"},
+{n:"Florian",g:"m",c:["german","french"],e:["modern","renaissance"],f:["elegant","soft"],m:"Flowering"},
+{n:"Graham",g:"m",c:["scottish","english"],e:["modern","victorian"],f:["classic","strong"],m:"Gravelly homestead"},
+{n:"Isaac",g:"m",c:["english"],e:["modern","victorian","frontier"],f:["classic"],m:"He will laugh"},
+{n:"Jonas",g:"m",c:["english","scandinavian"],e:["modern","victorian"],f:["classic","soft"],m:"Dove"},
+{n:"Kellan",g:"m",c:["irish"],e:["modern"],f:["strong"],m:"Slender"},
+{n:"Landon",g:"m",c:["english"],e:["modern"],f:["classic"],m:"Long hill"},
+{n:"Merrick",g:"m",c:["english"],e:["modern","medieval"],f:["strong","unusual"],m:"Fame, power"},
+{n:"Noel",g:"m",c:["french","english"],e:["modern","victorian"],f:["soft","classic"],m:"Christmas"},
+{n:"Otis",g:"m",c:["english"],e:["modern","frontier"],f:["classic","rugged"],m:"Wealth"},
+{n:"Paxton",g:"m",c:["english"],e:["modern"],f:["strong","unusual"],m:"Peace town"},
+{n:"Riordan",g:"m",c:["irish"],e:["modern","medieval"],f:["strong","unusual"],m:"Royal poet"},
+{n:"Stetson",g:"m",c:["english"],e:["modern","frontier"],f:["rugged","strong"],m:"Son of Stephen"},
+{n:"Tavish",g:"m",c:["scottish"],e:["modern","medieval"],f:["strong","unusual"],m:"Twin"},
+{n:"Victor",g:"m",c:["english","french","spanish"],e:["modern","victorian"],f:["strong","classic","noble"],m:"Conqueror"},
+{n:"Warrick",g:"m",c:["english"],e:["medieval","modern"],f:["strong","noble"],m:"Fortress"},
+
+// ADDITIONAL FEMALE NAMES
+{n:"Beatrix",g:"f",c:["english","german"],e:["victorian","modern"],f:["unusual","strong","whimsical"],m:"She who brings happiness"},
+{n:"Constance",g:"f",c:["english","french"],e:["regency","victorian","medieval"],f:["classic","noble"],m:"Constant, steadfast"},
+{n:"Dorothea",g:"f",c:["english","greek"],e:["regency","victorian"],f:["classic","noble"],m:"Gift of God"},
+{n:"Edith",g:"f",c:["english"],e:["victorian","modern"],f:["classic","strong"],m:"Prosperous in war"},
+{n:"Flora",g:"f",c:["english","scottish"],e:["victorian","modern","regency"],f:["soft","whimsical"],m:"Flower"},
+{n:"Georgiana",g:"f",c:["english"],e:["regency","victorian"],f:["classic","noble","elegant"],m:"Farmer"},
+{n:"Honora",g:"f",c:["irish","english"],e:["regency","victorian","medieval"],f:["classic","noble"],m:"Honor"},
+{n:"Isadora",g:"f",c:["greek","english"],e:["modern","victorian"],f:["elegant","unusual"],m:"Gift of Isis"},
+{n:"Jessamine",g:"f",c:["english","french"],e:["victorian","regency"],f:["elegant","whimsical"],m:"Jasmine flower"},
+{n:"Katerina",g:"f",c:["russian","greek"],e:["modern","victorian"],f:["elegant","strong"],m:"Pure"},
+{n:"Lavinia",g:"f",c:["english"],e:["regency","victorian","ancient"],f:["classic","elegant"],m:"From Lavinium"},
+{n:"Marigold",g:"f",c:["english"],e:["victorian","modern"],f:["whimsical","soft"],m:"Golden flower"},
+{n:"Nerissa",g:"f",c:["greek","english"],e:["renaissance","modern"],f:["elegant","unusual"],m:"Sea nymph"},
+{n:"Ottilie",g:"f",c:["german","french"],e:["victorian","modern"],f:["unusual","soft"],m:"Prosperous in battle"},
+{n:"Primrose",g:"f",c:["english"],e:["victorian","modern","regency"],f:["soft","whimsical"],m:"First rose"},
+{n:"Rhiannon",g:"f",c:["irish","english"],e:["modern","medieval"],f:["whimsical","strong","unusual"],m:"Great queen, divine"},
+{n:"Seraphine",g:"f",c:["french"],e:["modern","victorian"],f:["elegant","noble"],m:"Fiery, burning"},
+{n:"Temperance",g:"f",c:["english"],e:["victorian","frontier"],f:["classic","unusual"],m:"Moderation, restraint"},
+{n:"Ursula",g:"f",c:["english","german"],e:["medieval","victorian"],f:["strong","dark"],m:"Little bear"},
+{n:"Venetia",g:"f",c:["english","italian"],e:["regency","victorian","renaissance"],f:["elegant","unusual"],m:"From Venice"},
+{n:"Winifred",g:"f",c:["english"],e:["victorian","medieval"],f:["classic","strong"],m:"Blessed peacemaking"},
+{n:"Xanthe",g:"f",c:["greek"],e:["ancient","modern"],f:["unusual","elegant"],m:"Golden, yellow"},
+{n:"Zinnia",g:"f",c:["english"],e:["modern","victorian"],f:["whimsical","unusual"],m:"Zinnia flower"},
+{n:"Camellia",g:"f",c:["english"],e:["modern","victorian"],f:["elegant","soft"],m:"Camellia flower"},
+{n:"Daphne",g:"f",c:["greek","english"],e:["modern","ancient","victorian"],f:["classic","soft"],m:"Laurel tree"},
+{n:"Eleanora",g:"f",c:["italian","english"],e:["renaissance","victorian"],f:["noble","elegant"],m:"Light"},
+{n:"Fiora",g:"f",c:["italian"],e:["modern","renaissance"],f:["elegant","soft","whimsical"],m:"Flower"},
+{n:"Gwendolyn",g:"f",c:["english"],e:["medieval","modern"],f:["classic","elegant"],m:"White ring, blessed bow"},
+{n:"Hermione",g:"f",c:["greek","english"],e:["ancient","modern"],f:["noble","classic","strong"],m:"Messenger, earthly"},
+{n:"Iris",g:"f",c:["greek","english"],e:["modern","victorian","ancient"],f:["classic","soft"],m:"Rainbow"},
+{n:"Jacinta",g:"f",c:["spanish","latin-american"],e:["modern"],f:["elegant","soft"],m:"Hyacinth"},
+{n:"Keira",g:"f",c:["irish","english"],e:["modern"],f:["strong","classic"],m:"Dark-haired"},
+{n:"Lucinda",g:"f",c:["english","spanish"],e:["regency","victorian","modern"],f:["elegant","classic"],m:"Light"},
+{n:"Mathilda",g:"f",c:["german","english"],e:["medieval","victorian"],f:["strong","classic"],m:"Mighty in battle"},
+{n:"Nicolette",g:"f",c:["french"],e:["modern","victorian"],f:["elegant","classic"],m:"Victory of the people"},
+{n:"Ondine",g:"f",c:["french"],e:["modern","renaissance"],f:["elegant","unusual","whimsical"],m:"Little wave"},
+{n:"Pandora",g:"f",c:["greek"],e:["ancient","modern"],f:["unusual","dark","whimsical"],m:"All gifts"},
+{n:"Ramona",g:"f",c:["spanish"],e:["modern","frontier"],f:["strong","classic"],m:"Wise protector"},
+{n:"Solange",g:"f",c:["french"],e:["modern"],f:["elegant","unusual"],m:"Solemn, dignified"},
+{n:"Tanith",g:"f",c:["english"],e:["modern","ancient"],f:["dark","unusual"],m:"Serpent lady"},
+{n:"Undine",g:"f",c:["german","english"],e:["modern","medieval"],f:["unusual","whimsical","elegant"],m:"Water spirit"},
+{n:"Vesna",g:"f",c:["russian"],e:["modern"],f:["soft","unusual"],m:"Spring"},
+{n:"Winnifred",g:"f",c:["english"],e:["victorian","frontier"],f:["classic"],m:"Holy peacemaking"}
+];
+
+const LAST_NAMES = [
+{n:"Blackwood",c:["english","scottish"],e:["modern","victorian","medieval","regency"]},
+{n:"Thornton",c:["english"],e:["modern","victorian","regency"]},
+{n:"Sterling",c:["english"],e:["modern","victorian","regency"]},
+{n:"Hawthorne",c:["english"],e:["modern","victorian","regency","frontier"]},
+{n:"Ashford",c:["english"],e:["modern","victorian","regency"]},
+{n:"Montgomery",c:["english"],e:["modern","victorian","regency","medieval"]},
+{n:"Sinclair",c:["english","scottish"],e:["modern","victorian","regency","medieval"]},
+{n:"Fairfax",c:["english"],e:["regency","victorian"]},
+{n:"Pemberton",c:["english"],e:["regency","victorian","modern"]},
+{n:"Whitmore",c:["english"],e:["modern","victorian","regency"]},
+{n:"Castellano",c:["italian","spanish"],e:["modern","renaissance"]},
+{n:"Moretti",c:["italian"],e:["modern","renaissance"]},
+{n:"Delacroix",c:["french"],e:["modern","victorian","regency","renaissance"]},
+{n:"Beaumont",c:["french","english"],e:["regency","victorian","medieval","modern"]},
+{n:"Volkov",c:["russian"],e:["modern","victorian"]},
+{n:"Petrov",c:["russian"],e:["modern","victorian"]},
+{n:"Nakamura",c:["japanese"],e:["modern"]},
+{n:"Tanaka",c:["japanese"],e:["modern"]},
+{n:"Kim",c:["korean"],e:["modern"]},
+{n:"O'Sullivan",c:["irish"],e:["modern","victorian","medieval"]},
+{n:"MacGregor",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Fitzgerald",c:["irish","english"],e:["modern","victorian","regency"]},
+{n:"Vasquez",c:["spanish","latin-american"],e:["modern"]},
+{n:"Santiago",c:["spanish","latin-american"],e:["modern"]},
+{n:"Erikson",c:["scandinavian"],e:["modern","medieval"]},
+{n:"Lindgren",c:["scandinavian"],e:["modern"]},
+{n:"Winslow",c:["english"],e:["modern","victorian","regency"]},
+{n:"Harrington",c:["english"],e:["modern","victorian","regency"]},
+{n:"Crawford",c:["english","scottish"],e:["modern","victorian","regency"]},
+{n:"Ashworth",c:["english"],e:["modern","victorian"]},
+{n:"Kensington",c:["english"],e:["regency","victorian"]},
+{n:"Winterbourne",c:["english"],e:["regency","victorian","medieval"]},
+{n:"Ravenswood",c:["english"],e:["victorian","medieval"]},
+{n:"Langley",c:["english"],e:["modern","victorian","regency"]},
+{n:"Prescott",c:["english"],e:["modern","victorian","regency"]},
+{n:"Darcy",c:["english","french","irish"],e:["regency","victorian","modern"]},
+{n:"Westbrook",c:["english"],e:["modern","victorian"]},
+{n:"Hartwell",c:["english"],e:["modern","victorian","regency"]},
+{n:"Lockwood",c:["english"],e:["modern","victorian"]},
+{n:"Ashby",c:["english"],e:["modern","victorian","regency"]},
+{n:"Waverly",c:["english"],e:["modern","victorian","regency"]},
+{n:"Summerfield",c:["english"],e:["modern","victorian"]},
+{n:"Everett",c:["english"],e:["modern","victorian"]},
+{n:"Aldridge",c:["english"],e:["modern","victorian","regency"]},
+{n:"Kingsley",c:["english"],e:["modern","victorian","regency"]},
+{n:"Northwood",c:["english"],e:["modern","victorian"]},
+{n:"Ridgeway",c:["english"],e:["modern","victorian"]},
+{n:"Bancroft",c:["english"],e:["modern","victorian","regency"]},
+{n:"Ellington",c:["english"],e:["modern","victorian"]},
+{n:"Worthington",c:["english"],e:["regency","victorian"]},
+{n:"Drake",c:["english"],e:["modern","victorian","renaissance"]},
+{n:"Grey",c:["english"],e:["modern","victorian","regency"]},
+{n:"Cross",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Stone",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Frost",c:["english"],e:["modern","victorian"]},
+{n:"Hunter",c:["english"],e:["modern","frontier"]},
+{n:"Knight",c:["english"],e:["modern","victorian","medieval"]},
+{n:"Bishop",c:["english"],e:["modern","victorian"]},
+{n:"Rowe",c:["english"],e:["modern","victorian"]},
+{n:"Crane",c:["english"],e:["modern","victorian"]},
+{n:"Mercer",c:["english"],e:["modern","victorian","medieval"]},
+{n:"Bellamy",c:["french","english"],e:["modern","victorian","regency"]},
+{n:"Montague",c:["english","french"],e:["regency","victorian","renaissance","medieval"]},
+{n:"Warwick",c:["english"],e:["medieval","victorian"]},
+{n:"Ashton",c:["english"],e:["modern","victorian"]},
+{n:"Beckett",c:["english"],e:["modern","victorian"]},
+{n:"Caldwell",c:["english","scottish"],e:["modern","victorian"]},
+{n:"Davenport",c:["english"],e:["modern","victorian","regency"]},
+{n:"Ellsworth",c:["english"],e:["victorian"]},
+{n:"Graves",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Holloway",c:["english"],e:["modern","victorian"]},
+{n:"Irvine",c:["scottish"],e:["modern","victorian"]},
+{n:"Kincaid",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Latham",c:["english"],e:["modern","victorian"]},
+{n:"Marlowe",c:["english"],e:["modern","victorian","renaissance"]},
+{n:"Norris",c:["english"],e:["modern","victorian"]},
+{n:"Oakley",c:["english"],e:["modern","frontier"]},
+{n:"Pryce",c:["english"],e:["modern","victorian"]},
+{n:"Quinlan",c:["irish"],e:["modern"]},
+{n:"Ramsey",c:["scottish","english"],e:["modern","victorian"]},
+{n:"Shelton",c:["english"],e:["modern","victorian"]},
+{n:"Thatcher",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Underwood",c:["english"],e:["modern","victorian"]},
+{n:"Vance",c:["english"],e:["modern"]},
+{n:"Whitfield",c:["english"],e:["modern","victorian"]},
+{n:"York",c:["english"],e:["modern","victorian","medieval"]},
+{n:"Abbott",c:["english"],e:["modern","victorian"]},
+{n:"Barrett",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Dumont",c:["french"],e:["modern","victorian","regency"]},
+{n:"Fontaine",c:["french"],e:["modern","victorian","regency"]},
+{n:"Laurent",c:["french"],e:["modern","regency"]},
+{n:"Marchand",c:["french"],e:["modern","regency","victorian"]},
+{n:"Renaud",c:["french"],e:["modern","medieval"]},
+{n:"Thibault",c:["french"],e:["modern","regency","medieval"]},
+{n:"Valois",c:["french"],e:["medieval","renaissance","regency"]},
+{n:"Charpentier",c:["french"],e:["modern","victorian"]},
+{n:"Rousseau",c:["french"],e:["modern","victorian"]},
+{n:"Leclerc",c:["french"],e:["modern"]},
+{n:"Dubois",c:["french"],e:["modern","victorian"]},
+{n:"Romano",c:["italian"],e:["modern","renaissance"]},
+{n:"De Luca",c:["italian"],e:["modern","renaissance"]},
+{n:"Bianchi",c:["italian"],e:["modern","renaissance"]},
+{n:"Ricci",c:["italian"],e:["modern","renaissance"]},
+{n:"Conti",c:["italian"],e:["modern","renaissance"]},
+{n:"Marchetti",c:["italian"],e:["modern","renaissance"]},
+{n:"Ferrara",c:["italian"],e:["modern","renaissance"]},
+{n:"Savoia",c:["italian"],e:["renaissance"]},
+{n:"Grimaldi",c:["italian"],e:["modern","renaissance"]},
+{n:"Lombardi",c:["italian"],e:["modern","renaissance"]},
+{n:"Navarro",c:["spanish"],e:["modern"]},
+{n:"Mendoza",c:["spanish","latin-american"],e:["modern"]},
+{n:"Reyes",c:["spanish","latin-american"],e:["modern"]},
+{n:"Torres",c:["spanish","latin-american"],e:["modern"]},
+{n:"Fuentes",c:["spanish","latin-american"],e:["modern"]},
+{n:"Castillo",c:["spanish","latin-american"],e:["modern"]},
+{n:"Delgado",c:["spanish","latin-american"],e:["modern"]},
+{n:"Herrera",c:["spanish","latin-american"],e:["modern"]},
+{n:"Cordova",c:["spanish","latin-american"],e:["modern"]},
+{n:"Salazar",c:["spanish","latin-american"],e:["modern"]},
+{n:"Aguilar",c:["spanish","latin-american"],e:["modern"]},
+{n:"Guerrero",c:["spanish","latin-american"],e:["modern"]},
+{n:"Rivera",c:["spanish","latin-american"],e:["modern"]},
+{n:"Schmidt",c:["german"],e:["modern","victorian"]},
+{n:"Weber",c:["german"],e:["modern","victorian"]},
+{n:"Hoffmann",c:["german"],e:["modern","victorian"]},
+{n:"Richter",c:["german"],e:["modern","victorian"]},
+{n:"Braun",c:["german"],e:["modern"]},
+{n:"Vogt",c:["german"],e:["modern","victorian"]},
+{n:"Adler",c:["german"],e:["modern","victorian"]},
+{n:"Reinhardt",c:["german"],e:["modern","victorian","medieval"]},
+{n:"Kessler",c:["german"],e:["modern"]},
+{n:"Engel",c:["german"],e:["modern","victorian"]},
+{n:"Johansson",c:["scandinavian"],e:["modern"]},
+{n:"Nilsson",c:["scandinavian"],e:["modern"]},
+{n:"Andersen",c:["scandinavian"],e:["modern"]},
+{n:"Stromberg",c:["scandinavian"],e:["modern"]},
+{n:"Magnusson",c:["scandinavian"],e:["modern","medieval"]},
+{n:"Halvorsen",c:["scandinavian"],e:["modern"]},
+{n:"Larsen",c:["scandinavian"],e:["modern"]},
+{n:"Bjornsson",c:["scandinavian"],e:["modern","medieval"]},
+{n:"Sorensen",c:["scandinavian"],e:["modern"]},
+{n:"Smirnov",c:["russian"],e:["modern","victorian"]},
+{n:"Ivanov",c:["russian"],e:["modern","victorian"]},
+{n:"Kozlov",c:["russian"],e:["modern"]},
+{n:"Morozov",c:["russian"],e:["modern","victorian"]},
+{n:"Sokolov",c:["russian"],e:["modern"]},
+{n:"Fedorov",c:["russian"],e:["modern","victorian"]},
+{n:"Romanov",c:["russian"],e:["victorian","medieval"]},
+{n:"Kuznetsov",c:["russian"],e:["modern"]},
+{n:"Popov",c:["russian"],e:["modern"]},
+{n:"Papadopoulos",c:["greek"],e:["modern"]},
+{n:"Alexopoulos",c:["greek"],e:["modern"]},
+{n:"Stavros",c:["greek"],e:["modern","ancient"]},
+{n:"Christodoulou",c:["greek"],e:["modern"]},
+{n:"Konstantinos",c:["greek"],e:["modern","ancient"]},
+{n:"Sato",c:["japanese"],e:["modern"]},
+{n:"Suzuki",c:["japanese"],e:["modern"]},
+{n:"Watanabe",c:["japanese"],e:["modern"]},
+{n:"Yamamoto",c:["japanese"],e:["modern","medieval"]},
+{n:"Hayashi",c:["japanese"],e:["modern"]},
+{n:"Mori",c:["japanese"],e:["modern","medieval"]},
+{n:"Ishikawa",c:["japanese"],e:["modern"]},
+{n:"Wang",c:["chinese"],e:["modern","ancient"]},
+{n:"Li",c:["chinese"],e:["modern","ancient"]},
+{n:"Zhang",c:["chinese"],e:["modern","ancient"]},
+{n:"Liu",c:["chinese"],e:["modern","ancient"]},
+{n:"Huang",c:["chinese"],e:["modern"]},
+{n:"Park",c:["korean"],e:["modern"]},
+{n:"Cho",c:["korean"],e:["modern"]},
+{n:"Yoon",c:["korean"],e:["modern"]},
+{n:"Shin",c:["korean"],e:["modern"]},
+{n:"Sharma",c:["indian"],e:["modern"]},
+{n:"Gupta",c:["indian"],e:["modern"]},
+{n:"Kapoor",c:["indian"],e:["modern"]},
+{n:"Reddy",c:["indian"],e:["modern"]},
+{n:"Patel",c:["indian"],e:["modern"]},
+{n:"Mehta",c:["indian"],e:["modern"]},
+{n:"Rao",c:["indian"],e:["modern","ancient"]},
+{n:"Al-Rashid",c:["arabic"],e:["modern","medieval"]},
+{n:"Al-Farsi",c:["arabic"],e:["modern","medieval"]},
+{n:"Nazari",c:["arabic"],e:["modern"]},
+{n:"Khalidi",c:["arabic"],e:["modern","medieval"]},
+{n:"Hassan",c:["arabic"],e:["modern","medieval"]},
+{n:"Ibrahim",c:["arabic","african"],e:["modern","medieval"]},
+{n:"Okonkwo",c:["african"],e:["modern"]},
+{n:"Adeyemi",c:["african"],e:["modern"]},
+{n:"Mensah",c:["african"],e:["modern"]},
+{n:"Diallo",c:["african"],e:["modern"]},
+{n:"Nkosi",c:["african"],e:["modern"]},
+{n:"Osei",c:["african"],e:["modern"]},
+{n:"Achebe",c:["african"],e:["modern"]},
+{n:"O'Brien",c:["irish"],e:["modern","victorian"]},
+{n:"O'Connor",c:["irish"],e:["modern","victorian"]},
+{n:"Murphy",c:["irish"],e:["modern","victorian"]},
+{n:"Brennan",c:["irish"],e:["modern","victorian"]},
+{n:"Doyle",c:["irish"],e:["modern","victorian"]},
+{n:"Flynn",c:["irish"],e:["modern","victorian"]},
+{n:"Gallagher",c:["irish"],e:["modern","victorian"]},
+{n:"Kavanagh",c:["irish"],e:["modern","victorian","medieval"]},
+{n:"MacLeod",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Campbell",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Fraser",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Douglas",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Stewart",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Wallace",c:["scottish"],e:["modern","victorian","medieval"]},
+{n:"Gordon",c:["scottish"],e:["modern","victorian"]},
+{n:"Kerr",c:["scottish"],e:["modern","victorian"]},
+{n:"Monroe",c:["scottish","english"],e:["modern","victorian"]},
+{n:"Calloway",c:["english"],e:["modern","frontier"]},
+{n:"Lawson",c:["english"],e:["modern","frontier"]},
+{n:"Garrett",c:["english"],e:["modern","frontier"]},
+{n:"Sawyer",c:["english"],e:["modern","frontier"]},
+{n:"Tucker",c:["english"],e:["modern","frontier"]},
+{n:"Mason",c:["english"],e:["modern","frontier"]},
+{n:"Sutton",c:["english"],e:["modern","victorian"]},
+{n:"Harper",c:["english"],e:["modern"]},
+{n:"Manning",c:["english"],e:["modern","victorian"]},
+{n:"Hayes",c:["english","irish"],e:["modern","frontier"]},
+{n:"Cole",c:["english"],e:["modern","frontier"]},
+{n:"Wolfe",c:["english","german"],e:["modern","victorian","medieval"]},
+{n:"Fox",c:["english"],e:["modern","victorian"]},
+{n:"Rowan",c:["irish","english"],e:["modern"]},
+{n:"Steele",c:["english"],e:["modern","victorian"]},
+{n:"Wilde",c:["english","german"],e:["modern","victorian"]},
+{n:"Shaw",c:["english","scottish"],e:["modern","victorian"]},
+{n:"Crane",c:["english"],e:["modern","victorian"]},
+{n:"Fletcher",c:["english"],e:["modern","medieval"]},
+{n:"Ashcroft",c:["english"],e:["modern","victorian"]},
+{n:"Crowley",c:["english","irish"],e:["modern","victorian"]},
+{n:"Graves",c:["english"],e:["modern","victorian"]},
+{n:"Nightingale",c:["english"],e:["victorian","modern"]},
+{n:"Whitlock",c:["english"],e:["victorian","modern"]},
+{n:"Starling",c:["english"],e:["modern","victorian"]},
+{n:"Blackburn",c:["english"],e:["modern","victorian"]},
+{n:"Ashmore",c:["english"],e:["victorian","regency"]},
+{n:"Darrow",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Evershed",c:["english"],e:["victorian","regency"]},
+{n:"Whitaker",c:["english"],e:["modern","victorian"]},
+{n:"Hollister",c:["english"],e:["modern","frontier"]},
+{n:"Redmond",c:["irish","english"],e:["modern","victorian"]},
+{n:"Kingsley",c:["english"],e:["modern","victorian"]},
+{n:"Lancaster",c:["english"],e:["medieval","victorian","modern"]},
+{n:"Carmichael",c:["scottish"],e:["modern","victorian"]},
+{n:"Thorndike",c:["english"],e:["victorian"]},
+{n:"Ashworth",c:["english"],e:["modern","victorian"]},
+{n:"Blackstone",c:["english"],e:["medieval","victorian","modern"]},
+{n:"Cromwell",c:["english"],e:["medieval","victorian"]},
+{n:"DeWitt",c:["english","german"],e:["modern","victorian"]},
+{n:"Elwood",c:["english"],e:["modern","victorian"]},
+{n:"Fairchild",c:["english"],e:["modern","victorian"]},
+{n:"Grayson",c:["english"],e:["modern"]},
+{n:"Hemsworth",c:["english"],e:["modern","victorian"]},
+{n:"Jameson",c:["english","scottish"],e:["modern","frontier"]},
+{n:"Kensington",c:["english"],e:["regency","victorian"]},
+{n:"Lovell",c:["english","french"],e:["medieval","victorian"]},
+{n:"Morland",c:["english"],e:["regency","victorian"]},
+{n:"Prescott",c:["english"],e:["modern","victorian"]},
+{n:"Ravencroft",c:["english"],e:["victorian","medieval"]},
+{n:"Stanhope",c:["english"],e:["regency","victorian"]},
+{n:"Thornhill",c:["english"],e:["regency","victorian"]},
+{n:"Wycliffe",c:["english"],e:["medieval","victorian"]},
+{n:"Beauregard",c:["french"],e:["modern","frontier","regency"]},
+{n:"Lefebvre",c:["french"],e:["modern"]},
+{n:"Montclair",c:["french"],e:["regency","victorian"]},
+{n:"Vivaldi",c:["italian"],e:["renaissance","modern"]},
+{n:"Medici",c:["italian"],e:["renaissance"]},
+{n:"Corsini",c:["italian"],e:["renaissance","modern"]},
+{n:"Montero",c:["spanish","latin-american"],e:["modern"]},
+{n:"Valdez",c:["spanish","latin-american"],e:["modern"]},
+{n:"Stryker",c:["english","german"],e:["modern","futuristic"]},
+{n:"Voss",c:["german"],e:["modern"]},
+{n:"Kruger",c:["german"],e:["modern","victorian"]},
+{n:"Strand",c:["scandinavian"],e:["modern"]},
+{n:"Thorsen",c:["scandinavian"],e:["modern","medieval"]},
+{n:"Volkov",c:["russian"],e:["modern"]},
+{n:"Kensington",c:["english"],e:["regency","victorian"]},
+{n:"Takahashi",c:["japanese"],e:["modern"]},
+{n:"Fujimoto",c:["japanese"],e:["modern"]},
+{n:"Lee",c:["korean","chinese","english"],e:["modern"]},
+{n:"Hawking",c:["english"],e:["modern","victorian"]},
+{n:"Thornberry",c:["english"],e:["victorian","modern"]},
+{n:"Running Bear",c:["indigenous"],e:["frontier","modern"]},
+{n:"Two Feathers",c:["indigenous"],e:["frontier","modern"]},
+{n:"Red Cloud",c:["indigenous"],e:["frontier"]},
+{n:"Ironhawk",c:["indigenous"],e:["modern","frontier"]},
+{n:"Strongbow",c:["indigenous","english"],e:["frontier","medieval"]},
+{n:"Collingwood",c:["english"],e:["victorian","regency"]},
+{n:"Pembroke",c:["english"],e:["regency","victorian","medieval"]},
+{n:"Ashdale",c:["english"],e:["modern","victorian"]},
+{n:"Blackwell",c:["english"],e:["modern","victorian"]},
+{n:"Chandler",c:["english"],e:["modern","victorian","frontier"]},
+{n:"Delaney",c:["irish","english"],e:["modern","victorian"]},
+{n:"Emsworth",c:["english"],e:["regency","victorian"]},
+{n:"Forester",c:["english"],e:["modern","victorian","medieval"]},
+{n:"Greystone",c:["english"],e:["medieval","victorian"]},
+{n:"Hightower",c:["english"],e:["medieval","modern"]},
+{n:"Ivory",c:["english"],e:["modern","victorian"]},
+{n:"Langdon",c:["english"],e:["modern","victorian"]},
+{n:"Moorhouse",c:["english"],e:["victorian","modern"]},
+{n:"Pemberton",c:["english"],e:["regency","victorian"]},
+{n:"Ravenscroft",c:["english"],e:["victorian","medieval"]},
+{n:"Silverstone",c:["english"],e:["modern","victorian"]},
+{n:"Whitehall",c:["english"],e:["regency","victorian"]},
+{n:"Bramwell",c:["english"],e:["victorian","modern"]},
+{n:"Windermere",c:["english"],e:["victorian","regency"]},
+{n:"Thornfield",c:["english"],e:["victorian","regency","modern"]},
+{n:"Matsuda",c:["japanese"],e:["modern"]},
+{n:"Benetti",c:["italian"],e:["modern","renaissance"]},
+{n:"Kowalski",c:["german"],e:["modern"]},
+{n:"Espinoza",c:["spanish","latin-american"],e:["modern"]},
+{n:"MacAllister",c:["scottish"],e:["modern","victorian","medieval"]}
+];
+
+// Hard-coded banned names (always excluded)
+const SYSTEM_BANNED = ["chen","lucian","marcus","emma"];
+
+// ============================================================
+// APP STATE
+// ============================================================
+let favorites = JSON.parse(localStorage.getItem("tipNameGenFavs") || "[]");
+let bannedNames = localStorage.getItem("tipNameGenBanned") || "";
+let generatedNames = [];
+
+// ============================================================
+// INIT
+// ============================================================
+(function init() {
+  // Populate letter dropdown
+  const sel = document.getElementById("fLetter");
+  for (let i = 65; i <= 90; i++) {
+    const o = document.createElement("option");
+    o.value = String.fromCharCode(i);
+    o.textContent = String.fromCharCode(i);
+    sel.appendChild(o);
+  }
+  // Load banned
+  document.getElementById("bannedInput").value = bannedNames;
+  renderFavorites();
+})();
+
+// ============================================================
+// GENERATION
+// ============================================================
+function getBannedSet() {
+  const raw = document.getElementById("bannedInput").value;
+  const items = raw.split(",").map(s => s.trim().toLowerCase()).filter(Boolean);
+  return new Set([...SYSTEM_BANNED, ...items]);
+}
+
+function saveBanned() {
+  bannedNames = document.getElementById("bannedInput").value;
+  localStorage.setItem("tipNameGenBanned", bannedNames);
+}
+
+function resetFilters() {
+  document.getElementById("fGenre").value = "";
+  document.getElementById("fEra").value = "";
+  document.getElementById("fGender").value = "";
+  document.getElementById("fCulture").value = "";
+  document.getElementById("fLetter").value = "";
+  document.getElementById("fFeel").value = "";
+}
+
+// Genre-to-feel mapping for scoring
+const GENRE_FEEL_MAP = {
+  "Romance": ["elegant","soft","classic","noble"],
+  "Thriller": ["strong","dark","rugged"],
+  "Fantasy": ["unusual","noble","whimsical","dark","elegant"],
+  "Historical": ["classic","noble","elegant"],
+  "Contemporary": ["classic","strong","soft"],
+  "Sci-Fi": ["unusual","strong","whimsical"],
+  "Western": ["rugged","strong","classic"],
+  "Horror": ["dark","unusual","strong"]
+};
+
+function generate() {
+  const banned = getBannedSet();
+  const genre = document.getElementById("fGenre").value;
+  const era = document.getElementById("fEra").value;
+  const gender = document.getElementById("fGender").value;
+  const culture = document.getElementById("fCulture").value;
+  const letter = document.getElementById("fLetter").value;
+  const feel = document.getElementById("fFeel").value;
+
+  // Filter first names
+  let firsts = FIRST_NAMES.filter(fn => {
+    if (banned.has(fn.n.toLowerCase())) return false;
+    if (gender && fn.g !== gender && fn.g !== "n") return false;
+    if (culture && !fn.c.includes(culture)) return false;
+    if (era && !fn.e.includes(era)) return false;
+    if (letter && !fn.n.toUpperCase().startsWith(letter)) return false;
+    if (feel && !fn.f.includes(feel)) return false;
+    if (genre) {
+      const genreFeels = GENRE_FEEL_MAP[genre] || [];
+      if (!fn.f.some(f => genreFeels.includes(f)) && !fn.e.some(e => e === era)) {
+        // Allow through if era matches, even if feel doesn't
+        if (era && fn.e.includes(era)) return true;
+        // Soft filter: allow some through for variety
+        return Math.random() < 0.3;
+      }
+    }
+    return true;
+  });
+
+  // Filter last names
+  let lasts = LAST_NAMES.filter(ln => {
+    if (banned.has(ln.n.toLowerCase())) return false;
+    if (culture && !ln.c.includes(culture)) return false;
+    if (era && !ln.e.includes(era)) return false;
+    return true;
+  });
+
+  // Fallback if filters are too restrictive
+  if (firsts.length < 3) {
+    firsts = FIRST_NAMES.filter(fn => !banned.has(fn.n.toLowerCase()));
+  }
+  if (lasts.length < 3) {
+    lasts = LAST_NAMES.filter(ln => !banned.has(ln.n.toLowerCase()));
+  }
+
+  // Generate 10 unique combinations
+  const results = [];
+  const usedCombos = new Set();
+  let attempts = 0;
+
+  while (results.length < 10 && attempts < 200) {
+    attempts++;
+    const first = firsts[Math.floor(Math.random() * firsts.length)];
+    const last = lasts[Math.floor(Math.random() * lasts.length)];
+    const combo = first.n + " " + last.n;
+    if (usedCombos.has(combo)) continue;
+    usedCombos.add(combo);
+
+    // Determine genre fit
+    let genreFit = [];
+    for (const [g, feels] of Object.entries(GENRE_FEEL_MAP)) {
+      if (first.f.some(f => feels.includes(f))) genreFit.push(g);
+    }
+    if (genreFit.length === 0) genreFit = ["Versatile"];
+
+    // Determine era fit
+    const eraFit = first.e.filter(e => last.e.includes(e));
+    const eraLabels = eraFit.length > 0 ? eraFit : first.e;
+
+    // Culture
+    const sharedCultures = first.c.filter(c => last.c.includes(c));
+    const cultureLabel = sharedCultures.length > 0
+      ? sharedCultures.map(formatCulture).join(", ")
+      : [...new Set([...first.c, ...last.c])].map(formatCulture).join(", ");
+
+    results.push({
+      fullName: combo,
+      firstName: first.n,
+      lastName: last.n,
+      culture: cultureLabel,
+      meaning: first.m,
+      eraFit: eraLabels.map(formatEra).join(", "),
+      genreFit: genreFit.slice(0, 3).join(", "),
+      feel: first.f.map(f => f.charAt(0).toUpperCase() + f.slice(1)).join(", ")
+    });
+  }
+
+  generatedNames = results;
+  renderResults();
+}
+
+function formatCulture(c) {
+  const map = {
+    "english":"English","irish":"Irish","scottish":"Scottish","french":"French",
+    "italian":"Italian","spanish":"Spanish","german":"German","scandinavian":"Scandinavian",
+    "greek":"Greek","russian":"Russian","japanese":"Japanese","chinese":"Chinese",
+    "korean":"Korean","indian":"Indian","arabic":"Arabic","african":"African",
+    "latin-american":"Latin American","indigenous":"Indigenous American"
+  };
+  return map[c] || c;
+}
+
+function formatEra(e) {
+  const map = {
+    "modern":"Modern","regency":"Regency","victorian":"Victorian","medieval":"Medieval",
+    "renaissance":"Renaissance","frontier":"Frontier","ancient":"Ancient","futuristic":"Futuristic"
+  };
+  return map[e] || e;
+}
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderResults() {
+  const section = document.getElementById("resultsSection");
+  const grid = document.getElementById("nameGrid");
+  section.style.display = "block";
+  grid.innerHTML = "";
+
+  generatedNames.forEach((name, idx) => {
+    const isFav = favorites.some(f => f.fullName === name.fullName);
+    const card = document.createElement("div");
+    card.className = "name-card";
+    if (isFav) card.style.borderLeftColor = "var(--gold)";
+    card.innerHTML = `
+      <div class="full-name">${name.fullName}</div>
+      <div class="meta">
+        <div><span class="label">Meaning:</span> ${name.meaning}</div>
+        <div><span class="label">Origin:</span> ${name.culture}</div>
+        <div><span class="label">Era:</span> ${name.eraFit}</div>
+        <div><span class="label">Genre:</span> ${name.genreFit}</div>
+        <div><span class="label">Feel:</span> ${name.feel}</div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-lock ${isFav ? 'locked' : ''}" onclick="toggleFav(${idx})">${isFav ? '&#10084; Saved' : '&#9825; Save'}</button>
+        <button class="btn-copy" onclick="copyName('${name.fullName}')">Copy</button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ============================================================
+// FAVORITES
+// ============================================================
+function toggleFav(idx) {
+  const name = generatedNames[idx];
+  const existIdx = favorites.findIndex(f => f.fullName === name.fullName);
+  if (existIdx >= 0) {
+    favorites.splice(existIdx, 1);
+    toast("Removed from favorites");
+  } else {
+    favorites.push(name);
+    toast("Saved to favorites!");
+  }
+  saveFavorites();
+  renderResults();
+  renderFavorites();
+}
+
+function removeFav(fullName) {
+  favorites = favorites.filter(f => f.fullName !== fullName);
+  saveFavorites();
+  renderFavorites();
+  if (generatedNames.length) renderResults();
+}
+
+function clearFavorites() {
+  if (favorites.length === 0) return;
+  if (!confirm("Remove all saved names?")) return;
+  favorites = [];
+  saveFavorites();
+  renderFavorites();
+  if (generatedNames.length) renderResults();
+}
+
+function saveFavorites() {
+  localStorage.setItem("tipNameGenFavs", JSON.stringify(favorites));
+}
+
+function renderFavorites() {
+  const list = document.getElementById("favList");
+  const count = document.getElementById("favCount");
+  count.textContent = favorites.length > 0 ? `(${favorites.length})` : "";
+
+  if (favorites.length === 0) {
+    list.innerHTML = '<span class="empty-fav">No saved names yet. Click the heart on a generated name to save it.</span>';
+    return;
+  }
+
+  list.innerHTML = favorites.map(f =>
+    `<span class="fav-chip"><span class="star">&#9733;</span>${f.fullName}<span class="remove" onclick="removeFav('${f.fullName}')" title="Remove">&times;</span></span>`
+  ).join("");
+}
+
+// ============================================================
+// COPY
+// ============================================================
+function copyName(name) {
+  navigator.clipboard.writeText(name).then(() => toast("Copied: " + name));
+}
+
+function copyResults() {
+  if (!generatedNames.length) return;
+  const text = generatedNames.map(n =>
+    `${n.fullName} | ${n.culture} | "${n.meaning}" | ${n.eraFit} | ${n.genreFit}`
+  ).join("\n");
+  navigator.clipboard.writeText(text).then(() => toast("All names copied!"));
+}
+
+function copyFavorites() {
+  if (!favorites.length) { toast("No favorites to copy"); return; }
+  const text = favorites.map(f =>
+    `${f.fullName} | ${f.culture} | "${f.meaning}" | ${f.eraFit} | ${f.genreFit}`
+  ).join("\n");
+  navigator.clipboard.writeText(text).then(() => toast("Favorites copied!"));
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2000);
+}
+</script>
+</body>
+</html>

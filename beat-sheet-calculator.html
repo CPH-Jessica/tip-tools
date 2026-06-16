@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beat Sheet Calculator | The Invisible Pen</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#008080;--coral:#FF6B6B;--gold:#D4A574;--cream:#FFF8F0;--charcoal:#2C2C2C;
+  --teal-light:#00a0a0;--teal-dark:#006666;--coral-light:#ff8a8a;--gold-light:#e0bb8e;
+  --shadow:0 2px 8px rgba(0,0,0,.08);--shadow-lg:0 4px 20px rgba(0,0,0,.12);
+  --radius:10px;--radius-sm:6px;
+}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--charcoal);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--teal);text-decoration:none}a:hover{text-decoration:underline}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--teal-dark),var(--teal));color:#fff;padding:1.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+header::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")}
+header *{position:relative;z-index:1}
+header h1{font-size:1.75rem;font-weight:700;letter-spacing:.5px}
+header .tagline{font-size:.9rem;opacity:.85;margin-top:.15rem;font-weight:300}
+header h2{font-size:1.1rem;font-weight:400;margin-top:.5rem;color:var(--gold-light)}
+
+/* MAIN */
+main{flex:1;max-width:1100px;width:100%;margin:0 auto;padding:1.5rem}
+
+/* CONTROLS */
+.controls{background:#fff;border-radius:var(--radius);padding:1.5rem;box-shadow:var(--shadow);margin-bottom:1.5rem}
+.controls-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.control-group{display:flex;flex-direction:column;gap:.35rem}
+.control-group label{font-weight:600;font-size:.85rem;color:var(--teal-dark)}
+.control-group input[type="number"],
+.control-group select{
+  border:1.5px solid #d0d0d0;border-radius:var(--radius-sm);padding:.55rem .75rem;
+  font-size:.95rem;color:var(--charcoal);background:#fff;transition:border-color .2s;
+}
+.control-group input:focus,.control-group select:focus{outline:none;border-color:var(--teal)}
+.control-group input[type="range"]{-webkit-appearance:none;appearance:none;height:6px;background:linear-gradient(90deg,var(--teal),var(--coral));border-radius:3px;margin-top:.25rem;cursor:pointer}
+.control-group input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--teal);border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer}
+.word-count-display{font-size:1.5rem;font-weight:700;color:var(--teal);text-align:center;margin:.25rem 0}
+
+/* TIMELINE */
+.timeline-section{margin-bottom:1.5rem}
+.timeline-section h3{font-size:1rem;font-weight:600;color:var(--teal-dark);margin-bottom:.5rem}
+.timeline-container{background:#fff;border-radius:var(--radius);padding:1.25rem;box-shadow:var(--shadow);overflow-x:auto}
+.timeline-bar{display:flex;height:48px;border-radius:var(--radius-sm);overflow:hidden;position:relative;min-width:600px}
+.timeline-segment{display:flex;align-items:center;justify-content:center;color:#fff;font-size:.65rem;font-weight:600;cursor:pointer;position:relative;transition:filter .2s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 4px;text-shadow:0 1px 2px rgba(0,0,0,.3)}
+.timeline-segment:hover{filter:brightness(1.15)}
+.timeline-labels{display:flex;min-width:600px;margin-top:.35rem}
+.timeline-label{font-size:.55rem;color:#888;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 1px}
+.timeline-legend{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
+.legend-item{display:flex;align-items:center;gap:.3rem;font-size:.75rem;color:#666}
+.legend-swatch{width:12px;height:12px;border-radius:3px}
+
+/* BEAT CARDS */
+.beats-grid{display:grid;grid-template-columns:1fr;gap:1rem;margin-bottom:1.5rem}
+.beat-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;transition:box-shadow .2s}
+.beat-card:hover{box-shadow:var(--shadow-lg)}
+.beat-card-header{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;cursor:pointer;user-select:none}
+.beat-number{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0}
+.beat-card-header h4{flex:1;font-size:.95rem;font-weight:600;color:var(--charcoal)}
+.beat-meta{display:flex;gap:1rem;font-size:.78rem;color:#777;flex-wrap:wrap}
+.beat-meta span{display:flex;align-items:center;gap:.2rem}
+.beat-chevron{font-size:.8rem;color:#aaa;transition:transform .3s}
+.beat-card.open .beat-chevron{transform:rotate(180deg)}
+.beat-card-body{padding:0 1.25rem 1.25rem;display:none}
+.beat-card.open .beat-card-body{display:block}
+.beat-description{font-size:.85rem;color:#666;margin-bottom:.75rem;padding:.6rem .8rem;background:var(--cream);border-radius:var(--radius-sm);border-left:3px solid var(--gold)}
+.beat-notes textarea{width:100%;min-height:70px;border:1.5px solid #d0d0d0;border-radius:var(--radius-sm);padding:.6rem .75rem;font-family:inherit;font-size:.85rem;resize:vertical;color:var(--charcoal);transition:border-color .2s}
+.beat-notes textarea:focus{outline:none;border-color:var(--teal)}
+.beat-notes label{font-size:.8rem;font-weight:600;color:var(--teal-dark);display:block;margin-bottom:.3rem}
+.beat-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin-bottom:.75rem}
+.stat-box{background:var(--cream);border-radius:var(--radius-sm);padding:.5rem .7rem;text-align:center}
+.stat-box .stat-label{font-size:.65rem;text-transform:uppercase;letter-spacing:.5px;color:#999;font-weight:600}
+.stat-box .stat-value{font-size:1rem;font-weight:700;color:var(--teal)}
+
+/* ACTIONS BAR */
+.actions-bar{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.btn{padding:.6rem 1.25rem;border-radius:var(--radius-sm);border:none;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem}
+.btn-primary{background:var(--teal);color:#fff}.btn-primary:hover{background:var(--teal-light)}
+.btn-secondary{background:var(--gold);color:#fff}.btn-secondary:hover{background:var(--gold-light)}
+.btn-outline{background:transparent;color:var(--coral);border:1.5px solid var(--coral)}.btn-outline:hover{background:var(--coral);color:#fff}
+.btn-ghost{background:transparent;color:#888;border:1.5px solid #ddd}.btn-ghost:hover{background:#f0f0f0}
+
+/* FOOTER */
+footer{background:var(--charcoal);color:#ccc;text-align:center;padding:1.25rem;font-size:.85rem}
+footer a{color:var(--gold-light)}footer a:hover{color:var(--gold)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--teal);color:#fff;padding:.7rem 1.2rem;border-radius:var(--radius-sm);font-size:.85rem;font-weight:500;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .35s;z-index:100;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* TOOLTIP */
+.tip{position:relative}.tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) scale(.9);background:var(--charcoal);color:#fff;padding:.35rem .6rem;border-radius:4px;font-size:.7rem;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s;z-index:50}
+.tip:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
+
+/* SUMMARY ROW */
+.summary-row{background:#fff;border-radius:var(--radius);padding:1rem 1.25rem;box-shadow:var(--shadow);display:flex;flex-wrap:wrap;gap:1.5rem;justify-content:center;margin-bottom:1.5rem}
+.summary-item{text-align:center}
+.summary-item .s-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:#999;font-weight:600}
+.summary-item .s-value{font-size:1.35rem;font-weight:700;color:var(--teal)}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .controls-grid{grid-template-columns:1fr}
+  main{padding:1rem}
+  header{padding:1rem}header h1{font-size:1.35rem}
+  .beat-meta{flex-direction:column;gap:.25rem}
+  .actions-bar{flex-direction:column}
+  .summary-row{flex-direction:column;align-items:center;gap:.75rem}
+}
+
+/* PRINT */
+@media print{
+  body{background:#fff;font-size:11pt}
+  header{background:var(--teal)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;padding:1rem}
+  .controls,.actions-bar,.btn,.toast,footer .link-line{display:none!important}
+  .timeline-container{box-shadow:none;border:1px solid #ddd}
+  .timeline-segment{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .beat-card{box-shadow:none;border:1px solid #ddd;break-inside:avoid}
+  .beat-card-body{display:block!important}
+  .beat-chevron{display:none}
+  .beat-notes textarea{border:1px solid #ccc;min-height:40px}
+  .summary-row{box-shadow:none;border:1px solid #ddd}
+  footer{background:var(--charcoal)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .beat-number{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .legend-swatch{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Invisible Pen</h1>
+  <div class="tagline">AI for Authors Over 40</div>
+  <h2>Beat Sheet Calculator</h2>
+</header>
+
+<main>
+  <!-- CONTROLS -->
+  <div class="controls">
+    <div class="controls-grid">
+      <div class="control-group">
+        <label for="wordCount">Target Word Count</label>
+        <div class="word-count-display" id="wordCountDisplay">65,000</div>
+        <input type="range" id="wordCountSlider" min="10000" max="200000" step="1000" value="65000">
+        <input type="number" id="wordCountInput" min="1000" max="500000" step="500" value="65000">
+      </div>
+      <div class="control-group">
+        <label for="structureType">Story Structure</label>
+        <select id="structureType">
+          <option value="3act">3-Act Structure</option>
+          <option value="stc">Save the Cat (Blake Snyder)</option>
+          <option value="romance">Romance Beat Sheet</option>
+          <option value="7point">7-Point Structure</option>
+          <option value="thriller">Thriller Beat Sheet</option>
+        </select>
+        <label for="wordsPerChapter" style="margin-top:.75rem">Words per Chapter</label>
+        <input type="number" id="wordsPerChapter" min="500" max="10000" step="100" value="3000">
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary-row" id="summaryRow"></div>
+
+  <!-- ACTIONS -->
+  <div class="actions-bar">
+    <button class="btn btn-primary" onclick="expandAll()">Expand All</button>
+    <button class="btn btn-ghost" onclick="collapseAll()">Collapse All</button>
+    <button class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
+    <button class="btn btn-outline" onclick="clearAllNotes()">Clear Notes</button>
+    <button class="btn btn-ghost" onclick="exportText()">Export as Text</button>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="timeline-section">
+    <h3>Visual Timeline</h3>
+    <div class="timeline-container">
+      <div class="timeline-bar" id="timelineBar"></div>
+      <div class="timeline-labels" id="timelineLabels"></div>
+      <div class="timeline-legend" id="timelineLegend"></div>
+    </div>
+  </div>
+
+  <!-- BEAT CARDS -->
+  <div class="beats-grid" id="beatsGrid"></div>
+</main>
+
+<footer>
+  <div>The Invisible Pen &mdash; AI for Authors Over 40</div>
+  <div class="link-line" style="margin-top:.3rem"><a href="https://www.skool.com/the-invisible-pen" target="_blank" rel="noopener">skool.com/the-invisible-pen</a></div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========== STRUCTURE DATA ========== */
+const STRUCTURES = {
+  "3act": {
+    name: "3-Act Structure",
+    sections: [
+      { label: "Act 1 — Setup", color: "#008080" },
+      { label: "Act 2 — Confrontation", color: "#FF6B6B" },
+      { label: "Act 3 — Resolution", color: "#D4A574" }
+    ],
+    beats: [
+      { name: "Hook", pctStart: 0, pctEnd: 3, section: 0, desc: "The opening scene that grabs the reader. Introduce the protagonist in their ordinary world and hint at what's to come." },
+      { name: "Inciting Incident", pctStart: 8, pctEnd: 12, section: 0, desc: "The event that disrupts the protagonist's normal life and sets the story in motion. This is the moment everything changes." },
+      { name: "First Plot Point", pctStart: 20, pctEnd: 25, section: 0, desc: "The protagonist commits to the journey. There's no turning back. This transitions us from Act 1 to Act 2." },
+      { name: "Rising Action", pctStart: 25, pctEnd: 37, section: 1, desc: "The protagonist faces escalating obstacles. Allies and enemies are revealed. Subplots develop." },
+      { name: "Midpoint", pctStart: 48, pctEnd: 52, section: 1, desc: "A major shift in the story. The protagonist moves from reactive to proactive (or vice versa). Stakes are raised significantly." },
+      { name: "Crisis", pctStart: 62, pctEnd: 70, section: 1, desc: "Everything falls apart. The protagonist faces their darkest moment. All seems lost." },
+      { name: "Climax", pctStart: 80, pctEnd: 90, section: 2, desc: "The final confrontation. The protagonist faces the central conflict head-on using everything they've learned." },
+      { name: "Resolution", pctStart: 90, pctEnd: 100, section: 2, desc: "Loose ends are tied up. The new normal is established. The reader sees how the protagonist has changed." }
+    ]
+  },
+  "stc": {
+    name: "Save the Cat (Blake Snyder)",
+    sections: [
+      { label: "Act 1 — Thesis", color: "#008080" },
+      { label: "Act 2A — Antithesis (Fun)", color: "#FF6B6B" },
+      { label: "Act 2B — Antithesis (Pain)", color: "#c0392b" },
+      { label: "Act 3 — Synthesis", color: "#D4A574" }
+    ],
+    beats: [
+      { name: "Opening Image", pctStart: 0, pctEnd: 1, section: 0, desc: "A snapshot of the protagonist's world before the journey begins. Sets tone, mood, and stakes. This is the 'before' picture." },
+      { name: "Theme Stated", pctStart: 4, pctEnd: 6, section: 0, desc: "Someone (not the protagonist) states the theme or lesson. The protagonist doesn't understand it yet, but the reader should." },
+      { name: "Setup", pctStart: 1, pctEnd: 10, section: 0, desc: "Introduce the main characters, the world, and what's missing in the hero's life. Plant every seed that will pay off later." },
+      { name: "Catalyst", pctStart: 9, pctEnd: 11, section: 0, desc: "The inciting incident. A telegram, a death, a meeting. Life will never be the same. This is the knock at the door." },
+      { name: "Debate", pctStart: 10, pctEnd: 20, section: 0, desc: "The hero questions: should I go? Is this wise? Fear, reluctance, and preparation. The last chance to turn back." },
+      { name: "Break into Two", pctStart: 19, pctEnd: 21, section: 0, desc: "The hero decides to act, leaving the old world behind. This must be a proactive choice, not something that happens to them." },
+      { name: "B Story", pctStart: 21, pctEnd: 24, section: 1, desc: "A new character or relationship enters, often the love interest. This subplot carries the theme and gives the hero perspective." },
+      { name: "Fun & Games", pctStart: 20, pctEnd: 50, section: 1, desc: "The promise of the premise. This is why the reader picked up the book. Deliver the goods: the fun, the adventure, the romance." },
+      { name: "Midpoint", pctStart: 49, pctEnd: 51, section: 1, desc: "A false victory or false defeat. Stakes are raised. The hero's goal shifts from a 'want' to a 'need.' The clock starts ticking." },
+      { name: "Bad Guys Close In", pctStart: 50, pctEnd: 75, section: 2, desc: "External pressures mount and internal doubts grow. The team fractures. Enemies regroup. Things get progressively worse." },
+      { name: "All Is Lost", pctStart: 74, pctEnd: 76, section: 2, desc: "The lowest point. A death (literal or metaphorical). The old way is gone. The hero has lost everything." },
+      { name: "Dark Night of the Soul", pctStart: 75, pctEnd: 80, section: 2, desc: "The hero mourns, reflects, and digs deep. From this darkness, the solution will emerge. The hero must find inner strength." },
+      { name: "Break into Three", pctStart: 79, pctEnd: 81, section: 3, desc: "The A and B stories combine to give the hero a new idea. Armed with fresh insight, they choose to fight one last time." },
+      { name: "Finale", pctStart: 80, pctEnd: 99, section: 3, desc: "The hero storms the castle, applying every lesson learned. Old flaws are conquered. The world is changed by the hero's transformation." },
+      { name: "Final Image", pctStart: 99, pctEnd: 100, section: 3, desc: "The opposite of the opening image. Proof that change has occurred. The 'after' picture that shows the arc is complete." }
+    ]
+  },
+  "romance": {
+    name: "Romance Beat Sheet",
+    sections: [
+      { label: "Act 1 — Meeting", color: "#FF6B6B" },
+      { label: "Act 2 — Falling", color: "#008080" },
+      { label: "Act 3 — Crisis & Resolution", color: "#D4A574" }
+    ],
+    beats: [
+      { name: "Meet Cute", pctStart: 8, pctEnd: 12, section: 0, desc: "The protagonists meet for the first time (or re-meet). This scene must establish chemistry and hint at both attraction and conflict." },
+      { name: "Attraction / Denial", pctStart: 10, pctEnd: 20, section: 0, desc: "Undeniable pull between the leads, but they resist. Internal walls, external obstacles, or both. The reader sees what the characters won't admit." },
+      { name: "First Kiss / Date", pctStart: 23, pctEnd: 27, section: 1, desc: "A meaningful first romantic milestone. Can be a kiss, a first date, or the first moment of vulnerability. Emotional walls crack." },
+      { name: "Deepening Connection", pctStart: 25, pctEnd: 50, section: 1, desc: "The leads spend time together and genuine feelings develop. Backstories are shared. Trust builds. The reader falls in love with them falling in love." },
+      { name: "Midpoint Commitment", pctStart: 48, pctEnd: 52, section: 1, desc: "A turning point where one or both characters acknowledge their feelings, whether through words, actions, or intimacy. Stakes deepen." },
+      { name: "Complication / Doubt", pctStart: 50, pctEnd: 65, section: 2, desc: "Misunderstandings, secrets revealed, external forces, or internal fears threaten the relationship. One or both pull away." },
+      { name: "Black Moment", pctStart: 73, pctEnd: 77, section: 2, desc: "The relationship appears destroyed. The couple separates. All seems lost. This should feel genuinely devastating to the reader." },
+      { name: "Grand Gesture", pctStart: 83, pctEnd: 87, section: 2, desc: "One character makes a bold, vulnerable move to win the other back. This demonstrates growth and proves their love is real." },
+      { name: "HEA / HFN", pctStart: 90, pctEnd: 100, section: 2, desc: "Happily Ever After or Happy For Now. The couple commits. Loose ends resolve. The reader closes the book with a satisfied sigh." }
+    ]
+  },
+  "7point": {
+    name: "7-Point Structure",
+    sections: [
+      { label: "Beginning", color: "#008080" },
+      { label: "Middle", color: "#FF6B6B" },
+      { label: "End", color: "#D4A574" }
+    ],
+    beats: [
+      { name: "Hook", pctStart: 0, pctEnd: 5, section: 0, desc: "The starting state, opposite of the Resolution. If the hero ends strong, they start weak. If they end together, they start alone. Show the contrast." },
+      { name: "Plot Turn 1", pctStart: 13, pctEnd: 17, section: 0, desc: "The event that sets the story in motion. The hero encounters the conflict and the journey begins. Often a call to adventure or a discovery." },
+      { name: "Pinch Point 1", pctStart: 28, pctEnd: 32, section: 1, desc: "Apply pressure. Introduce or showcase the antagonistic force. Remind the reader what's at stake and what the hero is up against." },
+      { name: "Midpoint", pctStart: 48, pctEnd: 52, section: 1, desc: "The hero shifts from reaction to action. A critical piece of information is learned. The hero commits fully to their goal." },
+      { name: "Pinch Point 2", pctStart: 68, pctEnd: 72, section: 1, desc: "Maximum pressure. The antagonist's power is fully felt. The hero loses an ally, a resource, or hope. Jaws tighten." },
+      { name: "Plot Turn 2", pctStart: 83, pctEnd: 87, section: 2, desc: "The hero gets the final piece of the puzzle. The key to victory is discovered, earned, or realized. Everything clicks into place." },
+      { name: "Resolution", pctStart: 95, pctEnd: 100, section: 2, desc: "The hero reaches the opposite of the Hook. The conflict is resolved, the character has transformed, and the new world is established." }
+    ]
+  },
+  "thriller": {
+    name: "Thriller Beat Sheet",
+    sections: [
+      { label: "Setup", color: "#2C2C2C" },
+      { label: "Rising Tension", color: "#008080" },
+      { label: "Escalation", color: "#FF6B6B" },
+      { label: "Climax & Resolution", color: "#D4A574" }
+    ],
+    beats: [
+      { name: "Cold Open / Hook", pctStart: 0, pctEnd: 3, section: 0, desc: "An immediate, gripping scene. A murder, a disappearance, a threat. Drop the reader into danger or mystery from page one." },
+      { name: "Setup / Status Quo", pctStart: 3, pctEnd: 10, section: 0, desc: "Establish the protagonist's world, skills, and vulnerabilities. Show what they stand to lose. Plant key details that will matter later." },
+      { name: "Inciting Incident", pctStart: 9, pctEnd: 12, section: 0, desc: "The protagonist is pulled into the central conflict. A case, a threat, a discovery. The ordinary world is shattered." },
+      { name: "Lock-In", pctStart: 20, pctEnd: 25, section: 1, desc: "The point of no return. The protagonist is committed to the mission whether by choice or circumstance. The antagonist is established." },
+      { name: "First Complication", pctStart: 24, pctEnd: 27, section: 1, desc: "An early setback that reveals the problem is bigger than expected. A clue misleads. An ally is compromised. The rules change." },
+      { name: "Rising Stakes", pctStart: 25, pctEnd: 50, section: 1, desc: "Escalating danger and revelations. Each scene raises the tension. The protagonist digs deeper and the threat becomes more personal." },
+      { name: "Midpoint Reversal", pctStart: 48, pctEnd: 52, section: 2, desc: "A major twist that reframes the entire story. The hunter becomes the hunted. The ally is the enemy. Everything the reader assumed is wrong." },
+      { name: "Ticking Clock Begins", pctStart: 53, pctEnd: 57, section: 2, desc: "A deadline is set. A bomb, a victim, a countdown. Urgency ratchets up and the protagonist can no longer be methodical." },
+      { name: "Betrayal / Twist", pctStart: 65, pctEnd: 70, section: 2, desc: "Someone the protagonist trusted reveals their true nature. A shocking revelation changes the stakes. The rug is pulled." },
+      { name: "All Hope Lost", pctStart: 73, pctEnd: 77, section: 2, desc: "The protagonist's plan fails. They're captured, wounded, or stripped of resources. The antagonist appears to win." },
+      { name: "Final Revelation", pctStart: 83, pctEnd: 87, section: 3, desc: "The missing piece clicks into place. The protagonist sees the full picture and devises a desperate final plan." },
+      { name: "Climax", pctStart: 88, pctEnd: 93, section: 3, desc: "The final confrontation. Maximum tension. The protagonist faces the antagonist with everything on the line." },
+      { name: "Resolution", pctStart: 95, pctEnd: 100, section: 3, desc: "The aftermath. Justice, survival, cost. Show what was won, what was lost, and how the protagonist has been changed." }
+    ]
+  }
+};
+
+/* ========== COLOR PALETTE FOR BEATS ========== */
+const BEAT_COLORS = [
+  "#008080","#FF6B6B","#D4A574","#5B8C5A","#9B59B6","#E67E22","#3498DB","#1ABC9C",
+  "#E74C3C","#8E6F47","#2980B9","#27AE60","#C0392B","#F39C12","#16A085"
+];
+
+/* ========== STATE ========== */
+let state = loadState();
+
+function defaultState(){
+  return { wordCount:65000, structure:"3act", wordsPerChapter:3000, notes:{}, openCards:{} };
+}
+
+function loadState(){
+  try {
+    const s = JSON.parse(localStorage.getItem("tip-beat-calc")||"{}");
+    return Object.assign(defaultState(), s);
+  } catch(e){ return defaultState(); }
+}
+
+function saveState(){
+  localStorage.setItem("tip-beat-calc", JSON.stringify(state));
+}
+
+/* ========== INIT ========== */
+document.addEventListener("DOMContentLoaded", ()=>{
+  const slider = document.getElementById("wordCountSlider");
+  const numInput = document.getElementById("wordCountInput");
+  const structSel = document.getElementById("structureType");
+  const wpcInput = document.getElementById("wordsPerChapter");
+
+  slider.value = state.wordCount;
+  numInput.value = state.wordCount;
+  structSel.value = state.structure;
+  wpcInput.value = state.wordsPerChapter;
+  updateDisplay();
+
+  slider.addEventListener("input", ()=>{ state.wordCount = +slider.value; numInput.value = slider.value; updateDisplay(); saveState(); });
+  numInput.addEventListener("input", ()=>{ state.wordCount = +numInput.value||65000; slider.value = Math.min(200000, Math.max(10000, state.wordCount)); updateDisplay(); saveState(); });
+  structSel.addEventListener("change", ()=>{ state.structure = structSel.value; updateDisplay(); saveState(); });
+  wpcInput.addEventListener("input", ()=>{ state.wordsPerChapter = +wpcInput.value||3000; updateDisplay(); saveState(); });
+});
+
+/* ========== RENDER ========== */
+function updateDisplay(){
+  document.getElementById("wordCountDisplay").textContent = state.wordCount.toLocaleString();
+  const struct = STRUCTURES[state.structure];
+  renderSummary(struct);
+  renderTimeline(struct);
+  renderBeats(struct);
+}
+
+function renderSummary(struct){
+  const wc = state.wordCount;
+  const wpc = state.wordsPerChapter;
+  const chapters = Math.ceil(wc / wpc);
+  document.getElementById("summaryRow").innerHTML = `
+    <div class="summary-item"><div class="s-label">Structure</div><div class="s-value" style="font-size:1rem">${struct.name}</div></div>
+    <div class="summary-item"><div class="s-label">Word Count</div><div class="s-value">${wc.toLocaleString()}</div></div>
+    <div class="summary-item"><div class="s-label">Est. Chapters</div><div class="s-value">${chapters}</div></div>
+    <div class="summary-item"><div class="s-label">Words/Chapter</div><div class="s-value">${wpc.toLocaleString()}</div></div>
+    <div class="summary-item"><div class="s-label">Beats</div><div class="s-value">${struct.beats.length}</div></div>
+  `;
+}
+
+function renderTimeline(struct){
+  const bar = document.getElementById("timelineBar");
+  const labels = document.getElementById("timelineLabels");
+  const legend = document.getElementById("timelineLegend");
+  bar.innerHTML = ""; labels.innerHTML = ""; legend.innerHTML = "";
+
+  // Build segments from beats sorted by start
+  const sorted = struct.beats.slice().sort((a,b)=>a.pctStart - b.pctStart);
+
+  // Normalize: create non-overlapping segments for display
+  const segments = [];
+  let cursor = 0;
+  sorted.forEach((b,i)=>{
+    const start = b.pctStart;
+    const end = b.pctEnd;
+    if(start > cursor){
+      segments.push({ name:"", start:cursor, end:start, color:"#e8e8e8", beat:null });
+    }
+    segments.push({ name:b.name, start:Math.max(start,cursor), end, color:BEAT_COLORS[i % BEAT_COLORS.length], beat:b });
+    cursor = Math.max(cursor, end);
+  });
+  if(cursor < 100) segments.push({ name:"", start:cursor, end:100, color:"#e8e8e8", beat:null });
+
+  segments.forEach(seg=>{
+    const width = seg.end - seg.start;
+    if(width <= 0) return;
+    const div = document.createElement("div");
+    div.className = "timeline-segment";
+    div.style.width = width + "%";
+    div.style.background = seg.color;
+    if(seg.name && width > 4) div.textContent = seg.name;
+    if(seg.beat){
+      const wc = state.wordCount;
+      div.title = `${seg.name}: ${Math.round(wc*seg.beat.pctStart/100).toLocaleString()} - ${Math.round(wc*seg.beat.pctEnd/100).toLocaleString()} words (${seg.beat.pctStart}%-${seg.beat.pctEnd}%)`;
+    }
+    bar.appendChild(div);
+
+    const lbl = document.createElement("div");
+    lbl.className = "timeline-label";
+    lbl.style.width = width + "%";
+    lbl.textContent = seg.name && width > 3 ? seg.beat ? seg.beat.pctStart+"%" : "" : "";
+    labels.appendChild(lbl);
+  });
+
+  // Legend for sections
+  struct.sections.forEach(sec=>{
+    const item = document.createElement("div");
+    item.className = "legend-item";
+    item.innerHTML = `<span class="legend-swatch" style="background:${sec.color}"></span>${sec.label}`;
+    legend.appendChild(item);
+  });
+}
+
+function renderBeats(struct){
+  const grid = document.getElementById("beatsGrid");
+  grid.innerHTML = "";
+  const wc = state.wordCount;
+  const wpc = state.wordsPerChapter;
+  const key = state.structure;
+
+  struct.beats.forEach((beat, i)=>{
+    const wordStart = Math.round(wc * beat.pctStart / 100);
+    const wordEnd = Math.round(wc * beat.pctEnd / 100);
+    const chapStart = Math.max(1, Math.ceil(wordStart / wpc));
+    const chapEnd = Math.max(1, Math.ceil(wordEnd / wpc));
+    const beatWords = wordEnd - wordStart;
+    const color = BEAT_COLORS[i % BEAT_COLORS.length];
+    const sectionColor = struct.sections[beat.section]?.color || color;
+    const noteKey = key + "_" + i;
+    const isOpen = state.openCards[noteKey];
+    const noteVal = state.notes[noteKey] || "";
+
+    const card = document.createElement("div");
+    card.className = "beat-card" + (isOpen ? " open" : "");
+    card.id = "beat-" + i;
+
+    card.innerHTML = `
+      <div class="beat-card-header" onclick="toggleCard('${noteKey}',${i})">
+        <div class="beat-number" style="background:${color}">${i+1}</div>
+        <h4>${beat.name}</h4>
+        <div class="beat-meta">
+          <span title="Word range">W: ${wordStart.toLocaleString()}&ndash;${wordEnd.toLocaleString()}</span>
+          <span title="Percentage">${beat.pctStart}%&ndash;${beat.pctEnd}%</span>
+          <span title="Chapters">Ch ${chapStart}${chapEnd !== chapStart ? "&ndash;"+chapEnd : ""}</span>
+        </div>
+        <span class="beat-chevron">&#9660;</span>
+      </div>
+      <div class="beat-card-body">
+        <div class="beat-stats">
+          <div class="stat-box"><div class="stat-label">Start Word</div><div class="stat-value">${wordStart.toLocaleString()}</div></div>
+          <div class="stat-box"><div class="stat-label">End Word</div><div class="stat-value">${wordEnd.toLocaleString()}</div></div>
+          <div class="stat-box"><div class="stat-label">Beat Length</div><div class="stat-value">${beatWords.toLocaleString()}</div></div>
+          <div class="stat-box"><div class="stat-label">Chapters</div><div class="stat-value">${chapStart}${chapEnd !== chapStart ? " &ndash; "+chapEnd : ""}</div></div>
+        </div>
+        <div class="beat-description">${beat.desc}</div>
+        <div class="beat-notes">
+          <label for="note-${i}">Your Story Notes</label>
+          <textarea id="note-${i}" placeholder="What happens in your story at this beat..." oninput="saveNote('${noteKey}',this.value)">${noteVal}</textarea>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ========== INTERACTIONS ========== */
+function toggleCard(noteKey, idx){
+  state.openCards[noteKey] = !state.openCards[noteKey];
+  const card = document.getElementById("beat-"+idx);
+  card.classList.toggle("open");
+  saveState();
+}
+
+function expandAll(){
+  document.querySelectorAll(".beat-card").forEach(c=>c.classList.add("open"));
+  const struct = STRUCTURES[state.structure];
+  struct.beats.forEach((_,i)=>{ state.openCards[state.structure+"_"+i] = true; });
+  saveState();
+}
+
+function collapseAll(){
+  document.querySelectorAll(".beat-card").forEach(c=>c.classList.remove("open"));
+  const struct = STRUCTURES[state.structure];
+  struct.beats.forEach((_,i)=>{ state.openCards[state.structure+"_"+i] = false; });
+  saveState();
+}
+
+function saveNote(key, val){
+  state.notes[key] = val;
+  saveState();
+}
+
+function clearAllNotes(){
+  if(!confirm("Clear all notes for every structure? This cannot be undone.")) return;
+  state.notes = {};
+  saveState();
+  updateDisplay();
+  showToast("All notes cleared");
+}
+
+function exportText(){
+  const struct = STRUCTURES[state.structure];
+  const wc = state.wordCount;
+  const wpc = state.wordsPerChapter;
+  let text = `BEAT SHEET: ${struct.name}\nTarget: ${wc.toLocaleString()} words | ${wpc.toLocaleString()} words/chapter | ~${Math.ceil(wc/wpc)} chapters\n${"=".repeat(60)}\n\n`;
+
+  struct.beats.forEach((beat, i)=>{
+    const ws = Math.round(wc * beat.pctStart / 100);
+    const we = Math.round(wc * beat.pctEnd / 100);
+    const cs = Math.max(1, Math.ceil(ws/wpc));
+    const ce = Math.max(1, Math.ceil(we/wpc));
+    const noteKey = state.structure + "_" + i;
+    const note = state.notes[noteKey] || "";
+    text += `${i+1}. ${beat.name}  (${beat.pctStart}%-${beat.pctEnd}%)\n`;
+    text += `   Words: ${ws.toLocaleString()} - ${we.toLocaleString()} | Chapters: ${cs}${ce!==cs?"-"+ce:""}\n`;
+    text += `   ${beat.desc}\n`;
+    if(note) text += `   NOTES: ${note}\n`;
+    text += "\n";
+  });
+
+  text += `\nGenerated by The Invisible Pen Beat Sheet Calculator\nhttps://www.skool.com/the-invisible-pen\n`;
+
+  const blob = new Blob([text], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `beat-sheet-${state.structure}-${wc}.txt`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast("Beat sheet exported");
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=> t.classList.remove("show"), 2200);
+}
+</script>
+</body>
+</html>
