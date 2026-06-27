@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trope Bible &amp; Builder — The Invisible Pen</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--teal:#008080;--coral:#FF6B6B;--gold:#D4A574;--cream:#FFF8F0;
+--charcoal:#2C2C2C;--amplify:#2E8B57;--conflict:#DC3545;--unexpected:#8B5CF6;
+--light-teal:rgba(0,128,128,.08);--card-shadow:0 2px 12px rgba(0,0,0,.08);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--cream);color:var(--charcoal);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+
+/* HEADER */
+header{background:linear-gradient(135deg,var(--teal),#006666);color:#fff;padding:1.5rem 2rem;text-align:center;position:relative;overflow:hidden}
+header::after{content:'';position:absolute;top:0;right:0;bottom:0;left:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+header h1{font-size:1.8rem;font-weight:700;letter-spacing:-.5px;position:relative;z-index:1}
+header .tagline{font-size:.9rem;opacity:.85;margin-top:.25rem;font-weight:300;position:relative;z-index:1}
+header h2{font-size:1.1rem;font-weight:400;margin-top:.5rem;color:var(--gold);position:relative;z-index:1}
+
+/* TABS */
+.tabs{display:flex;justify-content:center;gap:.5rem;background:#fff;padding:.6rem;box-shadow:var(--card-shadow);position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.tab{padding:.55rem 1.4rem;border-radius:8px;font-size:.92rem;font-weight:600;cursor:pointer;border:2px solid var(--teal);background:transparent;color:var(--teal);transition:all .2s}
+.tab:hover{background:var(--light-teal)}
+.tab.active{background:var(--teal);color:#fff}
+.tab .pill{display:inline-block;min-width:20px;padding:0 .35rem;margin-left:.4rem;background:var(--coral);color:#fff;border-radius:10px;font-size:.72rem;font-weight:700;line-height:1.35rem;text-align:center}
+.tab.active .pill{background:#fff;color:var(--coral)}
+
+/* LAYOUT */
+main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:1.5rem}
+.view{display:none}
+.view.active{display:block}
+.section-title{font-size:1.2rem;font-weight:700;color:var(--teal);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.section-title .icon{width:24px;height:24px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+.intro{background:#fff;border-radius:12px;padding:1.1rem 1.35rem;box-shadow:var(--card-shadow);border-left:4px solid var(--gold);margin-bottom:1.5rem;font-size:.9rem;color:#555}
+.intro strong{color:var(--charcoal)}
+
+/* CONTROLS */
+.controls{background:#fff;border-radius:12px;padding:1.25rem;box-shadow:var(--card-shadow);border:1px solid rgba(0,128,128,.12);margin-bottom:1.5rem}
+.search-box{position:relative;margin-bottom:1rem}
+.search-box input{width:100%;padding:.75rem 1rem .75rem 2.5rem;border:2px solid #e0e0e0;border-radius:8px;font-size:.95rem;transition:border-color .2s}
+.search-box input:focus{outline:none;border-color:var(--teal)}
+.search-box .search-icon{position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:#999;font-size:1rem}
+.filter-row{display:flex;flex-wrap:wrap;gap:.5rem}
+.filter-btn{padding:.4rem .9rem;border-radius:20px;font-size:.8rem;font-weight:600;cursor:pointer;border:2px solid #e0e0e0;background:#fff;color:#777;transition:all .2s}
+.filter-btn:hover{border-color:var(--teal);color:var(--teal)}
+.filter-btn.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* BIBLE GRID */
+.bible-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:1rem}
+.trope-card{background:#fff;border-radius:12px;padding:1.1rem 1.2rem;box-shadow:var(--card-shadow);border-top:4px solid var(--teal);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.trope-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.trope-card.cat-Romance{border-top-color:var(--coral)}
+.trope-card.cat-Fantasy{border-top-color:var(--unexpected)}
+.trope-card.cat-Thriller{border-top-color:var(--conflict)}
+.trope-card.cat-Horror{border-top-color:#444}
+.trope-card.hidden{display:none}
+.tc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.5rem}
+.tc-name{font-size:1.02rem;font-weight:700;color:var(--charcoal);line-height:1.25}
+.tc-cat{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:.2rem .5rem;border-radius:5px;white-space:nowrap;flex-shrink:0}
+.cat-Romance .tc-cat{background:rgba(255,107,107,.12);color:var(--coral)}
+.cat-Fantasy .tc-cat{background:rgba(139,92,246,.12);color:var(--unexpected)}
+.cat-Thriller .tc-cat{background:rgba(220,53,69,.1);color:var(--conflict)}
+.cat-Horror .tc-cat{background:rgba(68,68,68,.1);color:#444}
+.tc-def{font-size:.85rem;color:#555;margin-bottom:.6rem}
+.tc-promise{font-size:.8rem;color:#444;background:var(--light-teal);border-radius:7px;padding:.55rem .7rem;margin-bottom:.6rem}
+.tc-promise b{color:var(--teal)}
+.tc-meta{display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap}
+.heat{font-size:.72rem;font-weight:600;color:#b8651b}
+.market{font-size:.72rem;font-weight:600;padding:.12rem .5rem;border-radius:5px;background:rgba(46,139,87,.12);color:var(--amplify)}
+.market.mid{background:rgba(212,165,116,.18);color:#a9763a}
+.market.niche{background:rgba(139,92,246,.12);color:var(--unexpected)}
+.tc-add{margin-top:auto;padding:.55rem;border-radius:8px;border:2px solid var(--teal);background:transparent;color:var(--teal);font-weight:700;font-size:.83rem;cursor:pointer;transition:all .2s}
+.tc-add:hover{background:var(--teal);color:#fff}
+.tc-add.added{background:var(--amplify);border-color:var(--amplify);color:#fff}
+.no-results{text-align:center;color:#999;padding:3rem 1rem;font-size:.95rem;grid-column:1/-1}
+
+/* BUILDER */
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.82rem;font-weight:700;color:var(--teal);margin-bottom:.35rem}
+.field input,.field textarea{width:100%;padding:.65rem .85rem;border:2px solid #e0e0e0;border-radius:8px;font-size:.9rem;font-family:inherit;transition:border-color .2s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--teal)}
+.field textarea{resize:vertical;min-height:64px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:600px){.meta-grid{grid-template-columns:1fr}}
+.empty-stack{background:#fff;border:2px dashed #d8d2c8;border-radius:12px;padding:2.5rem 1.5rem;text-align:center;color:#999}
+.empty-stack button{margin-top:.75rem;padding:.55rem 1.4rem;border-radius:8px;border:2px solid var(--teal);background:var(--teal);color:#fff;font-weight:700;cursor:pointer}
+.stack-card{background:#fff;border-radius:12px;padding:1.1rem 1.25rem;box-shadow:var(--card-shadow);border-left:4px solid var(--teal);margin-bottom:1rem;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.stack-card.cat-Romance{border-left-color:var(--coral)}
+.stack-card.cat-Fantasy{border-left-color:var(--unexpected)}
+.stack-card.cat-Thriller{border-left-color:var(--conflict)}
+.stack-card.cat-Horror{border-left-color:#444}
+.sc-head{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.sc-name{font-size:1.02rem;font-weight:700}
+.sc-name .role{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#fff;background:var(--gold);padding:.15rem .5rem;border-radius:5px;margin-left:.4rem}
+.sc-remove{background:none;border:none;color:#bbb;font-size:1.2rem;cursor:pointer;line-height:1}
+.sc-remove:hover{color:var(--conflict)}
+.sc-promise{font-size:.78rem;color:#666;background:var(--light-teal);border-radius:7px;padding:.45rem .6rem;margin-bottom:.7rem}
+.role-toggle{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;color:#888;margin-bottom:.7rem;cursor:pointer;user-select:none}
+.role-toggle input{width:auto;margin:0}
+
+/* WARNINGS */
+.warning-card{background:#FFF3E0;border-radius:10px;padding:.85rem 1.1rem;border-left:4px solid #FF9800;margin-bottom:.75rem}
+.warning-card .warn-title{font-weight:700;font-size:.88rem;color:#E65100}
+.warning-card .warn-desc{font-size:.82rem;color:#795548;margin-top:.2rem}
+.success-card{background:rgba(46,139,87,.08);border-radius:10px;padding:.85rem 1.1rem;border-left:4px solid var(--amplify);font-size:.85rem;color:#2c6e49}
+
+/* ACTION BUTTONS */
+.action-bar{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center;margin-top:1.5rem}
+.btn{padding:.6rem 1.25rem;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;border:2px solid;transition:all .2s}
+.btn-teal{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-teal:hover{background:#006868}
+.btn-outline{background:transparent;color:var(--teal);border-color:var(--teal)}
+.btn-outline:hover{background:var(--teal);color:#fff}
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-gold:hover{background:#c49564}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}
+.modal{background:#fff;border-radius:12px;padding:1.5rem;max-width:640px;width:90%;max-height:82vh;overflow-y:auto;position:relative}
+.modal h3{margin-bottom:1rem;color:var(--teal)}
+.modal textarea{width:100%;height:320px;padding:1rem;border:1px solid #ddd;border-radius:8px;font-family:monospace;font-size:.8rem;resize:vertical}
+.modal .close-modal{position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999}
+
+/* FOOTER + TOAST */
+footer{background:var(--charcoal);color:rgba(255,255,255,.7);text-align:center;padding:1.25rem;font-size:.82rem;margin-top:auto}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--teal);color:#fff;padding:.75rem 1.25rem;border-radius:8px;font-size:.85rem;opacity:0;transform:translateY(10px);transition:all .3s;z-index:200;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* PRINT */
+@media print{
+.tabs,.controls,.tc-add,.action-bar,.sc-remove,.role-toggle,.empty-stack button{display:none!important}
+header{background:var(--teal)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#bibleView{display:none!important}
+#builderView{display:block!important}
+.stack-card{page-break-inside:avoid;box-shadow:none;border:1px solid #ddd}
+footer{background:var(--charcoal)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>The Invisible Pen</h1>
+<p class="tagline">AI for Authors Over 40</p>
+<h2>Trope Bible &amp; Builder</h2>
+</header>
+
+<div class="tabs">
+<button class="tab active" id="tabBible" onclick="switchView('bible')">📖 Trope Bible</button>
+<button class="tab" id="tabBuilder" onclick="switchView('builder')">📝 My Book's Trope Plan <span class="pill" id="stackPill">0</span></button>
+</div>
+
+<main>
+
+<!-- ══════════ BIBLE ══════════ -->
+<section class="view active" id="bibleView">
+<div class="intro">
+<strong>Your browsable trope library.</strong> Every entry tells you what the trope <em>is</em>, the promise readers expect when they see it, the typical heat, and how the market is moving. Found one for your book? Hit <strong>+ Add to my plan</strong> and switch to the builder tab to map out how it actually pays off on the page.
+</div>
+
+<div class="controls">
+<div class="search-box">
+<span class="search-icon">🔍</span>
+<input type="text" id="searchInput" placeholder="Search tropes (e.g. enemies, mates, billionaire)..." autocomplete="off">
+</div>
+<div class="filter-row" id="filterRow">
+<button class="filter-btn active" data-cat="all">All</button>
+<button class="filter-btn" data-cat="Romance">Romance</button>
+<button class="filter-btn" data-cat="Fantasy">Fantasy / Paranormal</button>
+<button class="filter-btn" data-cat="Thriller">Thriller / Suspense</button>
+<button class="filter-btn" data-cat="Horror">Horror</button>
+</div>
+</div>
+
+<div class="bible-grid" id="bibleGrid"></div>
+</section>
+
+<!-- ══════════ BUILDER ══════════ -->
+<section class="view" id="builderView">
+<div class="intro">
+<strong>Build your book's trope plan.</strong> Most books run on <strong>3–5 primary tropes</strong> plus a couple of supporting ones. For each trope, name how it actually shows up in <em>your</em> story and the scene where it pays off — that's the difference between a trope you slapped on a blurb and one readers feel. Save it, print it, or copy it into your planning doc.
+</div>
+
+<div class="controls">
+<div class="meta-grid">
+<div class="field" style="margin-bottom:0"><label>Book / Working Title</label><input type="text" id="bookTitle" placeholder="e.g. The Lighthouse We Left Behind"></div>
+<div class="field" style="margin-bottom:0"><label>Pen Name</label><input type="text" id="penName" placeholder="e.g. Constance Ruth Clark"></div>
+</div>
+</div>
+
+<div class="section-title"><span class="icon">!</span> Compatibility Check</div>
+<div id="warningArea" style="margin-bottom:1.5rem"></div>
+
+<div class="section-title"><span class="icon">★</span> Your Trope Stack</div>
+<div id="stackArea"></div>
+
+<div class="action-bar">
+<button class="btn btn-teal" onclick="exportPlan()">📋 Save / Export Plan</button>
+<button class="btn btn-outline" onclick="window.print()">🖨️ Print</button>
+<button class="btn btn-gold" onclick="clearPlan()">↺ Start Over</button>
+</div>
+</section>
+
+</main>
+
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal">
+<button class="close-modal" onclick="closeModal()">✕</button>
+<h3>Your Trope Plan</h3>
+<textarea id="planText" readonly></textarea>
+<div style="margin-top:.75rem;text-align:right">
+<button class="btn btn-teal" onclick="copyPlan()">Copy to Clipboard</button>
+</div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+<strong>The Invisible Pen</strong> — AI for Authors Over 40<br>
+<a href="https://www.skool.com/the-invisible-pen" target="_blank" rel="noopener">www.skool.com/the-invisible-pen</a>
+</footer>
+
+<script>
+/* ════════════════ TROPE BIBLE DATA ════════════════
+   cat: Romance | Fantasy | Thriller | Horror
+   heat: typical heat positioning
+   market: hot | mid | niche  (reader demand signal)
+   def: what it is.  promise: what readers are buying when they see it. */
+const TROPES = [
+/* ─── ROMANCE ─── */
+{name:"Enemies to Lovers",cat:"Romance",heat:"Any — works closed-door to scorching",market:"hot",def:"Two characters start as antagonists and fall through conflict, forced collaboration, or hard-won understanding.",promise:"The hate is real and the turn is earned. Readers want the wall to come down brick by brick, not skip straight to soft."},
+{name:"Friends to Lovers",cat:"Romance",heat:"Tender — warmth over shock",market:"hot",def:"Long-standing friends cross the line into romance, risking everything they already have.",promise:"The 'what if I ruin this' ache. Readers want years of history that makes the kiss feel inevitable AND terrifying."},
+{name:"Second Chance Romance",cat:"Romance",heat:"Emotional, often steamy",market:"hot",def:"Reunited lovers who split — often years apart — navigate old wounds and new lives.",promise:"Unfinished business. Readers want to know exactly why they broke and to believe it can actually be different now."},
+{name:"Fake Dating / Marriage",cat:"Romance",heat:"Builds — proximity to combustion",market:"hot",def:"Characters pretend to be together for an external reason and develop real feelings.",promise:"The line between performance and truth blurring. Readers live for the moment a 'fake' gesture lands as real."},
+{name:"Forced Proximity",cat:"Romance",heat:"Builds with the walls closing in",market:"hot",def:"Characters trapped together — snowed in, one cabin, road trip, assignment — with no escape from the tension.",promise:"No exits. Readers want the closeness to do the work the characters won't do themselves yet."},
+{name:"Grumpy / Sunshine",cat:"Romance",heat:"Flexible — sweet to spicy",market:"hot",def:"One brooding and closed-off, one bright and open; the contrast drives the conflict and the melt.",promise:"He's soft ONLY for her. Readers want the grump's walls to exist for everyone but the sunshine."},
+{name:"Age Gap",cat:"Romance",heat:"Often higher heat",market:"hot",def:"A significant age difference (usually 10+ years) between partners, with the maturity/power gap as texture.",promise:"Confidence meeting freshness. Readers want the gap to matter emotionally — handled with both characters clearly adult and consenting."},
+{name:"Forbidden Love",cat:"Romance",heat:"Tension-forward",market:"hot",def:"Attraction across a barrier — boss, rival family, best friend's ex, off-limits by rule or loyalty.",promise:"The cost of wanting it. Readers want the barrier to feel genuinely risky, so every stolen moment is expensive."},
+{name:"Marriage of Convenience",cat:"Romance",heat:"Slow build to genuine",market:"mid",def:"Two people marry for a practical reason — inheritance, visa, protection — then catch real feelings inside the contract.",promise:"Logistics becoming love. Readers want domestic closeness slowly rewriting the 'business arrangement.'"},
+{name:"Arranged Marriage",cat:"Romance",heat:"Slow burn-friendly",market:"mid",def:"Characters betrothed without choice, developing genuine feeling over time.",promise:"Choosing each other inside a choice that was made for them. Readers want consent and desire to grow where there was none."},
+{name:"Secret Baby",cat:"Romance",heat:"Emotional, varies",market:"mid",def:"A hidden pregnancy or child surfaces and forces the couple back together.",promise:"A bombshell with stakes. Readers want the reveal to reshape everything — and the 'why didn't you tell me' to land hard."},
+{name:"Billionaire Romance",cat:"Romance",heat:"Often higher heat",market:"mid",def:"A wealthy, powerful love interest whose money reshapes the playing field.",promise:"Escape and being chosen. Readers want the fantasy of being seen by someone who could have anyone — give him a wound under the wealth."},
+{name:"Small Town Romance",cat:"Romance",heat:"Cozy, flexible",market:"hot",def:"Romance rooted in a tight community where everyone knows everyone and nothing stays private.",promise:"Belonging. Readers want the town to feel like a character and the community to root for the couple."},
+{name:"Workplace / Office Romance",cat:"Romance",heat:"Flexible",market:"mid",def:"Coworkers — peers or across a power line — fall despite the professional risk.",promise:"Competence is attractive. Readers want sparks over shared work, with the 'this could cost us our jobs' tension real."},
+{name:"Brother's Best Friend",cat:"Romance",heat:"Flexible, often spicy",market:"hot",def:"Falling for the one person who's been off-limits by loyalty — her brother's closest friend.",promise:"Long-simmering, hands-off want. Readers want years of restraint finally breaking."},
+{name:"Best Friend's Sibling",cat:"Romance",heat:"Flexible",market:"mid",def:"Romance with the sibling of a best friend, with friendship on the line.",promise:"Forbidden by loyalty, not law. Readers want the 'I can't do this to my best friend' guilt to raise the stakes."},
+{name:"Amnesia",cat:"Romance",heat:"Emotional",market:"niche",def:"One partner loses memory — of the relationship or the other entirely — forcing reconnection.",promise:"Falling twice. Readers want the dramatic irony of one heart remembering everything the other forgot."},
+{name:"Love Triangle",cat:"Romance",heat:"Tension-forward",market:"niche",def:"Three characters with overlapping romantic pull; resolved or bittersweet.",promise:"A real, hard choice. Readers want both options to have genuine appeal — a flat third wheel kills it. Know that this trope polarizes."},
+{name:"Bodyguard Romance",cat:"Romance",heat:"Often higher heat",market:"mid",def:"One character is duty-bound to protect the other; proximity and vulnerability spark romance.",promise:"Safety as seduction. Readers want the 'I'd take a bullet for you' devotion and the line-crossing it triggers."},
+{name:"Royalty / Prince",cat:"Romance",heat:"Flexible",market:"mid",def:"A royal or aristocratic love interest, with duty pulling against desire.",promise:"Fairytale plus sacrifice. Readers want the crown to cost something — love vs. the throne."},
+{name:"Matchmaker",cat:"Romance",heat:"Sweet-leaning",market:"mid",def:"A character sets out to pair others — and tumbles into love themselves, often ironically.",promise:"The schemer outsmarted by their own heart. Readers want the irony and the warmth."},
+{name:"Slow Burn",cat:"Romance",heat:"Delayed, then earned",market:"hot",def:"Romance and intimacy build gradually across the book (or series) with sustained tension.",promise:"Earned, not rushed. Readers want every almost-moment delayed until the payoff is devastating — deliver real progress, not stalling."},
+{name:"Instalove",cat:"Romance",heat:"Intense, fast",market:"mid",def:"Characters fall hard and fast, moving to commitment quickly.",promise:"Certainty and intensity. Readers want a believable mechanism (fated mates, life-or-death stakes) when it's this fast."},
+{name:"Childhood Sweethearts",cat:"Romance",heat:"Tender",market:"mid",def:"Characters who've known each other since youth move into (or back into) romance.",promise:"Roots. Readers want the shared history to make the love feel like coming home."},
+{name:"Opposites Attract",cat:"Romance",heat:"Flexible",market:"mid",def:"Two people whose temperaments or worlds clash discover they complete each other.",promise:"Friction that fits. Readers want the differences to spark conflict AND fill each other's gaps."},
+{name:"Only One Bed",cat:"Romance",heat:"Tension spike",market:"hot",def:"Circumstance leaves the characters sharing a single bed.",promise:"Maximum proximity in one scene. Readers want the situation genuinely unavoidable and the tension electric."},
+{name:"Snowed In",cat:"Romance",heat:"Cozy tension",market:"mid",def:"Weather traps the characters together, nature playing matchmaker.",promise:"The world shrinks to one room. Readers want isolation forcing the closeness they're avoiding."},
+{name:"Touch Her and Die",cat:"Romance",heat:"Intense, possessive",market:"hot",def:"Fiercely protective hero whose devotion turns feral when she's threatened.",promise:"Unconditional protection. Readers want the 'over my dead body' energy aimed at anyone who comes for her."},
+{name:"Single Parent",cat:"Romance",heat:"Warm, flexible",market:"hot",def:"One character is actively parenting; the romance grows alongside the parenting arc.",promise:"Love that includes the kid. Readers want realistic parenting constraints and a partner who chooses the whole family."},
+{name:"He Falls First",cat:"Romance",heat:"Flexible",market:"hot",def:"The hero realizes — and feels — the depth of his love before she does.",promise:"Devotion on display. Readers want his internal pining while he plays it cool. Peak payoff with a grump."},
+{name:"She Falls First",cat:"Romance",heat:"Emotional",market:"mid",def:"She loves first, often quietly, while his feelings catch up.",promise:"Sweet anguish. Readers want her hope and restraint, then the relief when he finally catches up."},
+{name:"Pining",cat:"Romance",heat:"Aching",market:"hot",def:"One character silently, longingly in love while the other is unaware or unavailable.",promise:"Longing readers can feel. Reward the wait with a reveal-and-reunion that pays off every ache."},
+{name:"Hurt / Comfort",cat:"Romance",heat:"Tender",market:"hot",def:"One character in pain — physical or emotional — and the other provides care and healing.",promise:"Being cared for. Readers want the tending itself to be the intimacy. Pairs beautifully with slow burn."},
+{name:"Found Family",cat:"Romance",heat:"Warm",market:"hot",def:"Unrelated characters become family through choice and loyalty; often the emotional spine.",promise:"Chosen belonging. Readers (esp. millennial/Gen Z) want the group to feel like home — pair with romance for broad appeal."},
+{name:"Redemption Arc",cat:"Romance",heat:"Often dark/spicy",market:"mid",def:"A morally compromised character earns genuine redemption, often through love.",promise:"Watching someone become worthy. Readers want the redemption EARNED and the cost paid — be clear what redemption looks like."},
+{name:"Reverse Harem",cat:"Romance",heat:"High heat",market:"niche",def:"One central character in a consensual relationship with multiple partners at once.",promise:"Devotion times several. Readers want each partner distinct and the consent/structure crystal clear. Dedicated niche audience."},
+{name:"Christmas / Holiday Romance",cat:"Romance",heat:"Cozy, flexible",market:"hot",def:"Set in a holiday season, with the season tied to the emotional resolution.",promise:"Seasonal magic. Readers literally search for this — lean into the holiday warmth and the deadline of the season. Seasonal but very profitable."},
+
+/* ─── FANTASY / PARANORMAL ─── */
+{name:"Fated Mates",cat:"Fantasy",heat:"High heat-friendly",market:"hot",def:"Two people destined for each other by magic, biology, or fate.",promise:"Inevitability with teeth. Readers want clear mechanics for how the bond works — and characters who still have to CHOOSE it."},
+{name:"Chosen One",cat:"Fantasy",heat:"Plot-driven",market:"mid",def:"A protagonist prophesied or designated to defeat evil or fulfill a destiny.",promise:"Destiny with weight. Modern readers love complexity and subversion — the chosen one who resists or questions the narrative."},
+{name:"Dragon / Shifter Romance",cat:"Fantasy",heat:"High heat",market:"hot",def:"A dragon or shapeshifter as the love interest, often tied to mate bonds.",promise:"Primal devotion. Readers seek this out specifically — possessive, protective, 'you're mine' energy. One of the highest-demand PNR lanes."},
+{name:"Vampire / Undead Romance",cat:"Fantasy",heat:"Sensual to dark",market:"hot",def:"A vampire or undead love interest, mortal-immortal tension built in.",promise:"Danger and eternity. Evergreen — readers have a clear sub-flavor in mind (seductive vs. dark vs. cursed). Pick yours and commit."},
+{name:"Fae Romance",cat:"Fantasy",heat:"Sensual, tension-forward",market:"hot",def:"Fae or fairy-court love interests, with bargains, glamour, and rules.",promise:"Bargains and beautiful danger. Readers want the fae rules to bite and the cross-court / mortal-fae stakes high."},
+{name:"Magical Academy",cat:"Fantasy",heat:"Flexible",market:"hot",def:"Characters train in magic at a school, coven, or guild.",promise:"World-building through structure. Readers love the academy framework — rivalries, training arcs, the school as a found-family engine."},
+{name:"Hidden Powers",cat:"Fantasy",heat:"Flexible",market:"mid",def:"A character unaware of their own magic until a catalyst forces discovery and control.",promise:"Becoming. Readers want the discovery to be a crescendo and the cost of control to be real."},
+{name:"Prophecy",cat:"Fantasy",heat:"Plot-driven",market:"mid",def:"A foretelling that shapes the characters' path and stakes.",promise:"A countdown to destiny. Readers love a prophecy that's misread, incomplete, or subverted at the climax."},
+{name:"Quest",cat:"Fantasy",heat:"Adventure",market:"mid",def:"A journey toward a goal that tests and bonds the characters.",promise:"Earned bonds through shared danger. Readers want the journey to forge the relationships, not just move the plot."},
+{name:"Magic with Cost",cat:"Fantasy",heat:"Flexible",market:"mid",def:"A magic system where power demands payment — health, memory, years, something loved.",promise:"Consequences readers respect. This is what makes your magic feel real — every spell should hurt to cast."},
+{name:"Witch / Warlock",cat:"Fantasy",heat:"Flexible",market:"mid",def:"Power drawn from being a practicing witch or warlock with rules, lineage, or covenant.",promise:"Craft and lineage. Readers want the rules consistent and the heritage to matter. Witches currently trend above warlocks."},
+{name:"Immortal Love",cat:"Fantasy",heat:"Sensual, aching",market:"mid",def:"An immortal navigating love across centuries, often with mortals.",promise:"Love against time. Readers want the ache of outliving — hurt/comfort around mortality and legacy."},
+{name:"Villain Redemption / Dark Lord",cat:"Fantasy",heat:"Dark-friendly",market:"hot",def:"A villain or morally grey antagonist gets their own arc or redemption.",promise:"Rooting for the monster. Readers actively seek villain POV — give him gravity and a wound, not just menace."},
+{name:"Magical Contract / Bond",cat:"Fantasy",heat:"Tension-forward",market:"mid",def:"A magical pact literally binds two characters together, with consequences for breaking it.",promise:"Forced closeness with magic teeth. Readers want the bond to chafe, then become something neither wants to break."},
+{name:"Portal Fantasy",cat:"Fantasy",heat:"Flexible",market:"mid",def:"Characters transported between the real world and a fantasy realm.",promise:"A door into wonder. Readers new to high fantasy use this as the on-ramp — make the crossing matter emotionally."},
+
+/* ─── THRILLER / SUSPENSE ─── */
+{name:"Unreliable Narrator",cat:"Thriller",heat:"N/A",market:"hot",def:"The narrating perspective is deliberately distorted — lying, faulty memory, or deceiving the reader.",promise:"The floor dropping out. Readers seek this — but it must be earned, not a cheap gotcha. Plant the clues fairly."},
+{name:"Stalker / Obsession",cat:"Thriller",heat:"Dark",market:"mid",def:"One character fixates on another, escalating to psychological or physical threat.",promise:"Suffocating dread. Dark-romance readers seek the obsessive intensity — frame consent/non-consent clearly. Content warning needed."},
+{name:"Kidnapping / Captivity",cat:"Thriller",heat:"Dark",market:"mid",def:"A character is taken and held against their will.",promise:"Survival stakes and locked-in tension. Readers want the captivity to feel real and the escape (or twist) earned. Content warning needed."},
+{name:"Hidden Identity / Secret",cat:"Thriller",heat:"N/A",market:"hot",def:"A character carries a dangerous secret whose revelation flips the story.",promise:"A ticking truth. Readers want to feel the weight of the secret and the dread of it surfacing at the worst moment."},
+{name:"Gaslighting / Manipulation",cat:"Thriller",heat:"Dark",market:"mid",def:"One character systematically warps another's sense of reality.",promise:"Doubting your own mind. Readers want the manipulation to be insidious and the reclaiming of reality cathartic. Portray authentically."},
+{name:"Murder Mystery / Whodunit",cat:"Thriller",heat:"N/A",market:"hot",def:"A death is investigated; the reader solves alongside the protagonist.",promise:"A fair puzzle. Readers want every clue on the page — solvable in hindsight, surprising in the moment. Perennial bestseller."},
+{name:"Race Against Time",cat:"Thriller",heat:"N/A",market:"mid",def:"A ticking clock forces urgent action before catastrophe.",promise:"Relentless momentum. Readers want the deadline real and the pressure escalating every chapter."},
+{name:"Conspiracy",cat:"Thriller",heat:"N/A",market:"mid",def:"A hidden network or plot the protagonist must uncover and outmaneuver.",promise:"The web tightening. Readers want the scope to keep widening and the 'who can I trust' paranoia to bite."},
+{name:"Betrayal Twist",cat:"Thriller",heat:"N/A",market:"hot",def:"A trusted character is revealed as the antagonist or conspirator.",promise:"Trust weaponized. Readers want the betrayal foreshadowed just enough to feel earned, not cheap, on the reveal."},
+{name:"Witness Protection",cat:"Thriller",heat:"Flexible",market:"mid",def:"A character must vanish into a new identity to survive.",promise:"Hiding in plain sight. Readers want the threat of discovery constant and the new life fragile."},
+{name:"Cold Case Reopened",cat:"Thriller",heat:"N/A",market:"mid",def:"An old, unsolved case is reopened, surfacing buried secrets.",promise:"The past clawing back. Readers want the personal stakes of the one who reopens it to collide with the truth."},
+{name:"Missing Person",cat:"Thriller",heat:"N/A",market:"mid",def:"Someone vanishes and the search drives the plot.",promise:"Hope against dread. Readers want every lead to twist and the emotional stakes of the searcher front and center."},
+{name:"Wrongly Accused",cat:"Thriller",heat:"N/A",market:"mid",def:"A character must prove innocence while the real threat closes in.",promise:"Injustice that demands payback. Readers want to ache for vindication and fear the net tightening."},
+
+/* ─── HORROR (cross-genre) ─── */
+{name:"Haunted House / Location",cat:"Horror",heat:"N/A",market:"mid",def:"A specific place carries a supernatural danger or entity.",promise:"A place that wants you. Readers want the location to feel alive and the dread to build room by room. Durable in dark PNR."},
+{name:"Curse",cat:"Horror",heat:"Flexible",market:"mid",def:"A magical consequence afflicting characters across time or generations.",promise:"Inherited doom. Readers want the curse's rules clear and the breaking of it to cost something real. Strong in dark fantasy/PNR."},
+{name:"Possession / Entity Control",cat:"Horror",heat:"Dark",market:"niche",def:"An external entity seizes a character's body or mind.",promise:"Losing yourself. Readers want the horror of being overridden and the fight to reclaim control."}
+];
+
+/* known clashes (lightweight subset for the planner) */
+const CONFLICTS = [
+["Slow Burn","Instalove","Opposed pacing — one demands patience, the other immediacy. Pick the spine and let the other go."],
+["Enemies to Lovers","Instalove","If they fall instantly there's no runway for the enemy phase to land."],
+["Friends to Lovers","Enemies to Lovers","They can't start as both. One setup undercuts the other unless you sequence them deliberately."],
+["Love Triangle","Fated Mates","If the bond is absolute, the triangle has no real tension — the choice is already made."],
+["Amnesia","Childhood Sweethearts","Amnesia erases the shared history that gives childhood sweethearts their emotional foundation."],
+["Marriage of Convenience","Instalove","Instant love collapses the 'convenience' premise — there's no slow realization left to earn."],
+["Single Parent","Instalove","Protective single parents read as cautious; instant love can fight the guardedness readers expect."],
+["Small Town Romance","Hidden Identity","Everyone knows everyone — a hidden identity strains credibility in a town this small."],
+["Witness Protection","Small Town Romance","Anonymity vs. transparency. The nosy-neighbor town becomes a direct threat to the cover."]
+];
+/* common cliché stacks to flag (not wrong — just need a fresh angle) */
+const CLICHES = [
+["Billionaire Romance","Secret Baby","Very common. Freshen it — maybe HE holds the secret, or flip the power dynamic."],
+["Enemies to Lovers","Only One Bed","Near-cliché. Make the one-bed genuinely unavoidable and the enemies dynamic specific."],
+["Fated Mates","Dragon / Shifter Romance","Genre staple — readers expect it. Differentiate through world-building or by challenging the bond."],
+["Chosen One","Prophecy","Classic to the point of cliché. Subvert: a wrong prophecy, multiple chosen ones, or a hero who refuses."],
+["Billionaire Romance","Workplace / Office Romance","Extremely common. Give the employee real leverage or expertise the billionaire lacks."]
+];
+
+/* ════════════════ STATE ════════════════ */
+let stack = [];      /* [{name, primary, showsUp, payoff}] */
+let meta = {title:"", pen:""};
+let activeCat = "all";
+
+try{ const s=localStorage.getItem('tip-trope-bible'); if(s){const d=JSON.parse(s); stack=d.stack||[]; meta=d.meta||meta;} }catch(e){}
+function save(){ try{ localStorage.setItem('tip-trope-bible', JSON.stringify({stack,meta})); }catch(e){} }
+
+function tropeByName(n){ return TROPES.find(t=>t.name===n); }
+function inStack(n){ return stack.some(s=>s.name===n); }
+
+/* ════════════════ BIBLE RENDER ════════════════ */
+const bibleGrid = document.getElementById('bibleGrid');
+const searchInput = document.getElementById('searchInput');
+
+function renderBible(){
+  const q = searchInput.value.toLowerCase().trim();
+  bibleGrid.innerHTML = '';
+  let shown = 0;
+  for(const t of TROPES){
+    if(activeCat!=='all' && t.cat!==activeCat) continue;
+    if(q && !(t.name.toLowerCase().includes(q) || t.def.toLowerCase().includes(q) || t.promise.toLowerCase().includes(q))) continue;
+    shown++;
+    const mClass = t.market==='hot'?'':(t.market==='mid'?'mid':'niche');
+    const mLabel = t.market==='hot'?'High demand':(t.market==='mid'?'Steady market':'Niche / dedicated');
+    const card = document.createElement('div');
+    card.className = 'trope-card cat-'+t.cat;
+    card.innerHTML =
+      `<div class="tc-head"><div class="tc-name">${t.name}</div><div class="tc-cat">${t.cat}</div></div>`+
+      `<div class="tc-def">${t.def}</div>`+
+      `<div class="tc-promise"><b>Reader promise:</b> ${t.promise}</div>`+
+      `<div class="tc-meta"><span class="heat">🔥 ${t.heat}</span><span class="market ${mClass}">${mLabel}</span></div>`+
+      `<button class="tc-add ${inStack(t.name)?'added':''}" data-name="${t.name.replace(/"/g,'&quot;')}">${inStack(t.name)?'✓ In your plan':'+ Add to my plan'}</button>`;
+    bibleGrid.appendChild(card);
+  }
+  if(shown===0) bibleGrid.innerHTML = '<div class="no-results">No tropes match that search. Try a different word or clear the filter.</div>';
+  bibleGrid.querySelectorAll('.tc-add').forEach(b=>b.addEventListener('click',()=>addTrope(b.dataset.name)));
+}
+
+searchInput.addEventListener('input', renderBible);
+document.getElementById('filterRow').addEventListener('click', e=>{
+  const btn = e.target.closest('.filter-btn'); if(!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); activeCat = btn.dataset.cat; renderBible();
+});
+
+/* ════════════════ STACK / BUILDER ════════════════ */
+function addTrope(name){
+  if(inStack(name)){ switchView('builder'); return; }
+  if(stack.length>=8){ showToast('That\'s a full stack (8). Most books need 3–5.'); return; }
+  stack.push({name, primary: stack.length<5, showsUp:"", payoff:""});
+  save(); renderBible(); renderStack(); updatePill();
+  showToast(name+' added to your plan');
+}
+function removeTrope(name){
+  stack = stack.filter(s=>s.name!==name);
+  save(); renderBible(); renderStack(); updatePill();
+}
+function updatePill(){ document.getElementById('stackPill').textContent = stack.length; }
+
+const stackArea = document.getElementById('stackArea');
+const warningArea = document.getElementById('warningArea');
+
+function renderStack(){
+  /* meta inputs */
+  document.getElementById('bookTitle').value = meta.title;
+  document.getElementById('penName').value = meta.pen;
+
+  if(stack.length===0){
+    stackArea.innerHTML = '<div class="empty-stack">No tropes yet. Head to the <strong>Trope Bible</strong> and add the ones your book runs on.<br><button onclick="switchView(\'bible\')">📖 Browse the Trope Bible</button></div>';
+    renderWarnings();
+    return;
+  }
+  stackArea.innerHTML = '';
+  stack.forEach((s,i)=>{
+    const t = tropeByName(s.name) || {cat:'Romance',promise:''};
+    const card = document.createElement('div');
+    card.className = 'stack-card cat-'+t.cat;
+    card.innerHTML =
+      `<div class="sc-head"><div class="sc-name">${s.name}${s.primary?'<span class="role">Primary</span>':''}</div>`+
+      `<button class="sc-remove" title="Remove" data-name="${s.name.replace(/"/g,'&quot;')}">&times;</button></div>`+
+      `<div class="sc-promise"><b>Promise to keep:</b> ${t.promise}</div>`+
+      `<label class="role-toggle"><input type="checkbox" data-i="${i}" class="primaryChk" ${s.primary?'checked':''}> Primary trope (drives the blurb &amp; ads)</label>`+
+      `<div class="field"><label>How does this show up in YOUR book?</label><textarea class="showsUp" data-i="${i}" placeholder="The specific version in your story — who, where, why it's unavoidable...">${s.showsUp||''}</textarea></div>`+
+      `<div class="field" style="margin-bottom:0"><label>The payoff scene / moment</label><textarea class="payoff" data-i="${i}" placeholder="The scene where this trope delivers on its promise...">${s.payoff||''}</textarea></div>`;
+    stackArea.appendChild(card);
+  });
+  stackArea.querySelectorAll('.sc-remove').forEach(b=>b.addEventListener('click',()=>removeTrope(b.dataset.name)));
+  stackArea.querySelectorAll('.showsUp').forEach(el=>el.addEventListener('input',()=>{stack[el.dataset.i].showsUp=el.value;save();}));
+  stackArea.querySelectorAll('.payoff').forEach(el=>el.addEventListener('input',()=>{stack[el.dataset.i].payoff=el.value;save();}));
+  stackArea.querySelectorAll('.primaryChk').forEach(el=>el.addEventListener('change',()=>{stack[el.dataset.i].primary=el.checked;save();renderStack();}));
+  renderWarnings();
+}
+
+function renderWarnings(){
+  warningArea.innerHTML='';
+  const names = stack.map(s=>s.name);
+  const has = n=>names.includes(n);
+  let any=false;
+  for(const [a,b,desc] of CONFLICTS){ if(has(a)&&has(b)){ any=true;
+    warningArea.insertAdjacentHTML('beforeend',`<div class="warning-card"><div class="warn-title">⚠️ ${a} + ${b} — tension to resolve</div><div class="warn-desc">${desc}</div></div>`);
+  }}
+  for(const [a,b,desc] of CLICHES){ if(has(a)&&has(b)){ any=true;
+    warningArea.insertAdjacentHTML('beforeend',`<div class="warning-card" style="border-left-color:#8B5CF6;background:rgba(139,92,246,.07)"><div class="warn-title" style="color:#6d3fc4">💡 ${a} + ${b} — common combo</div><div class="warn-desc">${desc}</div></div>`);
+  }}
+  if(stack.length>=3 && !any){
+    warningArea.innerHTML = '<div class="success-card">✅ No clashes detected. This stack reads as compatible — now make each trope specific to your book below.</div>';
+  } else if(stack.length<3 && stack.length>0){
+    warningArea.innerHTML = '<div class="success-card" style="border-left-color:var(--gold);background:rgba(212,165,116,.1);color:#a9763a">Add at least 3 tropes for a full compatibility check. Most books run on 3–5 primaries.</div>';
+  } else if(stack.length===0){
+    warningArea.innerHTML = '<div class="success-card" style="border-left-color:#ccc;background:#f7f5f1;color:#999">Add tropes from the Bible to see compatibility notes.</div>';
+  }
+}
+
+document.getElementById('bookTitle').addEventListener('input',e=>{meta.title=e.target.value;save();});
+document.getElementById('penName').addEventListener('input',e=>{meta.pen=e.target.value;save();});
+
+/* ════════════════ VIEW SWITCH ════════════════ */
+function switchView(v){
+  document.getElementById('bibleView').classList.toggle('active', v==='bible');
+  document.getElementById('builderView').classList.toggle('active', v==='builder');
+  document.getElementById('tabBible').classList.toggle('active', v==='bible');
+  document.getElementById('tabBuilder').classList.toggle('active', v==='builder');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ════════════════ EXPORT ════════════════ */
+function exportPlan(){
+  let txt = `TROPE PLAN\n`;
+  txt += `The Invisible Pen — Trope Bible & Builder\n`;
+  if(meta.title) txt += `Book: ${meta.title}\n`;
+  if(meta.pen) txt += `Pen Name: ${meta.pen}\n`;
+  txt += `Date: ${new Date().toLocaleDateString()}\n`;
+  txt += '='.repeat(52)+'\n\n';
+  const primaries = stack.filter(s=>s.primary);
+  const supporting = stack.filter(s=>!s.primary);
+  const blockFor = (s)=>{
+    const t = tropeByName(s.name)||{};
+    let b = `▸ ${s.name}\n`;
+    if(t.promise) b += `   Reader promise: ${t.promise}\n`;
+    b += `   In my book: ${s.showsUp || '(not filled in yet)'}\n`;
+    b += `   Payoff: ${s.payoff || '(not filled in yet)'}\n\n`;
+    return b;
+  };
+  txt += `PRIMARY TROPES (${primaries.length}) — these drive your blurb & ads:\n\n`;
+  primaries.forEach(s=>txt+=blockFor(s));
+  if(supporting.length){ txt += `\nSUPPORTING TROPES (${supporting.length}):\n\n`; supporting.forEach(s=>txt+=blockFor(s)); }
+  /* warnings */
+  const names = stack.map(s=>s.name); const has=n=>names.includes(n);
+  const notes=[];
+  for(const [a,b,d] of CONFLICTS) if(has(a)&&has(b)) notes.push(`⚠️ ${a} + ${b}: ${d}`);
+  for(const [a,b,d] of CLICHES) if(has(a)&&has(b)) notes.push(`💡 ${a} + ${b}: ${d}`);
+  if(notes.length){ txt += `\n${'─'.repeat(52)}\nCOMPATIBILITY NOTES:\n\n`; notes.forEach(n=>txt+='  '+n+'\n'); }
+  txt += `\n${'='.repeat(52)}\n`;
+  txt += `Tip: use these trope names verbatim in your blurb, ads, and newsletter.\nReaders search tropes, not vague descriptions. Don't apologize for tropes — name them.\n`;
+  txt += `\nThe Invisible Pen — AI for Authors Over 40\nhttps://www.skool.com/the-invisible-pen\n`;
+
+  document.getElementById('planText').value = txt;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+function copyPlan(){
+  const ta=document.getElementById('planText'); ta.select();
+  navigator.clipboard.writeText(ta.value).then(()=>{showToast('Copied to clipboard!');closeModal();})
+   .catch(()=>{document.execCommand('copy');showToast('Copied!');closeModal();});
+}
+function closeModal(){ document.getElementById('modalOverlay').classList.remove('active'); }
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+
+function clearPlan(){
+  if(!confirm('Clear your whole trope plan? This can\'t be undone.')) return;
+  stack=[]; meta={title:"",pen:""}; save();
+  renderBible(); renderStack(); updatePill();
+  document.getElementById('bookTitle').value=''; document.getElementById('penName').value='';
+  showToast('Plan cleared');
+}
+
+function showToast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+/* ════════════════ INIT ════════════════ */
+renderBible();
+renderStack();
+updatePill();
+</script>
+</body>
+</html>
