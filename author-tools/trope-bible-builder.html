@@ -38,6 +38,27 @@ main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:1.5rem}
 .intro{background:#fff;border-radius:12px;padding:1.1rem 1.35rem;box-shadow:var(--card-shadow);border-left:4px solid var(--gold);margin-bottom:1.5rem;font-size:.9rem;color:#555}
 .intro strong{color:var(--charcoal)}
 
+/* KEY / LEGEND */
+.key-panel{background:#fff;border-radius:12px;box-shadow:var(--card-shadow);border-left:4px solid var(--teal);margin-bottom:1.5rem;overflow:hidden}
+.key-panel summary{cursor:pointer;padding:1rem 1.35rem;font-weight:700;color:var(--teal);font-size:.95rem;list-style:none;display:flex;align-items:center;gap:.5rem}
+.key-panel summary::-webkit-details-marker{display:none}
+.key-panel summary .chev{margin-left:auto;transition:transform .2s;font-size:.8rem;color:#999}
+.key-panel[open] summary .chev{transform:rotate(180deg)}
+.key-body{padding:0 1.35rem 1.15rem}
+.key-row{display:flex;gap:.85rem;align-items:flex-start;padding:.55rem 0;border-top:1px dashed #eee;font-size:.86rem;color:#555;line-height:1.5}
+.key-row:first-child{border-top:none}
+.key-term{flex-shrink:0;min-width:138px;font-weight:700;color:var(--charcoal);font-size:.82rem;padding-top:.05rem}
+.key-fresh{margin-top:.85rem;background:var(--light-teal);border-radius:8px;padding:.75rem .95rem;font-size:.82rem;color:#2c5a58;line-height:1.55}
+.key-fresh strong{color:var(--teal)}
+@media(max-width:600px){.key-row{flex-direction:column;gap:.2rem}.key-term{min-width:0}}
+
+/* GENRE DROPDOWN */
+.genre-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;margin-bottom:1rem}
+.genre-row label{font-size:.82rem;font-weight:700;color:var(--teal);flex-shrink:0}
+.genre-row select{flex:1;min-width:220px;padding:.6rem .8rem;border:2px solid #e0e0e0;border-radius:8px;font-size:.9rem;font-family:inherit;background:#fff;cursor:pointer}
+.genre-row select:focus{outline:none;border-color:var(--teal)}
+.genre-count{font-size:.78rem;color:#999;flex-basis:100%;margin-top:-.4rem}
+
 /* CONTROLS */
 .controls{background:#fff;border-radius:12px;padding:1.25rem;box-shadow:var(--card-shadow);border:1px solid rgba(0,128,128,.12);margin-bottom:1.5rem}
 .search-box{position:relative;margin-bottom:1rem}
@@ -172,7 +193,29 @@ footer{background:var(--charcoal)!important;-webkit-print-color-adjust:exact;pri
 <strong>Your browsable trope library — <span id="tropeCount"></span> tropes across romance, dark romance, fantasy, sci-fi, thriller &amp; horror.</strong> Every entry tells you what the trope <em>is</em>, the promise readers expect when they see it, the typical heat, and how the market is moving. Found one for your book? Hit <strong>+ Add to my plan</strong> and switch to the builder tab to map out how it actually pays off on the page.
 </div>
 
+<details class="key-panel" open>
+<summary>&#128273; New here? How to read every trope card <span class="chev">&#9660;</span></summary>
+<div class="key-body">
+<div class="key-row"><span class="key-term">The definition</span><span>What the trope actually is, in plain English. A trope isn't a clich&eacute; — it's a familiar story pattern readers <em>search for on purpose</em>, the way they'd order a favorite dish. Naming yours is how readers find you.</span></div>
+<div class="key-row"><span class="key-term">Reader promise</span><span>What a reader is <em>buying</em> when they pick this trope. If your blurb says enemies-to-lovers, readers pre-ordered slow-melting hostility — skip it and the reviews will tell you. Write the promise, market the promise, deliver the promise.</span></div>
+<div class="key-row"><span class="key-term">&#128293; Heat</span><span>The steam level readers <em>typically expect</em> with this trope — a guide, not a law. You can write a closed-door mafia romance, but know you're swimming against reader expectation and say so in your marketing.</span></div>
+<div class="key-row"><span class="key-term"><span class="market">High demand</span></span><span>Large numbers of readers are actively searching for this <em>right now</em>. These are your <strong>visibility engines</strong> — lead your blurb, keywords, and ads with them so busy searches surface your book.</span></div>
+<div class="key-row"><span class="key-term"><span class="market mid">Steady market</span></span><span>The perennial sellers. Demand doesn't spike, but it never dries up either — these are <strong>safe anchors</strong> you can build a backlist on without chasing a trend that might fade.</span></div>
+<div class="key-row"><span class="key-term"><span class="market niche">Niche / dedicated</span></span><span>A smaller but <em>passionate</em> audience that's often underserved. The play: <strong>pair a niche trope with a high-demand one</strong> — the big trope gets you found, the niche trope makes you the only author giving that reader exactly what they want.</span></div>
+<div class="key-fresh">
+<strong>How current is this data?</strong> Market signals were last reviewed <strong>July&nbsp;2026</strong>, drawing on Amazon/KU category movement, BookTok search behavior, and current bestseller patterns. Reader demand shifts, so treat signals as a compass, not gospel — before a launch, type your top tropes into Amazon's search bar and let the autocomplete confirm the demand. This library gets a market re-review roughly <strong>every 3 months</strong>; the date above always tells you how fresh it is.
+</div>
+</div>
+</details>
+
 <div class="controls">
+<div class="genre-row">
+<label for="genreSelect">&#127917; Show tropes for my genre:</label>
+<select id="genreSelect">
+<option value="">All genres — show everything</option>
+</select>
+<span class="genre-count" id="genreCount"></span>
+</div>
 <div class="search-box">
 <span class="search-icon">🔍</span>
 <input type="text" id="searchInput" placeholder="Search tropes (e.g. enemies, mates, billionaire)..." autocomplete="off">
@@ -474,10 +517,32 @@ const CLICHES = [
 ["Grumpy / Sunshine","He Falls First","Beloved combo verging on default. Sharpen it with a specific reason his walls exist for everyone but her."]
 ];
 
+/* ════════════════ GENRE MAP ════════════════
+   Curated genre → trope sets. cats pulls whole categories,
+   include adds specific tropes, exclude removes misfits. */
+const GENRES = {
+"Contemporary Romance": {cats:["Romance"], exclude:["Duke Romance","Wallflower","Rake Reformed","Governess Romance","Ruined / Compromised","Highlander Romance"]},
+"Small-Town / Cozy Romance": {include:["Small Town Romance","Grumpy / Sunshine","Second Chance Romance","Single Parent","Cowboy / Ranch Romance","Firefighter / First Responder","Neighbors to Lovers","Christmas / Holiday Romance","Friends to Lovers","Childhood Sweethearts","Later-in-Life Romance (40+)","Love After Loss","Accidental Pregnancy","Fake Dating / Marriage","Only One Bed","Snowed In","Curvy Heroine","He Falls First","Pining","The Grovel","Found Family","Hurt / Comfort","Military / Veteran Hero","One Night Stand to Forever","Slow Burn","Golden Retriever x Black Cat"]},
+"Romantic Comedy": {include:["Fake Dating / Marriage","Enemies to Lovers","Vegas Wedding / Accidental Marriage","One Night Stand to Forever","Roommates to Lovers","Matchmaker","Opposites Attract","Golden Retriever x Black Cat","Grumpy Boss","Grumpy / Sunshine","Miscommunication","Friends With Benefits","Only One Bed","Workplace / Office Romance","Neighbors to Lovers","Accidental Pregnancy","The Grovel","Brother's Best Friend","Best Friend's Sibling","Hockey Romance","Sports Romance"]},
+"Dark Romance": {cats:["Dark"], include:["Touch Her and Die","Age Gap","Enemies With Benefits","Redemption Arc","Reverse Harem","Forbidden Love","Best Friend's Dad"]},
+"Historical / Regency Romance": {include:["Duke Romance","Wallflower","Rake Reformed","Governess Romance","Ruined / Compromised","Highlander Romance","Arranged Marriage","Marriage of Convenience","Forbidden Love","Gothic Romance","Pining","Slow Burn","Second Chance Romance","Secret Baby","Royalty / Prince","Enemies to Lovers","Love After Loss","Age Gap","Bodyguard Romance"]},
+"Paranormal Romance": {include:["Fated Mates","Dragon / Shifter Romance","Vampire / Undead Romance","Fae Romance","Demon Romance","Angel x Demon","Blood Bond","Omegaverse (A/B/O)","Rejected Mate","Monster Romance","Immortal Love","Witch / Warlock","Hidden Powers","Reincarnated Lovers","Magical Contract / Bond","God x Mortal","Shadow Daddy","Curse","Haunted House / Location","Touch Her and Die","Instalove","Magic with Cost"]},
+"Romantasy / Fantasy Romance": {cats:["Fantasy"], include:["Monster Romance","Touch Her and Die","Enemies to Lovers","Forced Proximity","Only One Bed","Slow Burn","Found Family"]},
+"Sci-Fi Romance": {include:["Alien Abduction Romance","Alien Warrior Mate","Mail-Order Alien Bride","Cyborg Romance","AI / Android Awakening","Time Travel Romance","Telepathic Bond","Bio-Enhanced Super Soldier","Enemies on a Spaceship","Post-Apocalyptic Survival","Fated Mates","Forced Proximity","Instalove","Breeding","Found Family"]},
+"Clean / Sweet Romance": {include:["Friends to Lovers","Second Chance Romance","Small Town Romance","Christmas / Holiday Romance","Single Parent","Childhood Sweethearts","Later-in-Life Romance (40+)","Love After Loss","Neighbors to Lovers","Wallflower","Matchmaker","Snowed In","Cowboy / Ranch Romance","Fake Dating / Marriage","Grumpy / Sunshine","Pining","Slow Burn","The Grovel","Found Family","Hurt / Comfort","Golden Retriever x Black Cat","Opposites Attract","Marriage of Convenience","Amnesia","Roommates to Lovers"]},
+"Romantic Suspense": {include:["Bodyguard Romance","Witness Protection","Stalker / Obsession","Hidden Identity / Secret","Race Against Time","Missing Person","Wrongly Accused","Conspiracy","Military / Veteran Hero","Touch Her and Die","Hitman / Assassin Romance","Mafia Romance","Kidnapping / Captivity","Cat and Mouse","Home Invasion","Betrayal Twist","Undercover Billionaire"]},
+"Thriller / Suspense": {cats:["Thriller"], exclude:["Cozy Mystery","Amateur Sleuth"]},
+"Mystery / Cozy Mystery": {include:["Murder Mystery / Whodunit","Amateur Sleuth","Cozy Mystery","Locked Room Mystery","Cold Case Reopened","Missing Person","Twin Swap / Doppelgänger","Hidden Identity / Secret","Betrayal Twist","Small Town Romance","Found Family"]},
+"Fantasy (Epic / General)": {include:["Chosen One","Quest","Prophecy","Magical Academy","Heist Fantasy","Court Intrigue","Tournament / Deadly Trials","Monster Hunter","Necromancer","Magic with Cost","Hidden Powers","Portal Fantasy","Dragon Rider","Enemy Courts / Kingdoms at War","Villain Redemption / Dark Lord","Magical Bargain Gone Wrong","Found Family","Dark Academia","Witch / Warlock","Blood Bond"]},
+"Science Fiction (General)": {cats:["SciFi"]},
+"Horror": {cats:["Horror"], include:["Serial Killer POV","Cult Escape","Home Invasion","Kidnapping / Captivity","Gothic Romance"]}
+};
+
 /* ════════════════ STATE ════════════════ */
 let stack = [];      /* [{name, primary, showsUp, payoff}] */
 let meta = {title:"", pen:""};
 let activeCat = "all";
+let activeGenre = "";
 
 try{ const s=localStorage.getItem('tip-trope-bible'); if(s){const d=JSON.parse(s); stack=d.stack||[]; meta=d.meta||meta;} }catch(e){}
 function save(){ try{ localStorage.setItem('tip-trope-bible', JSON.stringify({stack,meta})); }catch(e){} }
@@ -489,11 +554,21 @@ function inStack(n){ return stack.some(s=>s.name===n); }
 const bibleGrid = document.getElementById('bibleGrid');
 const searchInput = document.getElementById('searchInput');
 
+function matchesGenre(t){
+  if(!activeGenre) return true;
+  const g = GENRES[activeGenre]; if(!g) return true;
+  const inCats = g.cats && g.cats.includes(t.cat);
+  const inList = g.include && g.include.includes(t.name);
+  const excluded = g.exclude && g.exclude.includes(t.name);
+  return (inCats || inList) && !excluded;
+}
+
 function renderBible(){
   const q = searchInput.value.toLowerCase().trim();
   bibleGrid.innerHTML = '';
   let shown = 0;
   for(const t of TROPES){
+    if(!matchesGenre(t)) continue;
     if(activeCat!=='all' && t.cat!==activeCat) continue;
     if(q && !(t.name.toLowerCase().includes(q) || t.def.toLowerCase().includes(q) || t.promise.toLowerCase().includes(q))) continue;
     shown++;
@@ -510,6 +585,7 @@ function renderBible(){
     bibleGrid.appendChild(card);
   }
   if(shown===0) bibleGrid.innerHTML = '<div class="no-results">No tropes match that search. Try a different word or clear the filter.</div>';
+  document.getElementById('genreCount').textContent = activeGenre ? shown+' tropes fit '+activeGenre : '';
   bibleGrid.querySelectorAll('.tc-add').forEach(b=>b.addEventListener('click',()=>addTrope(b.dataset.name)));
 }
 
@@ -517,8 +593,26 @@ searchInput.addEventListener('input', renderBible);
 document.getElementById('filterRow').addEventListener('click', e=>{
   const btn = e.target.closest('.filter-btn'); if(!btn) return;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active'); activeCat = btn.dataset.cat; renderBible();
+  btn.classList.add('active'); activeCat = btn.dataset.cat;
+  /* picking a category clears the genre dropdown so filters never fight */
+  activeGenre = ''; document.getElementById('genreSelect').value = '';
+  renderBible();
 });
+
+/* populate + wire the genre dropdown */
+(function initGenres(){
+  const sel = document.getElementById('genreSelect');
+  Object.keys(GENRES).forEach(g=>{
+    const o = document.createElement('option'); o.value = g; o.textContent = g; sel.appendChild(o);
+  });
+  sel.addEventListener('change', ()=>{
+    activeGenre = sel.value;
+    /* picking a genre resets the category buttons to All */
+    activeCat = 'all';
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.toggle('active', b.dataset.cat==='all'));
+    renderBible();
+  });
+})();
 
 /* ════════════════ STACK / BUILDER ════════════════ */
 function addTrope(name){
