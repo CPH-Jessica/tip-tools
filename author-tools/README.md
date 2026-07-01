@@ -26,7 +26,7 @@ Select 3-7 tropes from 67 options across romance, thriller, and fantasy. Get an 
 #### 4. Trope Bible & Builder
 `trope-bible-builder.html`
 
-A browsable reference library of 65+ romance, fantasy/paranormal, thriller, and horror tropes — each with a plain-English definition, the specific promise readers expect when they see it, typical heat, and current market demand. Search and filter, then build your own book's trope plan: add tropes to your stack, mark primaries, and write how each one shows up in your story and the scene where it pays off. Live compatibility checking flags clashing tropes and overused combos. Save, print, or copy/export your plan for blurbs, ads, and your story bible. Everything persists in your browser.
+A browsable reference library of 180 tropes across romance, dark romance, fantasy/paranormal, sci-fi, thriller/mystery, and horror — each with a plain-English definition, the specific promise readers expect when they see it, typical heat, and current market demand. Includes the niche deep cuts (mafia, stalker hero, omegaverse, alien abduction, rejected mates, locked-room, final girl, and more) with content-warning guidance on the dark entries. Search and filter, then build your own book's trope plan: add tropes to your stack, mark primaries, and write how each one shows up in your story and the scene where it pays off. Live compatibility checking flags clashing tropes and overused combos. Save, print, or copy/export your plan for blurbs, ads, and your story bible. Everything persists in your browser.
 
 #### 5. Character Name Generator
 `name-generator.html`
