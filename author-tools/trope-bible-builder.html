@@ -54,7 +54,9 @@ main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:1.5rem}
 .trope-card{background:#fff;border-radius:12px;padding:1.1rem 1.2rem;box-shadow:var(--card-shadow);border-top:4px solid var(--teal);display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
 .trope-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .trope-card.cat-Romance{border-top-color:var(--coral)}
+.trope-card.cat-Dark{border-top-color:#8b1e3f}
 .trope-card.cat-Fantasy{border-top-color:var(--unexpected)}
+.trope-card.cat-SciFi{border-top-color:#0e7490}
 .trope-card.cat-Thriller{border-top-color:var(--conflict)}
 .trope-card.cat-Horror{border-top-color:#444}
 .trope-card.hidden{display:none}
@@ -62,7 +64,9 @@ main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:1.5rem}
 .tc-name{font-size:1.02rem;font-weight:700;color:var(--charcoal);line-height:1.25}
 .tc-cat{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:.2rem .5rem;border-radius:5px;white-space:nowrap;flex-shrink:0}
 .cat-Romance .tc-cat{background:rgba(255,107,107,.12);color:var(--coral)}
+.cat-Dark .tc-cat{background:rgba(139,30,63,.12);color:#8b1e3f}
 .cat-Fantasy .tc-cat{background:rgba(139,92,246,.12);color:var(--unexpected)}
+.cat-SciFi .tc-cat{background:rgba(14,116,144,.12);color:#0e7490}
 .cat-Thriller .tc-cat{background:rgba(220,53,69,.1);color:var(--conflict)}
 .cat-Horror .tc-cat{background:rgba(68,68,68,.1);color:#444}
 .tc-def{font-size:.85rem;color:#555;margin-bottom:.6rem}
@@ -91,7 +95,9 @@ main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:1.5rem}
 .stack-card{background:#fff;border-radius:12px;padding:1.1rem 1.25rem;box-shadow:var(--card-shadow);border-left:4px solid var(--teal);margin-bottom:1rem;animation:fadeUp .3s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .stack-card.cat-Romance{border-left-color:var(--coral)}
+.stack-card.cat-Dark{border-left-color:#8b1e3f}
 .stack-card.cat-Fantasy{border-left-color:var(--unexpected)}
+.stack-card.cat-SciFi{border-left-color:#0e7490}
 .stack-card.cat-Thriller{border-left-color:var(--conflict)}
 .stack-card.cat-Horror{border-left-color:#444}
 .sc-head{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.6rem}
@@ -163,7 +169,7 @@ footer{background:var(--charcoal)!important;-webkit-print-color-adjust:exact;pri
 <!-- ══════════ BIBLE ══════════ -->
 <section class="view active" id="bibleView">
 <div class="intro">
-<strong>Your browsable trope library.</strong> Every entry tells you what the trope <em>is</em>, the promise readers expect when they see it, the typical heat, and how the market is moving. Found one for your book? Hit <strong>+ Add to my plan</strong> and switch to the builder tab to map out how it actually pays off on the page.
+<strong>Your browsable trope library — <span id="tropeCount"></span> tropes across romance, dark romance, fantasy, sci-fi, thriller &amp; horror.</strong> Every entry tells you what the trope <em>is</em>, the promise readers expect when they see it, the typical heat, and how the market is moving. Found one for your book? Hit <strong>+ Add to my plan</strong> and switch to the builder tab to map out how it actually pays off on the page.
 </div>
 
 <div class="controls">
@@ -174,8 +180,10 @@ footer{background:var(--charcoal)!important;-webkit-print-color-adjust:exact;pri
 <div class="filter-row" id="filterRow">
 <button class="filter-btn active" data-cat="all">All</button>
 <button class="filter-btn" data-cat="Romance">Romance</button>
+<button class="filter-btn" data-cat="Dark">Dark Romance</button>
 <button class="filter-btn" data-cat="Fantasy">Fantasy / Paranormal</button>
-<button class="filter-btn" data-cat="Thriller">Thriller / Suspense</button>
+<button class="filter-btn" data-cat="SciFi">Sci-Fi</button>
+<button class="filter-btn" data-cat="Thriller">Thriller / Mystery</button>
 <button class="filter-btn" data-cat="Horror">Horror</button>
 </div>
 </div>
@@ -231,7 +239,7 @@ footer{background:var(--charcoal)!important;-webkit-print-color-adjust:exact;pri
 
 <script>
 /* ════════════════ TROPE BIBLE DATA ════════════════
-   cat: Romance | Fantasy | Thriller | Horror
+   cat: Romance | Dark | Fantasy | SciFi | Thriller | Horror
    heat: typical heat positioning
    market: hot | mid | niche  (reader demand signal)
    def: what it is.  promise: what readers are buying when they see it. */
@@ -310,7 +318,131 @@ const TROPES = [
 /* ─── HORROR (cross-genre) ─── */
 {name:"Haunted House / Location",cat:"Horror",heat:"N/A",market:"mid",def:"A specific place carries a supernatural danger or entity.",promise:"A place that wants you. Readers want the location to feel alive and the dread to build room by room. Durable in dark PNR."},
 {name:"Curse",cat:"Horror",heat:"Flexible",market:"mid",def:"A magical consequence afflicting characters across time or generations.",promise:"Inherited doom. Readers want the curse's rules clear and the breaking of it to cost something real. Strong in dark fantasy/PNR."},
-{name:"Possession / Entity Control",cat:"Horror",heat:"Dark",market:"niche",def:"An external entity seizes a character's body or mind.",promise:"Losing yourself. Readers want the horror of being overridden and the fight to reclaim control."}
+{name:"Possession / Entity Control",cat:"Horror",heat:"Dark",market:"niche",def:"An external entity seizes a character's body or mind.",promise:"Losing yourself. Readers want the horror of being overridden and the fight to reclaim control."},
+
+/* ─── ROMANCE — DEEP CUTS & SUBGENRE STAPLES ─── */
+{name:"Hockey Romance",cat:"Romance",heat:"Usually steamy",market:"hot",def:"Romance built around a hockey player hero — the team, the ice, the road trips, the playoffs.",promise:"Her name on his jersey. Readers want team found-family, locker-room banter, and a player who's untouchable on the ice and undone by one woman."},
+{name:"Sports Romance",cat:"Romance",heat:"Usually steamy",market:"hot",def:"An athlete love interest — football, baseball, F1, MMA — with the season's stakes woven into the romance.",promise:"Discipline meeting distraction. Readers want the game to genuinely matter and the romance to threaten (then fuel) the win."},
+{name:"Cowboy / Ranch Romance",cat:"Romance",heat:"Flexible",market:"hot",def:"A rancher or cowboy hero, with the land, the animals, and the work as the heartbeat of the book.",promise:"Capable hands and quiet devotion. Readers want sweat-and-saddle competence and a man of few words who shows love through work."},
+{name:"Military / Veteran Hero",cat:"Romance",heat:"Flexible",market:"mid",def:"An active-duty or veteran hero whose service — and what it cost him — shapes the romance.",promise:"Protective steel with a wound underneath. Readers want the discipline AND the softening; handle trauma with respect."},
+{name:"Firefighter / First Responder",cat:"Romance",heat:"Flexible",market:"mid",def:"A hero who runs toward danger for a living — firefighter, paramedic, search-and-rescue.",promise:"Everyday heroism. Readers want the adrenaline of the job colliding with the tenderness at home."},
+{name:"Rockstar Romance",cat:"Romance",heat:"Often steamy",market:"mid",def:"A musician love interest — fame, tours, groupies, and the person who sees past the stage persona.",promise:"Being the one real thing in a fake world. Readers want songs written about her and fame's cost paid on the page."},
+{name:"Nanny Romance",cat:"Romance",heat:"Flexible",market:"mid",def:"The nanny and the parent (usually a single dad) falling for each other across a professional line.",promise:"Domestic intimacy that shouldn't be crossed. Readers want family closeness doing the wooing before either admits it."},
+{name:"Best Friend's Dad",cat:"Romance",heat:"Usually high heat",market:"hot",def:"Falling for the father of a best friend — age gap plus a loyalty line that shouldn't be crossed.",promise:"Doubly forbidden. Readers want the experienced, established man losing control over the one woman he absolutely can't have."},
+{name:"Silver Fox",cat:"Romance",heat:"Often high heat",market:"hot",def:"An older, distinguished hero — confident, established, gray at the temples and unbothered.",promise:"A man, not a boy. Readers want certainty, competence, and a hero who knows exactly what he wants."},
+{name:"Curvy Heroine",cat:"Romance",heat:"Flexible",market:"hot",def:"A plus-size heroine desired exactly as she is — her body never the obstacle, always the draw.",promise:"Worship, not a makeover. Readers search this by name and want a hero obsessed from page one — no weight-loss arc."},
+{name:"Grumpy Boss",cat:"Romance",heat:"Tension-forward",market:"hot",def:"A cold, demanding boss and the one employee who gets under his skin.",promise:"Power and thaw. Readers want the boardroom iciness cracking in private — and the power dynamic handled with real consent."},
+{name:"Enemies With Benefits",cat:"Romance",heat:"High heat",market:"hot",def:"Rivals who fall into bed while insisting they still can't stand each other.",promise:"Hate as heat. Readers want the physical line crossed early while the emotional walls take the whole book to fall."},
+{name:"Friends With Benefits",cat:"Romance",heat:"High heat",market:"mid",def:"A no-strings arrangement between friends that catches feelings anyway.",promise:"The rules failing. Readers want the exact moment the arrangement stops being casual — and the panic that follows."},
+{name:"One Night Stand to Forever",cat:"Romance",heat:"Steamy start",market:"hot",def:"A single anonymous night, then fate throws them back together — as coworkers, in-laws, neighbors.",promise:"The morning after that won't stay in the past. Readers want the delicious horror of the re-meet."},
+{name:"Accidental Pregnancy",cat:"Romance",heat:"Emotional",market:"hot",def:"An unplanned pregnancy binds two people who were never supposed to be permanent.",promise:"Forever, ready or not. Readers want both parents to step up and the baby to force the honesty they were avoiding."},
+{name:"Vegas Wedding / Accidental Marriage",cat:"Romance",heat:"Flexible",market:"mid",def:"They wake up married — now they have to deal with it (or pretend it's real).",promise:"Consequences with a ring on. Readers want the chaos of the reveal and the slow realization neither wants the annulment."},
+{name:"Roommates to Lovers",cat:"Romance",heat:"Builds",market:"hot",def:"Sharing a space turns into sharing a life — forced proximity with a lease.",promise:"Domestic tension. Readers want the small intimacies (coffee orders, borrowed hoodies) doing the heavy lifting."},
+{name:"Neighbors to Lovers",cat:"Romance",heat:"Flexible",market:"mid",def:"The person next door becomes the person, one over-the-fence encounter at a time.",promise:"Love in low stakes. Readers want proximity, casseroles, and the wall between houses coming down."},
+{name:"Later-in-Life Romance (40+)",cat:"Romance",heat:"Flexible",market:"hot",def:"Protagonists in their 40s, 50s, or beyond finding new (or second) love.",promise:"It's not too late. A fast-growing market — readers want grown-up problems, grown-up bodies, and zero apology for either."},
+{name:"Love After Loss",cat:"Romance",heat:"Tender",market:"mid",def:"A widowed or grieving character learns to love again without erasing what came before.",promise:"Hope that honors the grief. Readers want the lost love respected, not replaced."},
+{name:"The Grovel",cat:"Romance",heat:"Emotional payoff",market:"hot",def:"After the dark moment, the one who wronged the other earns forgiveness — publicly, painfully, thoroughly.",promise:"Repentance readers can taste. Technically a beat, but readers search for it by name — the bigger the mistake, the bigger the grovel."},
+{name:"Miscommunication",cat:"Romance",heat:"Any",market:"niche",def:"The central conflict rests on something the characters simply haven't said to each other.",promise:"Warning label: many readers filter this OUT. If you use it, give them a real reason they can't speak — not just a missed text."},
+{name:"Duke Romance",cat:"Romance",heat:"Flexible",market:"hot",def:"A duke (or marquess, or earl) — power, title, and a marriage mart he's avoiding.",promise:"The most eligible man in England undone. Regency readers search by rank; dukes outsell everyone."},
+{name:"Wallflower",cat:"Romance",heat:"Slow burn-friendly",market:"hot",def:"The overlooked, unfashionable heroine the hero actually SEES.",promise:"Being chosen when no one was looking. Readers want the ton's least-wanted becoming one man's only want."},
+{name:"Rake Reformed",cat:"Romance",heat:"Steamy",market:"mid",def:"A scandalous libertine meets the one woman who makes the reputation not worth keeping.",promise:"The rake ruined by love. Readers want his past to be real and the reform to cost him something."},
+{name:"Governess Romance",cat:"Romance",heat:"Tension-forward",market:"mid",def:"The governess and the master of the house — Jane Eyre's long shadow.",promise:"Forbidden across class lines. Readers want the power gap acknowledged and the yearning conducted in glances."},
+{name:"Ruined / Compromised",cat:"Romance",heat:"Tension spike",market:"mid",def:"One scandalous moment forces a marriage — or destroys a reputation that must be rebuilt.",promise:"One kiss, whole consequences. Readers want society's rules to have teeth and the forced vows to turn real."},
+{name:"Highlander Romance",cat:"Romance",heat:"Steamy",market:"mid",def:"A Scottish warrior hero — clan loyalty, kilts, and a bride he'd burn the world for.",promise:"Fierce and elemental. Readers want the clan politics real and the devotion untamed."},
+{name:"Undercover Billionaire",cat:"Romance",heat:"Flexible",market:"mid",def:"He hides his wealth to find someone who wants HIM — then the truth comes out.",promise:"Loved before the reveal. Readers want her fury at the lie and proof the love was never about the money."},
+{name:"Golden Retriever x Black Cat",cat:"Romance",heat:"Flexible",market:"hot",def:"The sunny, devoted, uncomplicated partner paired with the aloof, prickly one — grumpy/sunshine's internet-era cousin.",promise:"Warmth that refuses to be pushed away. Readers use these exact words on BookTok — the golden retriever's patience slowly winning the black cat over."},
+
+/* ─── DARK ROMANCE ─── */
+{name:"Mafia Romance",cat:"Dark",heat:"High heat, dark",market:"hot",def:"A made man — capo, don, enforcer — and the woman pulled into his world of loyalty, violence, and omertà.",promise:"Danger that would die for her. Readers want the brutality real everywhere except with her — and the moral cost on the page."},
+{name:"Arranged Mafia Marriage",cat:"Dark",heat:"High heat",market:"hot",def:"A marriage brokered between crime families — she's the treaty, he's the enemy she has to wed.",promise:"Enemy vows turning true. Readers want cold contract to claimed devotion, with the families' threat never far."},
+{name:"Bratva / Cartel Romance",cat:"Dark",heat:"High heat, dark",market:"mid",def:"Russian bratva or cartel setting — colder hierarchies, higher body counts, same devoted heart underneath.",promise:"The most dangerous man in the room, on his knees for one person. Differentiate through culture and code, not just accents."},
+{name:"Dark Captive / Captor",cat:"Dark",heat:"Very dark",market:"hot",def:"She's taken — and the man who holds her becomes the man she can't leave. Needs unmistakable content warnings.",promise:"The forbidden fantasy handled deliberately. Readers self-select into this hard; signal clearly, frame consent evolution carefully, and never market it as sweet."},
+{name:"Stalker Hero",cat:"Dark",heat:"Very dark",market:"hot",def:"He watched her long before she knew his name — obsession framed as devotion. The 'Haunting Adeline' lane.",promise:"Being wanted past the point of reason. Massive current demand; content warnings and clear dark-romance shelving are non-negotiable."},
+{name:"Obsessed Hero",cat:"Dark",heat:"Intense",market:"hot",def:"A hero whose love is total, immediate, and slightly unhinged — she is the only thing he wants.",promise:"No one has ever loved you like this. Readers want single-minded fixation that never wavers and never strays."},
+{name:"Bully Romance",cat:"Dark",heat:"Dark, angsty",market:"mid",def:"He made her life hell — usually in an academy or elite school — before the cruelty cracked open into want.",promise:"The tormentor brought low. Readers want his WHY revealed and a grovel proportional to the damage."},
+{name:"Villain Gets the Girl",cat:"Dark",heat:"Dark",market:"hot",def:"The story's villain — not a misunderstood softie, an actual villain — wins the romance.",promise:"No redemption required. Readers want him to stay a monster for the world and a devotee for her."},
+{name:"Anti-Hero Romance",cat:"Dark",heat:"Dark, flexible",market:"hot",def:"A morally compromised lead — assassin, thief, fixer — whose code bends for one person only.",promise:"Gray that stays gray. Readers want his lines genuinely dark and the exception she is to feel earned."},
+{name:"Serial Killer Romance",cat:"Dark",heat:"Very dark",market:"hot",def:"One (or both) leads kill people — and the romance works anyway. The 'Butcher & Blackbird' lane.",promise:"Two monsters recognizing each other. Trending hard; dark comedy or shared code makes it palatable. Warn thoroughly."},
+{name:"Hitman / Assassin Romance",cat:"Dark",heat:"Dark, steamy",market:"mid",def:"A professional killer and the target, witness, or client he shouldn't want.",promise:"Death's precision turned protective. Readers want the job and the feelings on a fatal collision course."},
+{name:"Why Choose (Dark RH)",cat:"Dark",heat:"Very high heat",market:"mid",def:"One heroine, multiple dark love interests — and she keeps them all.",promise:"All of them, no apology. Readers want each man distinct, the group dynamic negotiated, and zero forced choice at the end."},
+{name:"Cult Romance",cat:"Dark",heat:"Very dark",market:"niche",def:"Romance inside — or escaping — a cult, with control and devotion dangerously entangled.",promise:"Love under total control. Small but intense readership; the psychology must feel authentic, not decorative."},
+{name:"Priest / Taboo Vows",cat:"Dark",heat:"Very dark",market:"niche",def:"A man of the cloth and the temptation that breaks (or tests) his vows.",promise:"Sacred versus wanted. Readers want genuine faith stakes — if the collar comes off too easily, the trope has no teeth."},
+{name:"Stepbrother Romance",cat:"Dark",heat:"High heat",market:"mid",def:"Step-siblings (no blood relation, usually met as adults) crossing the household line.",promise:"Forbidden under the same roof. Readers want the taboo frisson with the no-blood-relation ground rules crystal clear."},
+{name:"Professor / Student",cat:"Dark",heat:"High heat",market:"mid",def:"An academic power line crossed — the brilliant professor and the student he shouldn't notice.",promise:"Intellect as seduction. Keep both adults, make the institutional risk real, and let competence do the attracting."},
+{name:"Primal / Chase",cat:"Dark",heat:"Very high heat",market:"niche",def:"Pursuit as desire — the hunt, the catch, the willing prey. Usually within an established dynamic.",promise:"The thrill of being chased by someone you WANT to catch you. Niche but fiercely loyal; label clearly."},
+{name:"Breeding",cat:"Dark",heat:"Very high heat",market:"hot",def:"Pregnancy-focused desire — claiming, possession, and 'round with my child' as the fantasy's center.",promise:"Being wanted permanently, biologically, completely. A massive KU search term; shelve and label it accurately."},
+{name:"Daddy Dynamic",cat:"Dark",heat:"High heat",market:"mid",def:"A caretaking/authority dynamic — his control, her surrender, all of it negotiated.",promise:"Being taken care of, completely. Readers want the tenderness under the authority and consent that's explicit on the page."},
+{name:"CNC (Consensual Non-Consent)",cat:"Dark",heat:"Very dark",market:"niche",def:"A negotiated dynamic in which non-consent is role-played within clearly established, revocable consent.",promise:"The darkest fantasy with the safest scaffolding. Content warnings, on-page negotiation, and accurate labeling are absolutely required."},
+{name:"Auction / Sold",cat:"Dark",heat:"Very dark",market:"niche",def:"She's sold, auctioned, or traded — and the buyer is the story. Needs heavy content warnings.",promise:"Owned, then cherished. A dark-romance staple; the power imbalance is the point, so handle the consent arc deliberately."},
+{name:"Blackmail Romance",cat:"Dark",heat:"Dark",market:"niche",def:"He has leverage — and uses it to keep her close, until the leverage stops being why she stays.",promise:"Coercion becoming choice. Readers want the moment she'd stay without the threat — and him realizing he no longer wants to use it."},
+{name:"Underground Fighter",cat:"Dark",heat:"Gritty, steamy",market:"niche",def:"Bare-knuckle rings, debts, and a fighter with nothing to lose until her.",promise:"Violence with her name as the reason to stop (or win). Readers want blood, sweat, and a soft center."},
+{name:"Gothic Romance",cat:"Dark",heat:"Atmospheric",market:"mid",def:"A brooding estate, a husband with secrets, a house that might be lying — romance wrapped in dread.",promise:"Love and unease in the same breath. Readers want atmosphere thick enough to cut and a mystery entangled with the marriage."},
+{name:"Revenge Marriage",cat:"Dark",heat:"Dark, steamy",market:"mid",def:"He marries her to destroy her family, her company, or her name — then the weapon starts to matter more than the war.",promise:"The revenge plot collapsing under real feeling. Readers want the moment his endgame and his heart point in opposite directions."},
+{name:"Monster Romance",cat:"Dark",heat:"Very high heat",market:"hot",def:"A genuinely inhuman love interest — orc, minotaur, naga, demon, cryptid — desired AS the monster.",promise:"Loved by something that shouldn't be gentle. Booming niche; readers want the monstrousness kept, not cured."},
+
+/* ─── FANTASY / ROMANTASY — DEEP CUTS ─── */
+{name:"Shadow Daddy",cat:"Fantasy",heat:"High heat",market:"hot",def:"The dark, powerful, morally gray fae/god/immortal love interest — shadows, smirks, centuries of patience.",promise:"Ancient power on its knees. The defining romantasy archetype of the moment; give him a wound as old as his magic."},
+{name:"Dragon Rider",cat:"Fantasy",heat:"Flexible",market:"hot",def:"Bonded dragon and rider — training, war college, and a bond that chooses for itself. The 'Fourth Wing' lane.",promise:"Being chosen by something that could kill you. Readers want the bond to have opinions and the sky to feel dangerous."},
+{name:"Rejected Mate",cat:"Fantasy",heat:"Angst-forward",market:"hot",def:"The fated bond is refused — publicly, painfully — and the story is what happens after.",promise:"The rejector's regret. Huge in shifter KU; readers want her glow-up, his groveling, and the bond that won't die."},
+{name:"Omegaverse (A/B/O)",cat:"Fantasy",heat:"Very high heat",market:"hot",def:"A secondary-gender world — alphas, betas, omegas — with pack dynamics, heats, and biology-driven bonds.",promise:"Biology as destiny, pack as home. A massive dedicated readership with precise expectations — learn the conventions before you write them."},
+{name:"Demon Romance",cat:"Fantasy",heat:"High heat",market:"mid",def:"A demon love interest — summoned, bargained with, or accidentally bound.",promise:"Temptation with a contract. Readers want the infernal rules to matter and the fall to go both directions."},
+{name:"God x Mortal",cat:"Fantasy",heat:"Sensual, epic",market:"hot",def:"A deity and the mortal who unravels them — Hades and Persephone's endless echo.",promise:"Power humbled by the human. Readers want worship inverted: the god on the altar, the mortal divine."},
+{name:"Angel x Demon",cat:"Fantasy",heat:"Tension-forward",market:"mid",def:"Opposite sides of the eternal war, drawn across the line.",promise:"Forbidden at a cosmic scale. Readers want heaven and hell to both have a point — and both to be wrong about them."},
+{name:"Beauty & the Beast Retelling",cat:"Fantasy",heat:"Flexible",market:"hot",def:"The captor-turned-beloved tale retold — a cursed male, an unafraid female, a castle with rules.",promise:"Seeing the man in the monster. Evergreen retelling fuel; your twist on the curse is the differentiator."},
+{name:"Dark Fairytale Retelling",cat:"Fantasy",heat:"Dark",market:"hot",def:"A classic tale with its teeth put back in — Red Riding Hood, Hades/Persephone, Snow White gone wrong.",promise:"The story they sanitized. Readers want the familiar shape with the darkness restored and the heroine given agency."},
+{name:"Dark Academia",cat:"Fantasy",heat:"Atmospheric",market:"hot",def:"Elite institutions, forbidden knowledge, secret societies, and beautiful people doing terrible things for it.",promise:"Obsession as aesthetic. Readers want ambition deadly, libraries candlelit, and morality optional."},
+{name:"Tournament / Deadly Trials",cat:"Fantasy",heat:"Plot-driven",market:"hot",def:"Characters compete in trials where losing means death — and alliances mean everything.",promise:"Survive the gauntlet. Readers want each trial distinct, the cost cumulative, and rivals becoming something else."},
+{name:"Court Intrigue",cat:"Fantasy",heat:"Tension-forward",market:"mid",def:"Thrones, whispers, poisoned cups — power plays where words kill faster than swords.",promise:"The knife behind the curtsy. Readers want schemes they can almost solve and loyalties that genuinely shift."},
+{name:"Enemy Courts / Kingdoms at War",cat:"Fantasy",heat:"Flexible",market:"mid",def:"Lovers (or rivals) on opposite sides of a war between realms.",promise:"Romeo and Juliet with armies. Readers want both kingdoms sympathetic and the couple to be the treaty."},
+{name:"Heist Fantasy",cat:"Fantasy",heat:"Banter-forward",market:"mid",def:"A crew of specialists pulls an impossible job in a magical world. The 'Six of Crows' shape.",promise:"Competence porn with found family. Readers want the plan to go wrong brilliantly and the crew to bicker like siblings."},
+{name:"Necromancer",cat:"Fantasy",heat:"Dark",market:"niche",def:"Death magic as the gift — raising, speaking to, or serving the dead.",promise:"Intimacy with mortality. Niche but devoted; readers want death given rules, dignity, and consequence."},
+{name:"Monster Hunter",cat:"Fantasy",heat:"Gritty",market:"mid",def:"A professional who kills the things in the dark — until one of them becomes complicated.",promise:"The hunter compromised. Readers want expertise, scars, and the category 'monster' getting blurry."},
+{name:"Reincarnated Lovers",cat:"Fantasy",heat:"Epic, aching",market:"mid",def:"Souls that find each other life after life — and the pattern (or curse) that keeps breaking them apart.",promise:"Love older than memory. Readers want past-life echoes planted early and the cycle finally broken on the page."},
+{name:"Blood Bond",cat:"Fantasy",heat:"Sensual, dark",market:"hot",def:"A bite, a blood exchange, or an oath that magically ties two beings together — often unwilling, always binding.",promise:"Connected at the vein. Readers want the bond to have rules, side effects, and an intimacy neither asked for and neither can quit."},
+{name:"Magical Bargain Gone Wrong",cat:"Fantasy",heat:"Tension-forward",market:"mid",def:"A deal with a witch, fae, or god whose fine print becomes the plot.",promise:"Be careful what you trade. Readers want the bargain's cost to be personal and the loophole to hurt."},
+
+/* ─── SCI-FI ─── */
+{name:"Alien Abduction Romance",cat:"SciFi",heat:"High heat",market:"hot",def:"She's taken from Earth — and the alien who has her turns out to be the safest thing in the galaxy. The 'Ice Planet Barbarians' lane.",promise:"Stolen, then treasured. A juggernaut KU niche; readers want culture shock, devoted aliens, and found sisterhood among the abducted."},
+{name:"Alien Warrior Mate",cat:"SciFi",heat:"High heat",market:"hot",def:"A warrior species whose biology or honor code bonds them to one mate — and she's it.",promise:"Chosen by an apex predator. Readers want the mating mechanics clear, the devotion instant, and Earth's rules irrelevant."},
+{name:"Mail-Order Alien Bride",cat:"SciFi",heat:"Steamy",market:"mid",def:"An interplanetary matchmaking program pairs a human with an alien spouse, sight unseen.",promise:"Arranged marriage at lightspeed. Readers want the awkward-to-devoted arc and two species learning each other's tenderness."},
+{name:"Cyborg Romance",cat:"SciFi",heat:"Steamy",market:"mid",def:"A love interest more machine than man — engineered, decommissioned, or on the run.",promise:"Finding the heart in the hardware. Readers want the humanity question taken seriously and the loyalty absolute."},
+{name:"AI / Android Awakening",cat:"SciFi",heat:"Flexible",market:"mid",def:"An artificial mind crosses into feeling — and what it feels first is her.",promise:"Consciousness choosing love. Readers want the awakening gradual, earned, and a little frightening."},
+{name:"Time Travel Romance",cat:"SciFi",heat:"Flexible",market:"hot",def:"Lovers separated — or united — across timelines. The Outlander engine.",promise:"Love against time itself. Readers want the era gap to strain everything and the choice of WHEN to stay to wreck them."},
+{name:"Dystopian Rebellion",cat:"SciFi",heat:"Plot-driven",market:"mid",def:"A broken regime and the spark that lights the uprising.",promise:"Hope with a body count. Readers want the oppression specific, the resistance costly, and the ending earned."},
+{name:"Post-Apocalyptic Survival",cat:"SciFi",heat:"Gritty",market:"mid",def:"After the collapse — scavenging, danger, and trust as the scarcest resource.",promise:"Humanity at the edge. Readers want survival logistics real and small kindnesses hitting like miracles. Pairs beautifully with romance."},
+{name:"Enemies on a Spaceship",cat:"SciFi",heat:"Tension-forward",market:"mid",def:"Forced proximity at its most absolute — rivals sealed in a hull with nowhere to go.",promise:"No airlock big enough for the tension. Readers want the ship itself to force the reckoning."},
+{name:"Space Opera Found Crew",cat:"SciFi",heat:"Flexible",market:"mid",def:"A ragtag ship's crew becomes a family across a galaxy-sized canvas.",promise:"Firefly energy. Readers want banter at the mess table, loyalty under fire, and a captain with a past."},
+{name:"First Contact",cat:"SciFi",heat:"Flexible",market:"mid",def:"Humanity meets another intelligence for the first time — wonder, terror, and translation.",promise:"The biggest moment in history, made personal. Readers want awe AND consequence through one character's eyes."},
+{name:"Generation Ship",cat:"SciFi",heat:"Plot-driven",market:"niche",def:"A voyage so long that generations live and die aboard — and the mission outlives the truth.",promise:"A world in a bottle. Readers want the ship's secrets generational and the arrival (or the lie about it) devastating."},
+{name:"Clone / Double Identity",cat:"SciFi",heat:"Plot-driven",market:"niche",def:"A clone, copy, or double raises the question of who counts as the real one.",promise:"Identity with a body count. Readers want the philosophical question to get personal, fast."},
+{name:"Telepathic Bond",cat:"SciFi",heat:"Intimate",market:"mid",def:"Two minds linked — no secrets, no privacy, no escape from each other.",promise:"Absolute intimacy, unchosen. Readers want the invasion becoming the thing neither can live without."},
+{name:"Rogue AI",cat:"SciFi",heat:"N/A",market:"mid",def:"An artificial intelligence slips its leash — with the reader unsure whether it's villain or victim.",promise:"Creation outgrowing creator. Readers want the AI's logic coherent and its menace (or innocence) genuinely uncertain."},
+{name:"Frontier Planet / Colony",cat:"SciFi",heat:"Gritty",market:"niche",def:"Homesteading a hostile world — the western, relocated to the stars.",promise:"Civilization at the raw edge. Readers want the planet itself to be the antagonist and neighbors to matter like water."},
+{name:"Bio-Enhanced Super Soldier",cat:"SciFi",heat:"Steamy-friendly",market:"mid",def:"Engineered for war, discarded after it — a weapon learning to be a person.",promise:"The deadliest thing in the room, gentled by one person. Readers want the programming fought and the tenderness hard-won."},
+{name:"Simulation / Glitch Reality",cat:"SciFi",heat:"N/A",market:"niche",def:"Reality itself may be constructed — and someone has noticed the seams.",promise:"The floor isn't real. Readers want the rules of the simulation discoverable and the exit to cost everything."},
+
+/* ─── THRILLER / MYSTERY — DEEP CUTS ─── */
+{name:"Locked Room Mystery",cat:"Thriller",heat:"N/A",market:"hot",def:"A crime committed in a sealed space — an island, a snowbound lodge, a train — where the culprit must be one of them.",promise:"A closed circle of suspects. Readers want the impossibility genuine and every suspect to have a reason to lie."},
+{name:"Domestic Thriller",cat:"Thriller",heat:"N/A",market:"hot",def:"The danger is inside the house — a spouse, a neighbor, a family with something buried.",promise:"The person beside you, unknown. Readers want ordinary life to curdle by degrees."},
+{name:"Perfect Marriage, Dark Secrets",cat:"Thriller",heat:"N/A",market:"hot",def:"A picture-perfect couple, and the rot behind the holiday-card smile.",promise:"The envy-to-horror flip. Readers want to covet the life in chapter one and fear it by the midpoint."},
+{name:"Amateur Sleuth",cat:"Thriller",heat:"N/A",market:"hot",def:"An ordinary person — baker, librarian, retiree — pulled into solving what the police can't or won't.",promise:"Wits over badges. Readers want her day job skills to crack the case and the town to underestimate her."},
+{name:"Cozy Mystery",cat:"Thriller",heat:"Clean",market:"hot",def:"Murder without gore — a charming setting, a lovable sleuth, cats and recipes optional but encouraged.",promise:"Danger you can sip tea through. A contract genre: no explicit violence or sex on the page, justice always lands."},
+{name:"Serial Killer POV",cat:"Thriller",heat:"Dark",market:"mid",def:"Chapters inside the killer's head, running alongside the hunt.",promise:"Intimacy with the monster. Readers want the voice seductive and the dread of proximity to the victims unbearable."},
+{name:"Cat and Mouse",cat:"Thriller",heat:"N/A",market:"mid",def:"Hunter and hunted locked in an escalating duel of moves and countermoves.",promise:"Two minds at war. Readers want both players brilliant and the roles to flip at least once."},
+{name:"Cult Escape",cat:"Thriller",heat:"Dark",market:"mid",def:"Getting out of the compound is only the start — the cult doesn't let go.",promise:"Freedom with a target on it. Readers want the indoctrination psychology real and the pull-back constant."},
+{name:"Home Invasion",cat:"Thriller",heat:"Dark",market:"niche",def:"The safest place violated — strangers (or not-strangers) inside the walls.",promise:"Nowhere left to run. Readers want the geography of the house to matter and the motive to twist."},
+{name:"Twin Swap / Doppelgänger",cat:"Thriller",heat:"N/A",market:"niche",def:"An identical face takes over a life — or a life gets taken over.",promise:"The mirror lying. Readers want the swap's logistics airtight and the identity horror philosophical AND practical."},
+
+/* ─── HORROR — DEEP CUTS ─── */
+{name:"Final Girl",cat:"Horror",heat:"N/A",market:"hot",def:"The last one standing — the survivor the horror couldn't finish, often years later.",promise:"Survival as identity. Modern readers love the deconstruction: what the surviving actually did to her."},
+{name:"Folk Horror",cat:"Horror",heat:"N/A",market:"mid",def:"Old rites in rural places — the village that smiles, the harvest that requires something.",promise:"Tradition with teeth. Readers want the community warm on the surface and the ritual logic horribly coherent."},
+{name:"Cosmic Horror",cat:"Horror",heat:"N/A",market:"mid",def:"Vast, indifferent forces beyond comprehension — the horror of insignificance.",promise:"Knowledge that breaks you. Readers want the unknowable kept unknowable; explain the entity and you kill it."},
+{name:"Isolation Horror",cat:"Horror",heat:"N/A",market:"mid",def:"A research station, a lighthouse, a ship — cut off, with something wrong inside.",promise:"No help coming. Readers want the isolation total, the paranoia earned, and the group turning on itself."},
+{name:"Slasher",cat:"Horror",heat:"N/A",market:"mid",def:"A killer works through a cast one by one — the body-count engine.",promise:"The rules of the game. Readers know the conventions cold; play them straight or subvert them on purpose, never accidentally."},
+{name:"Cabin in the Woods",cat:"Horror",heat:"N/A",market:"mid",def:"Remote getaway, no signal, something in the trees.",promise:"The oldest setup, still working. Readers want the isolation established fast and the woods to feel like they're watching."},
+{name:"The Creepy Child",cat:"Horror",heat:"N/A",market:"niche",def:"A child who knows too much, says too little, or was never quite a child at all.",promise:"Innocence inverted. Readers want the wrongness to build in small details before anything overt."},
+{name:"Found Footage / Epistolary",cat:"Horror",heat:"N/A",market:"niche",def:"The horror assembled from tapes, diaries, transcripts, or posts — discovered after.",promise:"Evidence of something terrible. Readers want the format itself to create dread: we know how this ends, they didn't."},
+{name:"Body Horror",cat:"Horror",heat:"Dark",market:"niche",def:"The self betraying itself — transformation, infection, flesh gone wrong.",promise:"Visceral wrongness. Niche but intense; the horror is intimate because the body is the one place you can't leave."}
 ];
 
 /* known clashes (lightweight subset for the planner) */
@@ -323,7 +455,11 @@ const CONFLICTS = [
 ["Marriage of Convenience","Instalove","Instant love collapses the 'convenience' premise — there's no slow realization left to earn."],
 ["Single Parent","Instalove","Protective single parents read as cautious; instant love can fight the guardedness readers expect."],
 ["Small Town Romance","Hidden Identity","Everyone knows everyone — a hidden identity strains credibility in a town this small."],
-["Witness Protection","Small Town Romance","Anonymity vs. transparency. The nosy-neighbor town becomes a direct threat to the cover."]
+["Witness Protection","Small Town Romance","Anonymity vs. transparency. The nosy-neighbor town becomes a direct threat to the cover."],
+["Cozy Mystery","Serial Killer POV","Cozy promises no gore and gentle stakes; a killer's-head POV breaks the cozy contract outright."],
+["Cozy Mystery","Dark Captive / Captor","These serve opposite reader contracts — one promises safety, the other danger. Don't shelve them together."],
+["Miscommunication","Telepathic Bond","They can literally read each other's minds — a conflict built on the unsaid can't survive the bond."],
+["Instalove","Rejected Mate","Rejection needs the bond resisted; instalove accepts it immediately. Pick which way the bond breaks."]
 ];
 /* common cliché stacks to flag (not wrong — just need a fresh angle) */
 const CLICHES = [
@@ -331,7 +467,11 @@ const CLICHES = [
 ["Enemies to Lovers","Only One Bed","Near-cliché. Make the one-bed genuinely unavoidable and the enemies dynamic specific."],
 ["Fated Mates","Dragon / Shifter Romance","Genre staple — readers expect it. Differentiate through world-building or by challenging the bond."],
 ["Chosen One","Prophecy","Classic to the point of cliché. Subvert: a wrong prophecy, multiple chosen ones, or a hero who refuses."],
-["Billionaire Romance","Workplace / Office Romance","Extremely common. Give the employee real leverage or expertise the billionaire lacks."]
+["Billionaire Romance","Workplace / Office Romance","Extremely common. Give the employee real leverage or expertise the billionaire lacks."],
+["Mafia Romance","Arranged Mafia Marriage","The genre's default pairing — differentiate through her leverage, an unusual family structure, or who actually holds the power."],
+["Shadow Daddy","Fated Mates","The romantasy default stack. Fresh angle: make the bond inconvenient, contested, or arriving at the worst possible moment."],
+["Alien Abduction Romance","Fated Mates","This IS the subgenre's engine — expected, not tired. Make the alien culture and biology the fresh element."],
+["Grumpy / Sunshine","He Falls First","Beloved combo verging on default. Sharpen it with a specific reason his walls exist for everyone but her."]
 ];
 
 /* ════════════════ STATE ════════════════ */
@@ -516,6 +656,7 @@ function showToast(msg){
 }
 
 /* ════════════════ INIT ════════════════ */
+document.getElementById('tropeCount').textContent = TROPES.length;
 renderBible();
 renderStack();
 updatePill();
