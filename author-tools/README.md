@@ -1,6 +1,6 @@
 # Author Tools
 
-Twelve offline browser-based tools built for fiction writers by [The Invisible Pen](https://www.skool.com/the-invisible-pen).
+Thirteen offline browser-based tools built for fiction writers by [The Invisible Pen](https://www.skool.com/the-invisible-pen).
 
 No subscriptions. No accounts. No data leaves your machine. Download an HTML file, open it in any browser, use it forever.
 
@@ -72,6 +72,13 @@ Enter your daily ad spend, CPC, conversion rate, book price, and series length t
 
 Track multiple books in a series with per-book monthly data for ad spend, sales, KU reads, and revenue. Auto-calculated read-through rates between books, summary dashboard with total spend/revenue/profit/ROAS, canvas-drawn revenue-vs-spend chart, and CSV export. All data persists in your browser.
 
+### Marketing & Content
+
+#### 13. Content Pipeline Planner
+`content-pipeline-planner.html`
+
+Map your entire content system from idea to published post as a visual pipeline. Comes pre-loaded with a five-phase example (Ideas & Planning → Scripting → Record → Process & Edit → Publish) that you can reshape into your own workflow: rename phases, add or reorder them, and fill each one with the tools and Claude skills you use — each chip carries an optional tag for its job in the chain, a style for standard tools vs. key skills vs. still-deciding, and a checkmark for what's already working. Drop human-review checkpoints between phases to mark where you step in. Everything is click-to-edit, saves automatically, and exports as Markdown (for handing to Claude or your VA), JSON backup, or a clean printout.
+
 ## How to Use
 
 1. Download the HTML file you want.
@@ -81,7 +88,7 @@ Track multiple books in a series with per-book monthly data for ad spend, sales,
 
 ## Compatibility
 
-Works on desktop and mobile. No internet connection required after download. All twelve tools are single self-contained HTML files — no installation, no dependencies, no servers.
+Works on desktop and mobile. No internet connection required after download. All thirteen tools are single self-contained HTML files — no installation, no dependencies, no servers.
 
 ## About
 
