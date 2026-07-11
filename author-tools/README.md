@@ -1,6 +1,6 @@
 # Author Tools
 
-Twelve offline browser-based tools built for fiction writers by [The Invisible Pen](https://www.skool.com/the-invisible-pen).
+Thirteen offline browser-based tools built for fiction writers by [The Invisible Pen](https://www.skool.com/the-invisible-pen).
 
 No subscriptions. No accounts. No data leaves your machine. Download an HTML file, open it in any browser, use it forever.
 
@@ -55,19 +55,24 @@ Step-by-step wizard that walks you through genre, character, inciting incident, 
 
 Interactive checklist with 51 pre-loaded tasks across four phases: Pre-Launch (2+ weeks before), Launch Week, Launch Day, and Post-Launch. Animated checkboxes, per-section and overall progress tracking, add custom items, print-optimized layout, and confetti when you hit 100%.
 
+#### 10. Serial Chopper Upper
+`serial-chopper-upper.html`
+
+Paste a full manuscript (or load a .txt/.md file) and chop it into perfectly paced, cliffhanger-ending newsletter installments. Detects chapter headings and scene breaks automatically, scores every possible break point for cliffhanger potential (questions, mid-sentence cuts, revelations, tension language, punchy closers), and picks the cut that lands each installment near your target length on the strongest hook. Pick a target length (600–2,500 words or custom), choose whether it can cut mid-chapter or only at scene/chapter breaks, and set a release schedule (daily to biweekly) with auto-computed dates. You get a pacing chart, per-installment hook grades with the closing lines quoted, nudge buttons to move any break a paragraph earlier or later, a "next issue opens" teaser, and exports: copy or download individual parts, download the whole run as .txt or .md with part headers and optional "Previously..." recap lines, and a copyable release schedule.
+
 ### Business & Revenue
 
-#### 10. Royalty Calculator
+#### 11. Royalty Calculator
 `royalty-calculator.html`
 
 Input your book price and page count, toggle KU enrollment, and see earnings per sale across KDP (35% and 70% tiers), D2D/wide, Apple Books, Kobo, and print. Includes KU page read estimates, a side-by-side KU vs. wide comparison at multiple sales volumes, and a breakeven calculator for your production costs.
 
-#### 11. Ad Budget Calculator
+#### 12. Ad Budget Calculator
 `ad-budget-calculator.html`
 
 Enter your daily ad spend, CPC, conversion rate, book price, and series length to see expected clicks, sales, cost per sale, ROAS, and read-through revenue. Includes editable series read-through multipliers, a visual profitability gauge, breakeven line, and 30/60/90-day profit projections with red/yellow/green indicators.
 
-#### 12. Series Profitability Tracker
+#### 13. Series Profitability Tracker
 `series-profitability-tracker.html`
 
 Track multiple books in a series with per-book monthly data for ad spend, sales, KU reads, and revenue. Auto-calculated read-through rates between books, summary dashboard with total spend/revenue/profit/ROAS, canvas-drawn revenue-vs-spend chart, and CSV export. All data persists in your browser.
@@ -81,7 +86,7 @@ Track multiple books in a series with per-book monthly data for ad spend, sales,
 
 ## Compatibility
 
-Works on desktop and mobile. No internet connection required after download. All twelve tools are single self-contained HTML files — no installation, no dependencies, no servers.
+Works on desktop and mobile. No internet connection required after download. All thirteen tools are single self-contained HTML files — no installation, no dependencies, no servers.
 
 ## About
 
