@@ -1,8 +1,0 @@
-{
-  "name": "regency-romance-skill",
-  "version": "1.0.0",
-  "description": "Genre writing system for Regency romance — period-accurate language, courtship conventions, and Jane Austen-adjacent voice",
-  "author": {"name": "The Invisible Pen", "url": "https://theinvisiblepen.com"},
-  "repository": "https://github.com/CPH-Jessica/tip-tools",
-  "keywords": ["writing", "romance", "regency", "historical-romance", "fiction", "genre-writing"]
-}
