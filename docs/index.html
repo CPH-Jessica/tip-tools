@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Invisible Pen — AI Writing Coaching for Romance Authors</title>
+<meta name="description" content="The Invisible Pen teaches romance authors — many of us over 40 — how to make AI write like you, not a generic robot. Community, live classes, coaching, and genre-expert Claude plugins by Jessica Waldron.">
+<link rel="canonical" href="https://www.theinvisiblepen.com/">
+<meta property="og:title" content="The Invisible Pen — AI Writing Coaching for Romance Authors">
+<meta property="og:description" content="Teach AI to write like you. Community, classes, coaching, and genre-expert writing tools for romance authors.">
+<meta property="og:url" content="https://www.theinvisiblepen.com/">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 34 34%22%3E%3Ccircle cx=%2217%22 cy=%2217%22 r=%2216%22 fill=%22none%22 stroke=%22%230e6b66%22 stroke-width=%222%22/%3E%3Cpath d=%22M17 6 L21 20 L17 26 L13 20 Z%22 fill=%22%230e6b66%22/%3E%3Ccircle cx=%2217%22 cy=%2219%22 r=%221.8%22 fill=%22%23d3b356%22/%3E%3C/svg%3E">
+<style>*{margin:0;padding:0;box-sizing:border-box}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+  :root {
+    --paper: #ffffff;
+    --paper-warm: #f0f6f5;
+    --ink: #16302e;
+    --ink-soft: #3a5450;
+    --taupe: #5f7876;
+    --teal: #0e6b66;
+    --teal-deep: #0a4f4b;
+    --gold: #b8912e;
+    --gold-soft: #d3b356;
+    --sand: #d9e5e3;
+    --blush: #faf6ea;
+    --card: #ffffff;
+    --shadow: 0 1px 2px rgba(14, 107, 102, 0.06), 0 8px 28px rgba(14, 107, 102, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0d1f1e;
+      --paper-warm: #122a28;
+      --ink: #e8f0ee;
+      --ink-soft: #c4d6d3;
+      --taupe: #8ba7a4;
+      --teal: #4fb3ac;
+      --teal-deep: #6cc5be;
+      --gold: #d3b356;
+      --gold-soft: #b8912e;
+      --sand: #24403d;
+      --blush: #14302d;
+      --card: #12302d;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0d1f1e;
+    --paper-warm: #122a28;
+    --ink: #e8f0ee;
+    --ink-soft: #c4d6d3;
+    --taupe: #8ba7a4;
+    --teal: #4fb3ac;
+    --teal-deep: #6cc5be;
+    --gold: #d3b356;
+    --gold-soft: #b8912e;
+    --sand: #24403d;
+    --blush: #14302d;
+    --card: #12302d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+  }
+  :root[data-theme="light"] {
+    --paper: #ffffff;
+    --paper-warm: #f0f6f5;
+    --ink: #16302e;
+    --ink-soft: #3a5450;
+    --taupe: #5f7876;
+    --teal: #0e6b66;
+    --teal-deep: #0a4f4b;
+    --gold: #b8912e;
+    --gold-soft: #d3b356;
+    --sand: #d9e5e3;
+    --blush: #faf6ea;
+    --card: #ffffff;
+    --shadow: 0 1px 2px rgba(14, 107, 102, 0.06), 0 8px 28px rgba(14, 107, 102, 0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.65;
+    font-size: 17px;
+  }
+
+  .label {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  a { color: var(--teal); }
+  a:focus-visible, .btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+  /* Header */
+  header {
+    border-bottom: 1px solid var(--sand);
+    background: var(--paper);
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1.5rem; padding: 1.1rem 0; flex-wrap: wrap;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 0.65rem;
+    font-style: italic; font-size: 1.35rem; color: var(--teal);
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .brand svg { display: block; }
+  .nav-links { display: flex; gap: 1.6rem; flex-wrap: wrap; }
+  .nav-links a {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.85rem; color: var(--ink-soft); text-decoration: none;
+  }
+  .nav-links a:hover { color: var(--teal); }
+
+  /* Hero */
+  .hero { padding: 5rem 0 4rem; }
+  .hero h1 {
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 400; font-style: italic;
+    line-height: 1.12; text-wrap: balance;
+    margin: 1.1rem 0 1.6rem; max-width: 18ch;
+    color: var(--teal-deep);
+  }
+  .stroke { position: relative; white-space: nowrap; }
+  .stroke svg {
+    position: absolute; left: -2%; bottom: -0.18em; width: 104%; height: 0.35em;
+    overflow: visible; pointer-events: none;
+  }
+  .stroke path {
+    fill: none; stroke: var(--gold); stroke-width: 7; stroke-linecap: round;
+    stroke-dasharray: 320; stroke-dashoffset: 320;
+    animation: draw 1.1s ease-out 0.5s forwards;
+    opacity: 0.9;
+  }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @media (prefers-reduced-motion: reduce) { .stroke path { stroke-dashoffset: 0; } }
+
+  .hero p.lede {
+    font-size: 1.2rem; color: var(--ink-soft); max-width: 34rem; text-wrap: pretty;
+  }
+  .cta-row { display: flex; gap: 1rem; margin-top: 2.2rem; flex-wrap: wrap; align-items: center; }
+  .btn {
+    display: inline-block; text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.92rem; font-weight: 600;
+    padding: 0.85rem 1.6rem; border-radius: 2px;
+  }
+  .btn-primary { background: var(--teal); color: #ffffff; }
+  .btn-primary:hover { background: var(--gold); color: #16302e; }
+  .btn-ghost { color: var(--teal); border: 1px solid var(--sand); background: transparent; }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+  /* Video */
+  .video-section { padding: 0 0 4.5rem; }
+  .video-frame {
+    position: relative; aspect-ratio: 16 / 9; max-width: 52rem;
+    background: var(--paper-warm); border: 1px solid var(--sand); border-radius: 4px;
+    box-shadow: var(--shadow); overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-placeholder { text-align: center; padding: 2rem; color: var(--taupe); max-width: 28rem; }
+  .video-placeholder .play {
+    width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1rem;
+    background: var(--teal); display: flex; align-items: center; justify-content: center;
+  }
+  .video-placeholder .play svg { margin-left: 4px; }
+  a.video-frame { text-decoration: none; color: inherit; }
+  a.video-frame:hover .play { background: var(--gold); }
+  a.video-frame:hover .watch-label { color: var(--gold); }
+  .watch-label {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.92rem; font-weight: 600; color: var(--teal);
+  }
+
+  /* Problem section */
+  .problem { background: var(--paper-warm); border-top: 1px solid var(--sand); border-bottom: 1px solid var(--sand); }
+  .problem-inner { padding: 4.5rem 0; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+  @media (max-width: 720px) { .problem-inner { grid-template-columns: 1fr; } }
+  .problem h2 { font-style: italic; font-weight: 400; font-size: 1.9rem; line-height: 1.25; text-wrap: balance; margin-top: 0.6rem; color: var(--teal-deep); }
+  .problem p { color: var(--ink-soft); }
+  .problem p + p { margin-top: 1rem; }
+
+  /* Sections */
+  section { padding: 4.5rem 0; }
+  h2.section-title { font-style: italic; font-weight: 400; font-size: 2rem; margin: 0.6rem 0 0.8rem; text-wrap: balance; color: var(--teal-deep); }
+  .section-sub { color: var(--taupe); max-width: 38rem; margin-bottom: 2.5rem; }
+
+  /* Offer ladder */
+  .ladder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4rem; }
+  @media (max-width: 820px) { .ladder { grid-template-columns: 1fr; } }
+  .rung {
+    background: var(--card); border: 1px solid var(--sand); border-radius: 3px;
+    padding: 1.8rem 1.6rem; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 0.7rem;
+  }
+  .rung .tier { color: var(--taupe); }
+  .rung h3 { font-weight: 400; font-style: italic; font-size: 1.35rem; color: var(--teal); }
+  .rung p { color: var(--ink-soft); font-size: 0.98rem; flex: 1; }
+  .rung a { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.88rem; font-weight: 600; text-decoration: none; }
+  .rung a:hover { text-decoration: underline; }
+
+  /* Tools */
+  .tools { background: var(--blush); border-top: 1px solid var(--sand); border-bottom: 1px solid var(--sand); }
+  .tool-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.4rem; }
+  @media (max-width: 720px) { .tool-grid { grid-template-columns: 1fr; } }
+  .tool {
+    background: var(--card); border: 1px solid var(--sand); border-radius: 3px;
+    padding: 1.6rem; box-shadow: var(--shadow);
+  }
+  .tool h3 { font-weight: 400; font-style: italic; font-size: 1.25rem; margin-bottom: 0.4rem; color: var(--teal); }
+  .tool p { color: var(--ink-soft); font-size: 0.96rem; margin-bottom: 0.9rem; }
+  .tool a { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size: 0.86rem; font-weight: 600; text-decoration: none; }
+  .tool a:hover { text-decoration: underline; }
+
+  /* About */
+  .about-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; align-items: start; }
+  @media (max-width: 720px) { .about-grid { grid-template-columns: 1fr; } }
+  .about p + p { margin-top: 1rem; }
+  .about p { color: var(--ink-soft); }
+  .pullquote {
+    border-left: 3px solid var(--gold); padding: 0.4rem 0 0.4rem 1.4rem;
+    font-style: italic; font-size: 1.25rem; line-height: 1.5; color: var(--teal-deep);
+  }
+
+  /* Substack band */
+  .substack {
+    background: var(--teal-deep); color: #ffffff;
+    padding: 3.8rem 0;
+  }
+  :root[data-theme="dark"] .substack { background: #0a3c39; color: var(--ink); }
+  .substack .label { color: var(--gold-soft); }
+  .substack h2 { font-style: italic; font-weight: 400; font-size: 1.9rem; margin: 0.6rem 0 0.8rem; text-wrap: balance; }
+  .substack p { opacity: 0.85; max-width: 36rem; }
+  .substack .btn-primary { background: var(--gold-soft); color: #16302e; margin-top: 1.6rem; }
+  .substack .btn-primary:hover { background: #ffffff; }
+
+  /* Links + footer */
+  .links-section .link-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+  @media (max-width: 720px) { .links-section .link-cols { grid-template-columns: 1fr; } }
+  .link-cols h3 {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.9rem;
+  }
+  .link-cols ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.55rem; }
+  .link-cols a { text-decoration: none; font-size: 0.98rem; }
+  .link-cols a:hover { text-decoration: underline; }
+
+  footer { padding: 2.5rem 0 3rem; color: var(--taupe); font-size: 0.88rem; border-top: 1px solid var(--sand); }
+  footer .foot { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  footer a { color: var(--taupe); }
+</style>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top" aria-label="The Invisible Pen — home">
+      <!-- PLACEHOLDER logo mark: swap for your real logo file -->
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M17 6 L21 20 L17 26 L13 20 Z" fill="currentColor"/>
+        <circle cx="17" cy="19" r="1.8" fill="#d3b356"/>
+      </svg>
+      The Invisible Pen
+    </a>
+    <nav class="nav-links" aria-label="Main">
+      <a href="#community">Community</a>
+      <a href="#coaching">Classes &amp; Coaching</a>
+      <a href="#tools">Writing Tools</a>
+      <a href="#about">About Jessica</a>
+      <a href="#links">All Links</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap hero" id="top">
+  <span class="label">AI writing coaching for romance authors</span>
+  <h1>Teach AI to write like <span class="stroke">you<svg viewBox="0 0 120 20" aria-hidden="true"><path d="M4 12 C 30 4, 60 16, 88 8 S 112 10, 116 9"/></svg></span>.</h1>
+  <p class="lede">Not some generic romance robot. The Invisible Pen is a community for authors who are done experimenting alone — real prompts, real outputs, real feedback, and direction tailored to where you are right now.</p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://www.skool.com/the-invisible-pen">Join the community</a>
+    <a class="btn btn-ghost" href="https://theinvisiblepen.substack.com/">Read the Substack</a>
+  </div>
+</div>
+
+<div class="wrap video-section">
+  <!-- To embed a specific welcome video instead, replace this link card with:
+       <div class="video-frame"><iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Welcome to The Invisible Pen" allowfullscreen></iframe></div> -->
+  <a class="video-frame" href="https://www.youtube.com/@theinvisiblepencoach">
+    <div class="video-placeholder">
+      <div class="play"><svg width="22" height="26" viewBox="0 0 22 26" aria-hidden="true"><path d="M0 0 L22 13 L0 26 Z" fill="#ffffff"/></svg></div>
+      <p class="watch-label">Watch The Invisible Pen on YouTube →</p>
+    </div>
+  </a>
+</div>
+
+<div class="problem">
+  <div class="wrap problem-inner">
+    <div>
+      <span class="label">Sound familiar?</span>
+      <h2>You've stared at the blank chat box. Or worse — at the robotic draft it gave back.</h2>
+    </div>
+    <div>
+      <p>Maybe you're brand new: you've heard AI can help authors, but every tutorial assumes you're twenty-five and fluent in tech jargon. Or maybe you've been at it for months, and the output still doesn't sound like anything you'd put your name on.</p>
+      <p>Here, women over 40 bring decades of storytelling instinct to the table — and learn to hand the typing to AI without handing over their voice. No hype. No "10x your output" nonsense. Just craft.</p>
+    </div>
+  </div>
+</div>
+
+<section class="wrap" id="community">
+  <span class="label">How we work together</span>
+  <h2 class="section-title">Start simple. Go as deep as your books demand.</h2>
+  <p class="section-sub">Every level includes the same promise: you'll leave each session with something you can use in your manuscript that day.</p>
+  <div class="ladder">
+    <div class="rung">
+      <span class="label tier">Community · $10/month</span>
+      <h3>The Community</h3>
+      <p>Ask questions, share wins, and swap prompts with 360+ working romance authors on Skool. The fastest way to stop experimenting alone.</p>
+      <a href="https://www.skool.com/the-invisible-pen">Join on Skool →</a>
+    </div>
+    <div class="rung" id="coaching">
+      <span class="label tier">Classes</span>
+      <h3>Foundations of Claude</h3>
+      <p>Live classes and skills training on practical topics — project setup, style sheets, outlines, and workflows that train AI on <em>your</em> voice.</p>
+      <a href="https://www.skool.com/the-invisible-pen">See upcoming classes →</a>
+    </div>
+    <div class="rung">
+      <span class="label tier">Coaching</span>
+      <h3>Live Coaching Calls</h3>
+      <p>Twice-monthly group coaching plus mentoring cohorts with Coach Jessica — bring your pages, your prompts, and your stuck points.</p>
+      <a href="https://www.skool.com/the-invisible-pen">Work with Jessica →</a>
+    </div>
+  </div>
+</section>
+
+<div class="tools" id="tools">
+  <section class="wrap">
+    <span class="label">Writing tools</span>
+    <h2 class="section-title">A genre expert, installed in your Claude.</h2>
+    <p class="section-sub">Installable plugins that teach Claude the conventions, voice, pacing, and quality standards of your genre — so it co-writes and edits like it's read everything on your shelf.</p>
+    <div class="tool-grid">
+      <div class="tool">
+        <h3>Pen Name Launcher</h3>
+        <p>Launch a new pen name from zero to published: a 10-phase guided workflow plus a 6-lesson self-paced class with worksheets and slide decks.</p>
+        <a href="https://payhip.com/b/VF04b">Get Pen Name Launcher →</a>
+      </div>
+      <div class="tool">
+        <h3>Psychological Thriller Skill</h3>
+        <p>Confined-space thrillers, domestic suspense, surreal horror — with a 15-point scene checklist and a /thriller-check command for instant feedback.</p>
+        <a href="https://payhip.com/b/JiDcm">Get the Thriller Skill →</a>
+      </div>
+      <div class="tool">
+        <h3>Regency Romance Skill</h3>
+        <p>Period-accurate Regency with confidence: language guides, peerage tables, courtship progression, and anachronism traps — plus /regency-check.</p>
+        <a href="https://payhip.com/b/EL4Tj">Get the Regency Skill →</a>
+      </div>
+      <div class="tool">
+        <h3>Romantic Suspense Skill</h3>
+        <p>Master the dual-engine genre: romance and suspense in equal measure, with balance rules at scene, chapter, and book level — plus /suspense-check.</p>
+        <a href="https://payhip.com/b/vl0ZB">Get the Suspense Skill →</a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<section class="wrap about" id="about">
+  <span class="label">About</span>
+  <div class="about-grid">
+    <div>
+      <h2 class="section-title">Hi, I'm Jessica Waldron.</h2>
+      <p>I'm a multi-pen-name romance author and AI educator. I built The Invisible Pen because the authors I kept meeting — smart, seasoned storytellers — were being told AI was either magic or cheating, and nobody was showing them the honest middle: a tool that amplifies a voice you've spent decades developing.</p>
+      <p>Everything I teach comes from my own working process — the same prompts, style sheets, and project structures I use across my own pen names. If it doesn't survive contact with a real manuscript, I don't teach it.</p>
+    </div>
+    <blockquote class="pullquote">"You bring the storytelling instinct. The pen should be invisible."</blockquote>
+  </div>
+</section>
+
+<div class="substack">
+  <div class="wrap">
+    <span class="label">The newsletter</span>
+    <h2>Every week: what actually changed, and what it means for your writing.</h2>
+    <p>AI tools move fast. The Invisible Pen on Substack keeps working authors current — model updates, real workflows, and honest takes — without the hype cycle.</p>
+    <a class="btn btn-primary" href="https://theinvisiblepen.substack.com/">Subscribe on Substack</a>
+  </div>
+</div>
+
+<section class="wrap links-section" id="links">
+  <span class="label">Everything in one place</span>
+  <h2 class="section-title">All my links</h2>
+  <div class="link-cols">
+    <div>
+      <h3>Community &amp; Learning</h3>
+      <ul>
+        <li><a href="https://www.skool.com/the-invisible-pen">The Invisible Pen on Skool</a></li>
+        <li><a href="https://theinvisiblepen.substack.com/">The Invisible Pen on Substack</a></li>
+        <li><a href="https://www.youtube.com/@theinvisiblepencoach">The Invisible Pen on YouTube</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Shop</h3>
+      <ul>
+        <li><a href="https://payhip.com/theinvisiblepen">Payhip Store (all tools)</a></li>
+        <li><a href="https://payhip.com/b/VF04b">Pen Name Launcher</a></li>
+        <li><a href="https://payhip.com/b/JiDcm">Psychological Thriller Skill</a></li>
+        <li><a href="https://payhip.com/b/EL4Tj">Regency Romance Skill</a></li>
+        <li><a href="https://payhip.com/b/vl0ZB">Romantic Suspense Skill</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <ul>
+        <li><a href="mailto:coach@theinvisiblepen.com">coach@theinvisiblepen.com</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>© Clark Publishing House LLC / The Invisible Pen</span>
+    <span><a href="https://www.skool.com/the-invisible-pen">Skool</a> · <a href="https://theinvisiblepen.substack.com/">Substack</a> · <a href="https://www.youtube.com/@theinvisiblepencoach">YouTube</a> · <a href="https://payhip.com/theinvisiblepen">Payhip Store</a> · <a href="mailto:coach@theinvisiblepen.com">Email</a></span>
+  </div>
+</footer>
+</body>
+</html>
