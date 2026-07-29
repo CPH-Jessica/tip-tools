@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Q4 Workshop — Your Private Page | The Invisible Pen</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 34 34%22%3E%3Ccircle cx=%2217%22 cy=%2217%22 r=%2216%22 fill=%22none%22 stroke=%22%230e6b66%22 stroke-width=%222%22/%3E%3Cpath d=%22M17 6 L21 20 L17 26 L13 20 Z%22 fill=%22%230e6b66%22/%3E%3Ccircle cx=%2217%22 cy=%2219%22 r=%221.8%22 fill=%22%23d3b356%22/%3E%3C/svg%3E">
+<style>*{margin:0;padding:0;box-sizing:border-box}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+  :root {
+    --paper: #ffffff; --paper-warm: #f0f6f5; --ink: #16302e; --ink-soft: #3a5450;
+    --taupe: #5f7876; --teal: #0e6b66; --teal-deep: #0a4f4b; --gold: #b8912e;
+    --gold-soft: #d3b356; --sand: #d9e5e3; --blush: #faf6ea; --card: #ffffff;
+    --shadow: 0 1px 2px rgba(14, 107, 102, 0.06), 0 8px 28px rgba(14, 107, 102, 0.08);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #0d1f1e; --paper-warm: #122a28; --ink: #e8f0ee; --ink-soft: #c4d6d3;
+      --taupe: #8ba7a4; --teal: #4fb3ac; --teal-deep: #6cc5be; --gold: #d3b356;
+      --gold-soft: #b8912e; --sand: #24403d; --blush: #14302d; --card: #12302d;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0d1f1e; --paper-warm: #122a28; --ink: #e8f0ee; --ink-soft: #c4d6d3;
+    --taupe: #8ba7a4; --teal: #4fb3ac; --teal-deep: #6cc5be; --gold: #d3b356;
+    --gold-soft: #b8912e; --sand: #24403d; --blush: #14302d; --card: #12302d;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+  }
+  :root[data-theme="light"] {
+    --paper: #ffffff; --paper-warm: #f0f6f5; --ink: #16302e; --ink-soft: #3a5450;
+    --taupe: #5f7876; --teal: #0e6b66; --teal-deep: #0a4f4b; --gold: #b8912e;
+    --gold-soft: #d3b356; --sand: #d9e5e3; --blush: #faf6ea; --card: #ffffff;
+    --shadow: 0 1px 2px rgba(14, 107, 102, 0.06), 0 8px 28px rgba(14, 107, 102, 0.08);
+  }
+
+  body {
+    background: var(--paper); color: var(--ink);
+    font-family: Georgia, 'Times New Roman', serif;
+    line-height: 1.65; font-size: 17px;
+  }
+  .label {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold);
+  }
+  .wrap { max-width: 56rem; margin: 0 auto; padding: 0 1.5rem; }
+  a { color: var(--teal); }
+
+  header { border-bottom: 1px solid var(--sand); background: var(--paper); }
+  .nav { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; padding: 1.1rem 0; flex-wrap: wrap; }
+  .brand {
+    display: flex; align-items: center; gap: 0.65rem;
+    font-style: italic; font-size: 1.35rem; color: var(--teal);
+    text-decoration: none; letter-spacing: 0.01em;
+  }
+  .privtag {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    background: var(--blush); color: var(--gold); border: 1px solid var(--gold-soft);
+    padding: 0.3rem 0.85rem; border-radius: 999px;
+  }
+
+  .hero { padding: 3.6rem 0 2.4rem; }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem); font-weight: 400; font-style: italic;
+    line-height: 1.15; text-wrap: balance; margin: 1rem 0 1.2rem; color: var(--teal-deep);
+  }
+  .hero p.lede { font-size: 1.15rem; color: var(--ink-soft); max-width: 38rem; text-wrap: pretty; }
+
+  .video-frame {
+    position: relative; aspect-ratio: 16 / 9;
+    background: var(--paper-warm); border: 1px solid var(--sand); border-radius: 4px;
+    box-shadow: var(--shadow); overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    margin: 2rem 0 0.8rem;
+  }
+  .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .video-placeholder { text-align: center; padding: 2rem; color: var(--taupe); max-width: 30rem; }
+  .video-placeholder .clock {
+    width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1rem;
+    background: var(--gold); display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem;
+  }
+  .video-placeholder b { color: var(--teal-deep); font-style: italic; font-weight: 400; font-size: 1.15rem; display: block; margin-bottom: 0.3rem; }
+  .under-video {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.85rem; color: var(--taupe); margin-bottom: 2rem;
+  }
+
+  section { padding: 2.6rem 0; }
+  h2.section-title { font-style: italic; font-weight: 400; font-size: 1.7rem; margin: 0.5rem 0 0.8rem; text-wrap: balance; color: var(--teal-deep); }
+
+  .chapters { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1.4rem; }
+  @media (max-width: 720px) { .chapters { grid-template-columns: 1fr; } }
+  .chapter {
+    background: var(--card); border: 1px solid var(--sand); border-radius: 3px;
+    padding: 1.3rem 1.4rem; box-shadow: var(--shadow);
+  }
+  .chapter .t {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 0.35rem;
+  }
+  .chapter h3 { font-weight: 400; font-style: italic; font-size: 1.15rem; color: var(--teal); margin-bottom: 0.3rem; }
+  .chapter p { color: var(--ink-soft); font-size: 0.95rem; }
+
+  .next { background: var(--paper-warm); border-top: 1px solid var(--sand); border-bottom: 1px solid var(--sand); }
+  .next ol { margin: 1.2rem 0 0 1.3rem; color: var(--ink-soft); }
+  .next li { margin-bottom: 0.8rem; max-width: 42rem; }
+  .next li b { color: var(--teal-deep); }
+
+  .premium {
+    background: var(--blush); border: 1px solid var(--gold-soft); border-radius: 3px;
+    padding: 1.5rem 1.7rem; margin-top: 2.2rem;
+  }
+  .premium h3 { font-weight: 400; font-style: italic; font-size: 1.2rem; color: var(--teal-deep); margin-bottom: 0.4rem; }
+  .premium p { color: var(--ink-soft); font-size: 0.97rem; }
+
+  .btn {
+    display: inline-block; text-decoration: none;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.92rem; font-weight: 600;
+    padding: 0.85rem 1.6rem; border-radius: 2px;
+    background: var(--teal); color: #ffffff;
+  }
+  .btn:hover { background: var(--gold); color: #16302e; }
+
+  footer { padding: 2.2rem 0 2.8rem; color: var(--taupe); font-size: 0.88rem; border-top: 1px solid var(--sand); }
+  footer .foot { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  footer a { color: var(--taupe); }
+</style>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="https://www.theinvisiblepen.com/" aria-label="The Invisible Pen — home">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M17 6 L21 20 L17 26 L13 20 Z" fill="currentColor"/>
+        <circle cx="17" cy="19" r="1.8" fill="#d3b356"/>
+      </svg>
+      The Invisible Pen
+    </a>
+    <span class="privtag">🔑 Private page — for workshop signups</span>
+  </div>
+</header>
+
+<div class="wrap hero">
+  <span class="label">Q4 Holiday Release Workshop · July 29, 2026</span>
+  <h1>Welcome in. This page is yours.</h1>
+  <p class="lede">You signed up for the Q4 Holiday Release Workshop, so everything from the session lives here — the full replay, the recap, and exactly what to do next. Bookmark it; it isn't linked from anywhere public.</p>
+</div>
+
+<div class="wrap" id="replay">
+  <span class="label">The full replay</span>
+  <div id="replayFrame" class="video-frame">
+    <div class="video-placeholder">
+      <div class="clock">🎬</div>
+      <b>The replay is being polished right now.</b>
+      <p>The recording is with the editor and lands on this exact page very shortly — check back, or watch your inbox for the "replay is live" email.</p>
+    </div>
+  </div>
+  <div class="under-video">~75 minutes · watch with the worksheet open and build alongside — that's the whole point.</div>
+</div>
+
+<section class="wrap">
+  <span class="label">What we covered</span>
+  <h2 class="section-title">The session, chapter by chapter</h2>
+  <div class="chapters">
+    <div class="chapter">
+      <div class="t">Part 1</div>
+      <h3>The Q4 map — three waves</h3>
+      <p>🎃 Spooky, 🍂 Cozy Autumn, 🎄 Christmas — the real buy windows, and why a November 1st start is already too late.</p>
+    </div>
+    <div class="chapter">
+      <div class="t">Part 2</div>
+      <h3>Anatomy of a holiday book</h3>
+      <p>The wrapper + trope stack formula, and the Costume Test: if you can delete the holiday and the story survives, readers can tell.</p>
+    </div>
+    <div class="chapter">
+      <div class="t">Part 3</div>
+      <h3>Live build — your trope stack</h3>
+      <p>Wave, wrapper, up to three core tropes — then the search phrases, keywords, and positioning line readers actually respond to.</p>
+    </div>
+    <div class="chapter">
+      <div class="t">Part 4</div>
+      <h3>Backward-planning a launch</h3>
+      <p>A real release date rolled backward into draft-done, cover, ARC, and countdown dates — plus the honest words-per-day check.</p>
+    </div>
+  </div>
+</section>
+
+<div class="next">
+  <section class="wrap">
+    <span class="label">Do this next</span>
+    <h2 class="section-title">Three moves while it's fresh</h2>
+    <ol>
+      <li><b>Post your Q4 lineup in the community.</b> A release date you've said out loud is twice as real as one in your notes app — the accountability thread is live in <a href="https://www.skool.com/the-invisible-pen">The Invisible Pen on Skool</a>.</li>
+      <li><b>Put your draft-done date on your actual calendar.</b> Not the release date — the draft-done date. That number is the whole workshop.</li>
+      <li><b>Watch the replay with the worksheet open.</b> Almost everyone catches a window or a deadline they missed live.</li>
+    </ol>
+    <div class="premium">
+      <h3>Premium members — the tools are yours to keep</h3>
+      <p>The Holiday Trope Workbook and the Q4 Marketing Planner from the session are yours permanently — reuse them every single year. They're waiting in the premium space in the community. Not Premium yet? Upgrade inside <a href="https://www.skool.com/the-invisible-pen">the community</a> and they're yours too.</p>
+    </div>
+  </section>
+</div>
+
+<section class="wrap">
+  <span class="label">One more thing</span>
+  <h2 class="section-title">You'll hear about the next workshop first.</h2>
+  <p style="color:var(--ink-soft);max-width:40rem;">Being on this list means the next session's date, topic, and signup link land in your inbox before they're announced anywhere else. Got a topic you want built live? Tell me in the community — most workshops start as somebody's question.</p>
+  <p style="margin-top:1.4rem;"><a class="btn" href="https://www.skool.com/the-invisible-pen">Go to the community →</a></p>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <span>© Clark Publishing House LLC / The Invisible Pen</span>
+    <span>Questions? <a href="mailto:coach@theinvisiblepen.com">coach@theinvisiblepen.com</a> — replies come straight to Jessica.</span>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   REPLAY LINK — paste the YouTube URL between the quotes below
+   (any format: youtu.be/..., watch?v=..., or a full embed URL)
+   and the placeholder becomes the player automatically.
+   ============================================================ */
+var REPLAY_URL = "";
+
+(function(){
+  if(!REPLAY_URL) return;
+  var id = "";
+  var m = REPLAY_URL.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{6,})/);
+  if(m) id = m[1];
+  var frame = document.getElementById("replayFrame");
+  if(id){
+    frame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + id +
+      '" title="Q4 Holiday Release Workshop — full replay" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+  } else {
+    frame.innerHTML = '<div class="video-placeholder"><b>Watch the replay</b><p><a href="' + REPLAY_URL + '">Open the full replay →</a></p></div>';
+  }
+})();
+</script>
+</body>
+</html>
