@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ink & Ruin Beta — Clark Publishing House</title>
+  <meta name="description" content="Ink & Ruin dark romance author studio beta. $25. Decision-first planning, drafting, editing, export. Bring your own AI." />
+  <meta property="og:title" content="Ink & Ruin Beta · $25" />
+  <meta property="og:description" content="Dark romance author studio. Decisions first. You stay creative director. BYO AI." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0a0809;
+      --ink-elev: #141012;
+      --ink-soft: #1c1618;
+      --bone: #f3ebe3;
+      --bone-muted: #c9bdb2;
+      --bone-subtle: #8a7e76;
+      --wine: #8b2e3b;
+      --wine-bright: #b03a4a;
+      --border: #2e2428;
+      --success: #3d6b4f;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--ink);
+      color: var(--bone);
+      font-family: "DM Sans", system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139,46,59,0.25), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(139,46,59,0.12), transparent);
+    }
+    a { color: var(--wine-bright); }
+    .wrap { max-width: 640px; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+    .brand { display: flex; align-items: center; gap: 0.5rem; color: var(--wine-bright); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; }
+    .pill { border: 1px solid rgba(139,46,59,0.45); background: rgba(139,46,59,0.15); border-radius: 999px; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 500; }
+    .eyebrow { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--wine-bright); margin: 0 0 0.5rem; }
+    h1 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; font-size: clamp(2.25rem, 6vw, 3rem); line-height: 1.1; margin: 0 0 0.75rem; letter-spacing: -0.02em; }
+    .lede { color: var(--bone-muted); font-size: 1.05rem; line-height: 1.6; margin: 0 0 1.75rem; max-width: 36rem; }
+    .card {
+      background: var(--ink-elev);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.35rem 1.35rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card.wine { border-color: rgba(139,46,59,0.35); }
+    .card h2 { font-family: "Cormorant Garamond", Georgia, serif; font-weight: 500; font-size: 1.65rem; margin: 0 0 0.5rem; }
+    .card p.sub { color: var(--bone-muted); font-size: 0.9rem; line-height: 1.55; margin: 0 0 1rem; }
+    ul { list-style: none; padding: 0; margin: 0 0 1rem; }
+    ul li { display: flex; gap: 0.55rem; font-size: 0.9rem; line-height: 1.5; color: var(--bone-muted); margin-bottom: 0.45rem; }
+    ul li::before { content: "✓"; color: var(--wine-bright); font-weight: 600; flex-shrink: 0; }
+    .cost {
+      background: var(--ink);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.9rem 1rem;
+      font-size: 0.9rem;
+      color: var(--bone-muted);
+      line-height: 1.5;
+    }
+    .cost strong { color: var(--bone); }
+    label.field { display: block; margin-bottom: 1rem; }
+    label.field span {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--bone-subtle);
+      margin-bottom: 0.4rem;
+    }
+    input[type="text"], input[type="email"] {
+      width: 100%;
+      height: 2.75rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--ink);
+      color: var(--bone);
+      padding: 0 0.85rem;
+      font: inherit;
+      font-size: 0.95rem;
+    }
+    input:focus { outline: 2px solid rgba(139,46,59,0.45); border-color: transparent; }
+    .checks {
+      border: 1px solid var(--border);
+      background: rgba(28,22,24,0.6);
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin: 0.25rem 0 1.25rem;
+    }
+    .checks label {
+      display: flex;
+      gap: 0.7rem;
+      align-items: flex-start;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--bone-muted);
+      cursor: pointer;
+      margin-bottom: 0.85rem;
+    }
+    .checks label:last-child { margin-bottom: 0; }
+    .checks input { margin-top: 0.2rem; width: 1rem; height: 1rem; accent-color: var(--wine); flex-shrink: 0; }
+    .checks strong { color: var(--bone); }
+    button, .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      height: 3rem;
+      padding: 0 1.35rem;
+      border: none;
+      border-radius: 10px;
+      background: var(--wine);
+      color: var(--bone);
+      font: inherit;
+      font-weight: 500;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    button:hover, .btn:hover { background: var(--wine-bright); }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn.secondary { background: var(--ink-soft); border: 1px solid var(--border); }
+    .btn.secondary:hover { background: #261c20; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.75rem; }
+    .alert {
+      border-radius: 10px;
+      padding: 0.75rem 0.9rem;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+    .alert.err { border: 1px solid rgba(155,44,44,0.45); background: rgba(155,44,44,0.12); }
+    .alert.ok { border: 1px solid rgba(61,107,79,0.45); background: rgba(61,107,79,0.15); }
+    .hidden { display: none !important; }
+    footer { text-align: center; font-size: 0.75rem; color: var(--bone-subtle); margin-top: 2rem; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="brand">Ink & Ruin</span>
+      <span class="pill">Beta · $25</span>
+    </header>
+
+    <p class="eyebrow">Clark Publishing House · Beta access</p>
+    <h1>Ink & Ruin beta signup</h1>
+    <p class="lede">
+      Dark romance planning, drafting, and editing — you stay creative director.
+      One seat. One fee. Real feedback after you try it.
+    </p>
+
+    <div class="card wine">
+      <h2>What you're getting</h2>
+      <p class="sub">
+        Early access to the shared manual demo of Ink & Ruin — not a finished App Store product.
+        Built for authors who lock decisions before heat hits the page.
+      </p>
+      <ul>
+        <li>Full studio: Decision Lab → planning, codex, outline, draft, edit, export</li>
+        <li>Blood Vow demo book to explore day one</li>
+        <li>Heat contract (level, dynamic, elements, hard limits)</li>
+        <li>Export MD, DOCX, Google paste, cover prompt, trigger warnings</li>
+        <li>Bring-your-own AI (your ChatGPT / Claude / Grok — not our API)</li>
+      </ul>
+      <div class="cost">
+        <strong>Cost: $25</strong> one-time beta fee.
+        Hosted AI is off so generation runs on the AI tool you already pay for.
+        <div class="row">
+          <a class="btn" href="https://payhip.com/b/CqtUc" target="_blank" rel="noopener noreferrer">Pay $25 on Payhip →</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="success" class="card hidden">
+      <div class="alert ok">You're on the list. Complete payment, then watch email for access details.</div>
+      <h2>Next step: pay $25</h2>
+      <p class="sub">Use the same email you entered so we can match your seat.</p>
+      <div class="row">
+        <a class="btn" href="https://payhip.com/b/CqtUc" target="_blank" rel="noopener noreferrer">Pay $25 on Payhip →</a>
+      </div>
+    </div>
+
+    <div id="form-card" class="card">
+      <h2>Claim your seat</h2>
+      <p class="sub">Name + email. Confirm the fee and feedback check-in. Then pay on Payhip.</p>
+      <div id="error" class="alert err hidden"></div>
+      <form id="beta-form" novalidate>
+        <label class="field">
+          <span>Name</span>
+          <input id="name" name="name" type="text" autocomplete="name" required placeholder="How we should address you" />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+        </label>
+        <div class="checks">
+          <label>
+            <input id="agree-cost" type="checkbox" required />
+            <span>I understand this is a <strong>$25 beta fee</strong> and I agree to pay it via <a href="https://payhip.com/b/CqtUc" target="_blank" rel="noopener noreferrer">Payhip</a>.</span>
+          </label>
+          <label>
+            <input id="agree-feedback" type="checkbox" required />
+            <span>I agree to answer a short round of questions after a few days of use so the studio can improve.</span>
+          </label>
+        </div>
+        <button type="submit" id="submit-btn">Join Ink & Ruin beta · $25</button>
+      </form>
+    </div>
+
+    <footer>
+      Questions? Reach Clark Publishing House on Facebook or your usual community channel.<br />
+      Ink & Ruin only — this form is not for other tools.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var PAY = "https://payhip.com/b/CqtUc";
+      // FormSubmit delivers signup emails (confirm once when first used)
+      var FORMSUBMIT = "https://formsubmit.co/ajax/jessica@theinvisiblepen.com";
+
+      var form = document.getElementById("beta-form");
+      var err = document.getElementById("error");
+      var success = document.getElementById("success");
+      var formCard = document.getElementById("form-card");
+      var btn = document.getElementById("submit-btn");
+
+      function showError(msg) {
+        err.textContent = msg;
+        err.classList.remove("hidden");
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        err.classList.add("hidden");
+
+        var name = document.getElementById("name").value.trim();
+        var email = document.getElementById("email").value.trim();
+        var cost = document.getElementById("agree-cost").checked;
+        var feedback = document.getElementById("agree-feedback").checked;
+
+        if (name.length < 2) return showError("Please enter your name.");
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showError("Please enter a valid email.");
+        if (!cost) return showError("You must agree to the $25 beta fee.");
+        if (!feedback) return showError("You must agree to the feedback check-in.");
+
+        btn.disabled = true;
+        btn.textContent = "Submitting…";
+
+        fetch(FORMSUBMIT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            product: "Ink & Ruin Beta",
+            fee: "$25",
+            agreed_payhip: "yes",
+            agreed_feedback: "yes",
+            _subject: "Ink & Ruin beta signup: " + name,
+            _template: "table",
+            _captcha: "false"
+          })
+        })
+          .then(function (r) { return r.json().catch(function () { return {}; }); })
+          .then(function () {
+            try {
+              localStorage.setItem(
+                "ink-ruin-beta-signup",
+                JSON.stringify({ name: name, email: email, at: new Date().toISOString() })
+              );
+            } catch (_) {}
+            formCard.classList.add("hidden");
+            success.classList.remove("hidden");
+            success.scrollIntoView({ behavior: "smooth", block: "start" });
+            // Open Payhip so payment is one click away
+            window.open(PAY, "_blank", "noopener,noreferrer");
+          })
+          .catch(function () {
+            // Still succeed locally + open Payhip if email service hiccups
+            formCard.classList.add("hidden");
+            success.classList.remove("hidden");
+            window.open(PAY, "_blank", "noopener,noreferrer");
+          })
+          .finally(function () {
+            btn.disabled = false;
+            btn.textContent = "Join Ink & Ruin beta · $25";
+          });
+      });
+    })();
+  </script>
+</body>
+</html>
