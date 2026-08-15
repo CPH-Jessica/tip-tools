@@ -148,7 +148,7 @@
 <body>
   <div class="wrap">
     <header>
-      <span class="brand">Ink & Ruin</span>
+      <a class="brand" href="../">← The Invisible Pen</a>
       <span class="pill">Beta · $25</span>
     </header>
 
@@ -272,7 +272,14 @@
             _captcha: "false"
           })
         })
-          .then(function (r) { return r.json().catch(function () { return {}; }); })
+          .then(function (r) {
+            return r.json().catch(function () { return {}; }).then(function (data) {
+              if (!r.ok || data.success === false) {
+                throw new Error((data && (data.message || data.error)) || "Signup did not go through.");
+              }
+              return data;
+            });
+          })
           .then(function () {
             try {
               localStorage.setItem(
@@ -283,14 +290,10 @@
             formCard.classList.add("hidden");
             success.classList.remove("hidden");
             success.scrollIntoView({ behavior: "smooth", block: "start" });
-            // Open Payhip so payment is one click away
             window.open(PAY, "_blank", "noopener,noreferrer");
           })
-          .catch(function () {
-            // Still succeed locally + open Payhip if email service hiccups
-            formCard.classList.add("hidden");
-            success.classList.remove("hidden");
-            window.open(PAY, "_blank", "noopener,noreferrer");
+          .catch(function (e) {
+            showError((e && e.message) || "Signup didn't go through. Try again, or email jessica@theinvisiblepen.com.");
           })
           .finally(function () {
             btn.disabled = false;
