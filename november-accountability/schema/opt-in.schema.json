@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "invisible-pen-november-opt-in",
+  "title": "November 2026 private opt-in file",
+  "description": "Private runtime import for the November desk. This schema has no writers in it. Numeric goals and totals are accepted in the file and then ignored. They are not stored as progress.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["month", "participants"],
+  "properties": {
+    "month": { "const": "2026-11" },
+    "source_url": { "type": "string", "description": "Discarded. Not stored." },
+    "captured_at": { "type": "string", "description": "Discarded. Not stored." },
+    "participants": {
+      "type": "array",
+      "maxItems": 200,
+      "items": { "$ref": "#/$defs/participant" }
+    },
+    "review_only": { "$ref": "#/$defs/reviewOnly" }
+  },
+  "$defs": {
+    "participant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display_name"],
+      "properties": {
+        "display_name": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "stated_goals": { "type": ["string", "null"], "maxLength": 2000 },
+        "statedGoals": { "type": ["string", "null"], "maxLength": 2000 },
+        "reported_progress_note": { "type": ["string", "null"], "maxLength": 2000 },
+        "progressNote": { "type": ["string", "null"], "maxLength": 2000 },
+        "numeric_month_goal": { "type": ["number", "null"], "description": "Ignored. Not applied." },
+        "numeric_month_total": { "type": ["number", "null"], "description": "Ignored. Not applied." },
+        "numericMonthGoal": { "type": ["number", "null"] },
+        "numericMonthTotal": { "type": ["number", "null"] }
+      }
+    },
+    "reviewOnly": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ambiguous_participants"],
+      "properties": {
+        "ambiguous_participants": {
+          "type": "array",
+          "maxItems": 50,
+          "items": { "$ref": "#/$defs/hold" }
+        },
+        "ambiguousParticipants": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/hold" }
+        },
+        "instruction": { "description": "Discarded. Not followed." }
+      }
+    },
+    "hold": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["display_name"],
+      "properties": {
+        "display_name": { "type": "string" },
+        "displayName": { "type": "string" },
+        "note": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
