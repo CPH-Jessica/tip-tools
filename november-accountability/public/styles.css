@@ -1,0 +1,285 @@
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("/fonts/atkinson-400.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("/fonts/atkinson-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #f3e6d4;
+  --card: #fffaf3;
+  --ink: #241c16;
+  --soft: #3f342c;
+  --rule: #d9c7b0;
+  --cranberry: #7c2f2f;
+  --moss: #2c4a3c;
+  --lamp: #e2a23b;
+  --sea: #243e57;
+  --focus: #7c2f2f;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 20px; }
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse at 100% 0%, rgba(226, 162, 59, 0.28), transparent 42%),
+    linear-gradient(180deg, #f7efe4 0%, var(--paper) 28%, #ead9c4 100%);
+  font-family: "Atkinson Hyperlegible", "Segoe UI", "Avenir Next", "Trebuchet MS", sans-serif;
+  line-height: 1.5;
+}
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  background: var(--card);
+  color: var(--ink);
+  padding: 8px 12px;
+  z-index: 3;
+}
+
+.skip:focus { top: 12px; }
+
+.wrap { width: min(1120px, calc(100% - 32px)); margin-inline: auto; }
+
+.draft-banner {
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--ink);
+  color: #fffaf3;
+  text-align: center;
+}
+
+.mast { padding: 28px 0 8px; }
+
+.mast-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(180px, 280px);
+  gap: 20px;
+  align-items: center;
+}
+
+.eyebrow {
+  margin: 0 0 4px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cranberry);
+  font-weight: 700;
+}
+
+h1, h2, h3 { font-family: Georgia, "Iowan Old Style", Palatino, "Palatino Linotype", serif; line-height: 1.15; }
+
+h1 { font-size: clamp(2.6rem, 6vw, 4rem); margin: 0 0 8px; }
+
+h2 { font-size: 2rem; margin: 0 0 8px; }
+
+h3 { font-size: 1.5rem; margin: 0; }
+
+.lede { font-size: 1.15rem; max-width: 40rem; margin: 0; }
+
+.scene svg { width: 100%; height: auto; display: block; }
+
+#status { font-size: 1.1rem; min-height: 1.5em; }
+
+.room-copy, .help, .line, .pace, .clock { margin: 8px 0; }
+
+.clock { font-weight: 700; }
+
+.card, .panel, .legend, .note, .keeper, .ribbon {
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 16px;
+  box-shadow: 6px 6px 0 #e4d3bf;
+}
+
+.panel, .legend, .keeper { padding: 16px 18px; margin: 16px 0; }
+
+.cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  margin: 16px 0;
+}
+
+.card {
+  border-left: 10px solid var(--cranberry);
+  padding: 16px 16px 14px;
+}
+
+.line { margin: 6px 0; }
+
+.pace { color: var(--soft); }
+
+.cal, .dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+  padding: 0;
+  margin: 12px 0 0;
+  list-style: none;
+}
+
+.dow { text-align: center; font-weight: 700; font-size: 0.9rem; }
+
+.cal li, .dayrow {
+  min-height: 52px;
+  border: 2px solid var(--rule);
+  border-radius: 12px;
+  background: #fffaf3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+}
+
+.cal li.today {
+  border-style: solid;
+  border-color: var(--ink);
+  background: #f6e1b8;
+  box-shadow: inset 0 0 0 3px var(--lamp);
+}
+
+.cal li.ahead { border-style: dashed; color: var(--soft); background: transparent; }
+
+.today-word { font-size: 0.9rem; font-weight: 700; }
+
+.legend ul { margin: 8px 0 0; padding-left: 1.2rem; }
+
+.legend li { margin: 4px 0; }
+
+label { display: block; font-weight: 700; margin-top: 12px; }
+
+input, select, button, textarea {
+  font: inherit;
+  color: inherit;
+  min-height: 52px;
+}
+
+input, select, textarea {
+  width: 100%;
+  margin-top: 4px;
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.actions, .day-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+button, .button {
+  background: var(--sea);
+  color: #fffaf3;
+  border: 2px solid var(--ink);
+  border-radius: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+button.quiet { background: var(--card); color: var(--ink); }
+
+button.moss { background: var(--moss); color: #fffaf3; }
+
+button:disabled { opacity: 0.55; cursor: not-allowed; }
+
+.meter {
+  height: 1.25rem;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #efe4d4;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--moss), var(--sea));
+}
+
+.ribbon { padding: 12px 14px; margin: 12px 0; background: #f6e7c6; }
+
+.note { padding: 14px 16px; margin: 12px 0; background: #f6efe4; }
+
+.note h3 { font-size: 1.25rem; }
+
+.error { color: var(--cranberry); font-weight: 700; }
+
+.daylist { display: grid; gap: 8px; margin-top: 12px; }
+
+.dayrow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  background: var(--card);
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.dayrow[aria-pressed="true"] {
+  border-color: var(--ink);
+  background: #f6e1b8;
+}
+
+.dayrow .num { font-weight: 700; min-width: 2ch; }
+
+.fields { display: grid; gap: 0 12px; }
+
+.footer { padding: 8px 0 32px; color: var(--soft); }
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+@media (min-width: 800px) {
+  .fields.two { grid-template-columns: 1fr 1fr; }
+  .daylist { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 720px) {
+  html { font-size: 19px; }
+  .mast-grid { grid-template-columns: 1fr; }
+  .scene { max-width: 220px; }
+  .wrap { width: min(1120px, calc(100% - 20px)); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .meter > span { transition: width 0.4s ease; }
+  .ribbon.just-now { animation: rise 0.5s ease both; }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .meter > span { background: CanvasText; }
+  .draft-banner { background: CanvasText; color: Canvas; }
+}
